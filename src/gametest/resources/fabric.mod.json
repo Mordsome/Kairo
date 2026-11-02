@@ -1,0 +1,19 @@
+{
+	"schemaVersion": 1,
+	"id": "kairo-test",
+	"version": "1.0.0",
+	"name": "Kairo visual tests",
+	"description": "Dev-only: automated screenshot tour of the client's screens.",
+	"authors": [
+		"MordoMordeczek"
+	],
+	"environment": "client",
+	"entrypoints": {
+		"fabric-client-gametest": [
+			"dev.mordo.kairo.test.VisualTour"
+		]
+	},
+	"depends": {
+		"kairo": "*"
+	}
+}

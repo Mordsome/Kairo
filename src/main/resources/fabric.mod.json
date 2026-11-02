@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "kairo",
+	"version": "${version}",
+	"name": "Kairo Client",
+	"description": "A visuals-focused client: animated menus, HUD mods and PvP visual tweaks. Visual and client-side only, no cheats.",
+	"authors": [
+		"MordoMordeczek"
+	],
+	"license": "GPL-3.0-only",
+	"icon": "assets/kairo/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"dev.mordo.kairo.Kairo"
+		]
+	},
+	"mixins": [
+		{
+			"config": "kairo.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.20.1",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*",
+		"sodium": ">=0.9.0"
+	}
+}

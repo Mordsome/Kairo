@@ -1,0 +1,54 @@
+# gradle
+
+.gradle/
+build/
+out/
+classes/
+
+# eclipse
+
+*.launch
+
+# idea
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# vscode
+
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
+# macos
+
+*.DS_Store
+
+# fabric
+
+run/
+
+# java
+
+hs_err_*.log
+replay_*.log
+*.hprof
+*.jfr
+
+# personal helpers
+
+RunMinecraft.bat
+# personal artwork, not part of the project
+branding/
+
+# local tool state
+
+.claude/
+
+# release packaging (the jars go on the GitHub release page, not in the repository)
+
+release/

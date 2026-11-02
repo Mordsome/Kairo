@@ -1,0 +1,129 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	// Modrinth maven, only used to pull Sodium onto the dev runtime classpath.
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = 'Modrinth'
+				url = 'https://api.modrinth.com/maven'
+			}
+		}
+		filter {
+			includeGroup 'maven.modrinth'
+		}
+	}
+}
+
+loom {
+	mods {
+		"kairo" {
+			sourceSet sourceSets.main
+		}
+	}
+
+	runs {
+		client {
+			// Keep dev runs in their own folder so they never touch a real .minecraft.
+			runDir = "run"
+		}
+		// The same client as Kairo Void (./gradlew runVoidClient).
+		voidClient {
+			inherit client
+			configName = "Kairo Void Client"
+			vmArg "-Dkairo.edition=void"
+		}
+	}
+}
+
+// Automated visual checks (src/gametest): ./gradlew runClientGameTest creates a world, opens the
+// client's screens and saves screenshots to build/run/clientGameTest/screenshots. Not part of the mod jar.
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "kairo-test"
+		enableGameTests = false
+		enableClientGameTests = true
+		eula = false
+	}
+}
+
+// ./gradlew runClientGameTest -Pvoid runs the visual checks as Kairo Void.
+if (providers.gradleProperty('void').isPresent()) {
+	loom.runs.configureEach {
+		vmArg '-Dkairo.edition=void'
+	}
+}
+
+dependencies {
+	// 26.x ships unobfuscated, so there is no mappings line: Mojang's own names are used directly.
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Sodium (PolyForm Shield): runtime-only for ./gradlew runClient. Never shaded, never jar-in-jar.
+	runtimeOnly "maven.modrinth:sodium:${project.sodium_version}"
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+	withSourcesJar()
+}
+
+// Kairo Void: the same classes and assets, plus an edition marker and its own name. Built next to the main jar.
+tasks.register('voidJar', Jar) {
+	group = 'build'
+	description = 'Builds the Kairo Void jar from the same code.'
+	archiveBaseName = 'kairo-void'
+	from(sourceSets.main.output) {
+		filesMatching('fabric.mod.json') {
+			filter { String line ->
+				line.replace('"name": "Kairo Client"', '"name": "Kairo Void"')
+					.replaceAll('"description": ".*"', '"description": "The dark, PvP-focused edition of Kairo: flat grey menus and over-the-top combat, sky and menu visuals. Visual and client-side only, no cheats."')
+			}
+		}
+	}
+	// The same namespace marker Loom puts on the main jar (26.x is unobfuscated: official names).
+	manifest {
+		attributes('Fabric-Mapping-Namespace': 'official', 'Fabric-Minecraft-Version': project.minecraft_version)
+	}
+	from('src/void/resources')
+	from('LICENSE') {
+		rename { 'LICENSE_kairo' }
+	}
+	from('THIRD_PARTY_NOTICES.md')
+}
+tasks.named('assemble') { dependsOn 'voidJar' }
+
+// Ship the licence inside the jar (GPL-3.0 asks for it to travel with the program).
+jar {
+	from("LICENSE") {
+		rename { "LICENSE_kairo" }
+	}
+	from("THIRD_PARTY_NOTICES.md")
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+	it.options.encoding = 'UTF-8'
+}
