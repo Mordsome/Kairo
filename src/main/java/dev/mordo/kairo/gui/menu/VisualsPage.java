@@ -91,16 +91,19 @@ public final class VisualsPage extends PanelPage {
 			float h = drawRingPreview(g, x, y, w, fade);
 			return h + PickTile.grid(g, "SEGMENTS", ringTiles, x, y + h, w, fade, put);
 		});
+		// Theme: your colour (picked, or taken from your wallpaper) and how much of it panels and text take.
+		List<Setting<?>> theme = new ArrayList<>(List.of(s.accent, s.wallpaperColors, s.tintBackgrounds, s.backgroundTint, s.tintText, s.textTint,
+			s.accentEverywhere, s.pvpAccent, s.customFonts, s.hudFont));
 		if (dev.mordo.kairo.core.Edition.isVoid()) {
 			// Void has flat panels and fewer sections: colours, fonts, panels and motion together.
-			section("Theme", Icon.SPARKLE, null, List.of(s.accent, s.accentEverywhere, s.pvpAccent, s.customFonts, s.hudFont, s.backgroundDim,
-				s.animationSpeed, s.reduceMotion, s.reduceFlashing), List.of());
+			theme.addAll(List.of(s.backgroundDim, s.animationSpeed, s.reduceMotion, s.reduceFlashing));
+			section("Theme", Icon.SPARKLE, null, theme, List.of(s.wallpaperSwatch)).list().header(new dev.mordo.kairo.gui.widgets.WallpaperSwatches(true).section());
 		} else {
-			section("Theme", Icon.SPARKLE, null, List.of(s.accent, s.accentEverywhere, s.pvpAccent, s.customFonts, s.hudFont), List.of());
+			section("Theme", Icon.SPARKLE, null, theme, List.of(s.wallpaperSwatch)).list().header(new dev.mordo.kairo.gui.widgets.WallpaperSwatches(true).section());
 			section("Glass", Icon.LAYOUT, null, List.of(s.glassTint, s.blurStrength, s.backgroundDim), List.of());
 			section("Motion", Icon.GAUGE, null, List.of(s.animationSpeed, s.reduceMotion, s.reduceFlashing), List.of());
 		}
-		section("Menus", Icon.WORLD, null, List.of(s.customMainMenu, s.restyleMenus, s.menuFx, s.hidePauseExtras, s.menuSounds), List.of());
+		section("Menus", Icon.WORLD, null, List.of(s.customMainMenu, s.restyleMenus, s.menuFx, s.panelEdgeLight, s.hidePauseExtras, s.menuSounds), List.of());
 		Section buttons = section("Buttons", Icon.POWER, null,
 			List.of(s.buttonRadius, s.buttonAnimations, s.buttonGlow, s.buttonOutline, s.buttonColor, s.buttonClick), List.of());
 		// A live sample at the top of the Buttons section: hover it, click it.

@@ -22,6 +22,10 @@ public class VisualTour implements FabricClientGameTest {
 	public void runTest(ClientGameTestContext ctx) {
 		TestInput input = ctx.getInput();
 		input.resizeWindow(width, height);
+		if (ShowcaseTour.flag("tour-020")) {
+			new Update020Tour().run(ctx);
+			return;
+		}
 		if (ShowcaseTour.flag("tour-showcase")) {
 			new ShowcaseTour().run(ctx);
 			return;
@@ -1489,7 +1493,7 @@ public class VisualTour implements FabricClientGameTest {
 		ctx.takeScreenshot("w_00_welcome_intro");
 		ctx.waitTicks(30);
 		ctx.takeScreenshot("w_01_welcome");
-		for (int i = 1; i < 8; i++) {
+		for (int i = 1; i < 9; i++) {
 			input.pressKey(key(InputConstants.KEY_RIGHT));
 			ctx.waitTicks(14);
 			if (i == 2) {

@@ -26,9 +26,13 @@ import java.util.zip.Inflater;
  */
 public final class LookCodes {
 	private static final String PREFIX = "TLOOK1-";
-	/** The client settings a look carries (only looks, nothing personal). */
+	/**
+	 * The client settings a look carries (only looks, nothing personal). The theme colour travels as "accent"; the
+	 * wallpaper it may have come from (and whether colours follow it) never does.
+	 */
 	private static final Set<String> CLIENT_KEYS = Set.of("accent", "pvp_accent", "accent_everywhere", "glass_tint", "button_radius", "button_glow",
-		"button_outline", "button_color", "button_click", "living_ring", "menu_fx");
+		"button_outline", "button_color", "button_click", "living_ring", "menu_fx", "panel_edge_light",
+		"tint_backgrounds", "background_tint", "tint_text", "text_tint");
 
 	private LookCodes() {
 	}
@@ -83,6 +87,12 @@ public final class LookCodes {
 			return -1;
 		}
 		int changed = 0;
+		// Wearing a friend's colours: stop following your own wallpaper, or it would paint over them.
+		if (root.get(ClientSettings.INSTANCE.id()) instanceof JsonObject client && client.has("accent")
+			&& ClientSettings.INSTANCE.wallpaperColors.isOn()) {
+			ClientSettings.INSTANCE.wallpaperColors.set(false);
+			changed++;
+		}
 		for (SettingHolder holder : holders()) {
 			if (!root.has(holder.id()) || !root.get(holder.id()).isJsonObject()) {
 				continue;

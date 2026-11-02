@@ -19,6 +19,7 @@ public final class ModuleManager {
 		if (MODULES.putIfAbsent(module.id(), module) != null) {
 			throw new IllegalStateException("Duplicate module id " + module.id());
 		}
+		module.addThemeSettings();
 		MODULE_LIST.add(module);
 		HOLDERS.add(module);
 		return module;

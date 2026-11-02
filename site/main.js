@@ -143,9 +143,9 @@
     document.querySelectorAll(".switch button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.set === ed)));
     document.querySelectorAll("[data-kairo]").forEach((el) => { if (el !== scr) el.textContent = el.dataset[ed]; });
     animate ? scramble(scr, scr.dataset[ed]) : (scr.textContent = scr.dataset[ed]);
-    $("#download").href = REPO[ed] + "/releases/latest";
-    $(".rel-link").href = REPO[ed] + "/releases/latest";
-    $(".jarname").textContent = ed === "void" ? "kairo-void-0.1.0.jar" : "kairo-0.1.0.jar";
+    $("#download").href = REPO.kairo + "/releases/latest";
+    $(".rel-link").href = REPO.kairo + "/releases/latest";
+    $(".jarname").textContent = ed === "void" ? "kairo-void-0.2.0.jar" : "kairo-0.2.0.jar";
     document.title = ed === "void" ? "Kairo Void: Kairo, turned all the way up" : "Kairo: a visual client for Minecraft 26.3";
     buildStrip(); showTour(tourIdx, false);
     try { localStorage.setItem("kairo-edition", ed); } catch (e) {}

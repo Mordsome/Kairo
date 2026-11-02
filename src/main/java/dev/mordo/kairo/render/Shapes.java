@@ -198,7 +198,7 @@ public final class Shapes {
 		}
 		if (Edition.isVoid()) {
 			rect(g, x, y, w, h, radius, Colors.multiplyAlpha(flat(tint), opacity), Colors.multiplyAlpha(flatStroke(stroke), opacity), strokeWidth);
-			if (w > 500 && h > 300 && dev.mordo.kairo.core.ClientSettings.INSTANCE.menuFx.isOn()) {
+			if (w > 500 && h > 300 && dev.mordo.kairo.core.ClientSettings.INSTANCE.panelEdgeLight.isOn()) {
 				panelLight(g, x, y, w, h, radius, opacity);
 			}
 			return;
@@ -213,7 +213,7 @@ public final class Shapes {
 		submit(g, KairoPipelines.GLASS, Blur.glassTexture(), x + hw, y + hh, 1, 0,
 			-hw - m, -hh - m, hw + m, hh + m,
 			tint, tint, stroke, strokeWidth, ShapeElement.RECT, hw, hh, radius, 0, 0, opacity, 1.4f);
-		if (w > 500 && h > 300 && dev.mordo.kairo.core.ClientSettings.INSTANCE.menuFx.isOn()) {
+		if (w > 500 && h > 300 && dev.mordo.kairo.core.ClientSettings.INSTANCE.panelEdgeLight.isOn()) {
 			panelLight(g, x, y, w, h, radius, opacity);
 		}
 	}
@@ -225,14 +225,14 @@ public final class Shapes {
 	public static void backdrop(GuiGraphicsExtractor g, float opacity, float dim, float vignette) {
 		if (Edition.isVoid()) {
 			// Void: no blur, just a deep flat grey over the world.
-			g.fill(0, 0, g.guiWidth(), g.guiHeight(), Colors.argb(Math.clamp(opacity * (0.55f + dim * 0.6f), 0f, 0.94f), VOID_BACK));
+			g.fill(0, 0, g.guiWidth(), g.guiHeight(), Colors.argb(Math.clamp(opacity * (0.55f + dim * 0.6f), 0f, 0.94f), dev.mordo.kairo.gui.Theme.voidPanel(VOID_BACK)));
 			if (dev.mordo.kairo.core.ClientSettings.INSTANCE.menuFx.isOn()) {
 				livingBackdrop(g, opacity);
 			}
 			return;
 		}
 		if (!Blur.isAvailable()) {
-			g.fill(0, 0, g.guiWidth(), g.guiHeight(), Colors.argb(Math.clamp(opacity * (0.35f + dim), 0f, 1f), 0x06080C));
+			g.fill(0, 0, g.guiWidth(), g.guiHeight(), Colors.argb(Math.clamp(opacity * (0.35f + dim), 0f, 1f), dev.mordo.kairo.gui.Theme.voidPanel(0x06080C)));
 		} else {
 			float hw = g.guiWidth() / 2f;
 			float hh = g.guiHeight() / 2f;
@@ -258,7 +258,8 @@ public final class Shapes {
 	 */
 	public static int flat(int tint) {
 		float strength = Colors.alpha(tint) / 255f;
-		int mixed = Colors.lerp(0xFF000000 | VOID_PANEL, 0xFF000000 | (tint & 0xFFFFFF), strength * 0.55f) & 0xFFFFFF;
+		int panel = dev.mordo.kairo.gui.Theme.voidPanel(VOID_PANEL);
+		int mixed = Colors.lerp(0xFF000000 | panel, 0xFF000000 | (tint & 0xFFFFFF), strength * 0.55f) & 0xFFFFFF;
 		return Colors.argb(0.97f, mixed);
 	}
 
@@ -295,7 +296,7 @@ public final class Shapes {
 		return s - Math.floor(s);
 	}
 
-	/** Void "Living menus": a short light running along the top edge of big panels. */
+	/** "Panel edge light" (Visuals → Menus): a short light running along the top edge of big panels. */
 	private static void panelLight(GuiGraphicsExtractor g, float x, float y, float w, float h, float radius, float opacity) {
 		int accent = dev.mordo.kairo.gui.Theme.accent();
 		double t = System.nanoTime() / 1e9;

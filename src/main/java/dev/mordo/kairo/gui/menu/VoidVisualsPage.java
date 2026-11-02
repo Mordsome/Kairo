@@ -261,8 +261,13 @@ public final class VoidVisualsPage extends PanelPage {
 		add("Living ring", "Just the ring: it breathes, lights orbit it, the centre pulses. Pick its segments here", Icon.GRID, Group.INTERFACE,
 			bool(cs.livingRing), List.of(), grid("SEGMENTS (3 TO 8)", ringTiles));
 		add("Keystroke ripples", "Keys pop and send out a ripple when you press them", Icon.KEYBOARD, Group.INTERFACE, bool(vs.keyRipples), List.of(), null);
-		add("Living menus", "Drifting light behind the menus and a light running along the panels", Icon.GRID, Group.INTERFACE, bool(cs.menuFx),
+		add("Living menus", "Drifting light and motes behind the menus", Icon.GRID, Group.INTERFACE, bool(cs.menuFx),
 			List.of(cs.backgroundDim), null);
+		add("Panel edge light", "A short light runs along the top edge of big panels", Icon.SUN, Group.INTERFACE, bool(cs.panelEdgeLight),
+			List.of(), null);
+		add("Wallpaper colours", "Your colour comes from your main menu background; panels and text take a tint of it", Icon.IMAGE,
+			Group.INTERFACE, bool(cs.wallpaperColors), List.of(cs.accent, cs.tintBackgrounds, cs.backgroundTint, cs.tintText, cs.textTint),
+			new dev.mordo.kairo.gui.widgets.WallpaperSwatches(true).section());
 		add("Accent on all", "Every mod colour (crosshair, outlines, keys...) uses your accent", Icon.SPARKLE, Group.INTERFACE,
 			bool(cs.accentEverywhere), List.of(cs.accent), null);
 		add("Smooth motion", "How fast menus animate, or fades only", Icon.GAUGE, Group.INTERFACE, invert(cs.reduceMotion),
@@ -442,6 +447,17 @@ public final class VoidVisualsPage extends PanelPage {
 	/** Shows a category by index (0 = All). */
 	public void select(int index) {
 		selectGroup(index <= 0 ? null : Group.values()[Math.min(index, Group.values().length) - 1]);
+	}
+
+	/** Opens a visual's options by its name (used by the visual tour). */
+	public void openVisual(String name) {
+		for (Visual v : visuals) {
+			if (v.name().equals(name)) {
+				selectGroup(v.group());
+				openDetail(v);
+				return;
+			}
+		}
 	}
 
 	private void refresh() {

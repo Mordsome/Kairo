@@ -71,7 +71,7 @@ public final class Hotbar extends Module {
 
 	// ---- hotbar ----
 	public final EnumSetting<HotbarStyle> style = add(new EnumSetting<>("style", "Hotbar style", HotbarStyle.PANEL));
-	public final ColorSetting background = add(new ColorSetting("background", "Background", 0xA00C1018)
+	public final ColorSetting background = add(new ColorSetting("background", "Background", 0xA00C1018).themeBackground()
 		.description("Behind the slots and the bars"));
 	public final BooleanSetting accentSelection = add(new BooleanSetting("accent_selection", "Selection in accent color", true)
 		.description("Follows the client accent (orange in PvP mode)"));

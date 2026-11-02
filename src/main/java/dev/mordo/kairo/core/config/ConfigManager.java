@@ -39,7 +39,8 @@ import java.util.stream.Stream;
  * A file that can't be read is backed up next to itself and replaced by defaults; it never crashes the game.
  */
 public final class ConfigManager {
-	public static final int CONFIG_VERSION = 1;
+	/** 1 = 0.1.0, 2 = 0.2.0 (theme tints, panel edge light; see {@link ConfigMigrator}). */
+	public static final int CONFIG_VERSION = 2;
 	public static final String DEFAULT_PROFILE = "default";
 	private static final long SAVE_DELAY_MS = 750;
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -152,6 +153,16 @@ public final class ConfigManager {
 
 	private static void applyProfile(JsonObject root) {
 		int version = root.has("configVersion") ? root.get("configVersion").getAsInt() : 0;
+		if (version < CONFIG_VERSION) {
+			// Keep the old file next to the new one, then save the upgraded profile right away.
+			Path file = profileFile(activeProfile);
+			try {
+				Files.copy(file, file.resolveSibling(file.getFileName() + ".v" + version + "-backup"), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				Kairo.LOGGER.warn("Couldn't back up {} before upgrading it", file.getFileName(), e);
+			}
+			dirty = true;
+		}
 		root = ConfigMigrator.migrate(root, version, CONFIG_VERSION);
 
 		PvpMode.restore(root.has("pvpMode") && root.get("pvpMode").getAsBoolean());

@@ -22,7 +22,7 @@ public final class Toasts {
 	private static final float HOLD_MS = 1400;
 	private static final float OUT_MS = 320;
 
-	private record Toast(String text, int dotColor, long startNanos) {
+	private record Toast(String text, int dotColor, long startNanos, float holdMs) {
 	}
 
 	private static @Nullable Toast current;
@@ -44,7 +44,12 @@ public final class Toasts {
 	}
 
 	public static void show(String text, int dotColor) {
-		current = new Toast(text, dotColor, System.nanoTime());
+		show(text, dotColor, HOLD_MS);
+	}
+
+	/** A toast that stays up for {@code holdMs} (for news worth reading, like an update). */
+	public static void show(String text, int dotColor, float holdMs) {
+		current = new Toast(text, dotColor, System.nanoTime(), holdMs);
 	}
 
 	public static void draw(GuiGraphicsExtractor g) {
@@ -54,12 +59,13 @@ public final class Toasts {
 		}
 		float speed = Animation.speed();
 		float elapsed = (System.nanoTime() - toast.startNanos()) / 1_000_000f * speed;
-		if (elapsed > IN_MS + HOLD_MS + OUT_MS) {
+		float hold = toast.holdMs();
+		if (elapsed > IN_MS + hold + OUT_MS) {
 			current = null;
 			return;
 		}
 		float in = Easing.UI.apply(Math.clamp(elapsed / IN_MS, 0f, 1f));
-		float out = Easing.IN_CUBIC.apply(Math.clamp((elapsed - IN_MS - HOLD_MS) / OUT_MS, 0f, 1f));
+		float out = Easing.IN_CUBIC.apply(Math.clamp((elapsed - IN_MS - hold) / OUT_MS, 0f, 1f));
 		float alpha = in * (1 - out);
 		float slide = Animation.motion((1 - in) * -14 + out * -8, 0);
 
@@ -73,12 +79,12 @@ public final class Toasts {
 			float x = (viewWidth - w) / 2;
 			float y = 28 + slide;
 			Shapes.shadow(g, x, y + 4, w, h, h / 2, 12, Colors.argb(0.35f * alpha, 0));
-			Shapes.rect(g, x, y, w, h, h / 2, Colors.argb(0.78f * alpha, 0x0C1018), Colors.argb(0.18f * alpha, 0xFFFFFF), 1.25f);
+			Shapes.rect(g, x, y, w, h, h / 2, Colors.argb(0.78f * alpha, Theme.tintBackground(0xFF0C1018)), Colors.argb(0.18f * alpha, 0xFFFFFF), 1.25f);
 			float dotX = x + 18;
 			float cy = y + h / 2;
 			Shapes.shadow(g, dotX - 4, cy - 4, 8, 8, 4, 5, Colors.multiplyAlpha(toast.dotColor(), 0.6f * alpha));
 			Shapes.circle(g, dotX, cy, 3.5f, Colors.multiplyAlpha(toast.dotColor(), alpha));
-			Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, toast.text(), dotX + 12, cy, textSize, Colors.argb(alpha, 0xF4F8FB));
+			Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, toast.text(), dotX + 12, cy, textSize, Theme.text(alpha));
 		} finally {
 			RefSpace.pop(g);
 		}

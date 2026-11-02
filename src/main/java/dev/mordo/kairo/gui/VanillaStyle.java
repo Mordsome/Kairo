@@ -52,12 +52,12 @@ public final class VanillaStyle {
 
 	public static void textField(GuiGraphicsExtractor g, int x, int y, int w, int h, boolean focused, boolean active) {
 		int border = !active ? BORDER_INACTIVE : focused ? Colors.withAlpha(Theme.accent(), 0.9f) : BORDER;
-		Shapes.rect(g, x, y, w, h, radius(h), active ? 0xB0080B11 : FILL_INACTIVE, border, 1);
+		Shapes.rect(g, x, y, w, h, radius(h), Theme.tintBackground(active ? 0xB0080B11 : FILL_INACTIVE), border, 1);
 	}
 
 	public static void sliderTrack(GuiGraphicsExtractor g, int x, int y, int w, int h, double value, boolean active, boolean hovered) {
 		int accent = Theme.accent();
-		Shapes.rect(g, x, y, w, h, radius(h), active ? FILL : FILL_INACTIVE, hovered && active ? Colors.withAlpha(accent, 0.6f) : BORDER, 1);
+		Shapes.rect(g, x, y, w, h, radius(h), Theme.tintBackground(active ? FILL : FILL_INACTIVE), hovered && active ? Colors.withAlpha(accent, 0.6f) : BORDER, 1);
 		float filled = (float) ((w - 8) * value + 4);
 		if (active && filled > 2) {
 			Shapes.rect(g, x + 1, y + 1, filled, h - 2, radius(h) - 1, Colors.withAlpha(accent, hovered ? 0.32f : 0.22f));
@@ -72,7 +72,7 @@ public final class VanillaStyle {
 
 	public static void checkbox(GuiGraphicsExtractor g, int x, int y, int size, boolean selected, boolean hovered) {
 		int accent = Theme.accent();
-		int fill = selected ? accent : FILL;
+		int fill = selected ? accent : Theme.tintBackground(FILL);
 		int border = selected ? accent : hovered ? Colors.withAlpha(accent, 0.8f) : BORDER;
 		Shapes.rect(g, x, y, size, size, Math.min(4, ClientSettings.INSTANCE.buttonRadius.floatValue()), fill, border, 1);
 		if (selected) {
@@ -85,7 +85,7 @@ public final class VanillaStyle {
 		boolean inWorld = Minecraft.getInstance().level != null;
 		int top = inWorld ? 0x8C06090E : 0x7006090E;
 		int bottom = inWorld ? 0xB306090E : 0xA306090E;
-		Shapes.gradientRect(g, x, y, w, h, 0, top, bottom);
+		Shapes.gradientRect(g, x, y, w, h, 0, Theme.tintBackground(top), Theme.tintBackground(bottom));
 	}
 
 	public static void scrollbar(GuiGraphicsExtractor g, int x, int y, int w, int h, boolean track) {

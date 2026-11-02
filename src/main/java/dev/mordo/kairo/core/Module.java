@@ -29,6 +29,42 @@ public abstract class Module extends SettingHolder {
 		this.enabled.onChange(value -> syncActiveState());
 	}
 
+	/** "Follow theme colours": every colour of this mod that can use the accent does (null if it has none). */
+	public @org.jspecify.annotations.Nullable BooleanSetting followTheme;
+	/** "Tinted background": its background takes the theme's dark tone (null if it has no background colour). */
+	public @org.jspecify.annotations.Nullable BooleanSetting tintedBackground;
+
+	/**
+	 * Adds the theme switches to a mod with colours, after its own settings (so they show at the end of its page), and
+	 * connects its colours to them. Called once by {@link ModuleManager#register}.
+	 */
+	final void addThemeSettings() {
+		boolean accentable = false;
+		boolean background = false;
+		for (var setting : settings()) {
+			if (setting instanceof dev.mordo.kairo.core.settings.ColorSetting color) {
+				accentable |= color.accentRole() != dev.mordo.kairo.core.settings.ColorSetting.AccentRole.NONE
+					|| color.themeRole() == dev.mordo.kairo.core.settings.ColorSetting.ThemeRole.TEXT;
+				background |= color.themeRole() == dev.mordo.kairo.core.settings.ColorSetting.ThemeRole.BACKGROUND;
+			}
+		}
+		if (accentable) {
+			followTheme = add(new BooleanSetting("follow_theme", "Follow theme colours", false)
+				.description("Its colours use your theme colour (from Visuals → Theme or your wallpaper), even ones you picked"));
+		}
+		if (background) {
+			tintedBackground = add(new BooleanSetting("tinted_background", "Tinted background", true)
+				.description("Its background takes a dark tone of your theme colour while Visuals → Theme → Tint backgrounds is on. Off: neutral grey"));
+		}
+		java.util.function.BooleanSupplier follow = followTheme != null ? followTheme::isOn : () -> false;
+		java.util.function.BooleanSupplier tinted = tintedBackground != null ? tintedBackground::isOn : () -> true;
+		for (var setting : settings()) {
+			if (setting instanceof dev.mordo.kairo.core.settings.ColorSetting color) {
+				color.bindTheme(follow, tinted);
+			}
+		}
+	}
+
 	public String name() {
 		return name;
 	}

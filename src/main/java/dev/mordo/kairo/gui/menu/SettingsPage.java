@@ -61,6 +61,20 @@ public final class SettingsPage extends PanelPage {
 	private final Button renderTest;
 	private final Button setupAgain;
 
+	// About → Updates (opt-in)
+	private final dev.mordo.kairo.gui.widgets.ToggleSwitch checkUpdates =
+		new dev.mordo.kairo.gui.widgets.ToggleSwitch(dev.mordo.kairo.gui.widgets.Binding.normal(dev.mordo.kairo.core.ClientSettings.INSTANCE.checkUpdates));
+	private final Button updateNow;
+	private final Button viewOnGitHub;
+	private final ScrollState notesScroll = new ScrollState();
+	private float notesX;
+	private float notesY;
+	private float notesW;
+	private float notesH;
+	private String wrappedFor = "";
+	private float wrappedWidth;
+	private List<String> wrappedNotes = List.of();
+
 	SettingsPage(MenuScreen menu) {
 		super(menu);
 		for (Tab t : Tab.values()) {
@@ -87,12 +101,35 @@ public final class SettingsPage extends PanelPage {
 		renderTest = new Button("Open render test", Icon.SPARKLE, Button.Style.SUBTLE, ClientScreens::openRenderTest).textSize(11.5f);
 		setupAgain = new Button("Run the welcome setup again", Icon.REFRESH, Button.Style.SUBTLE,
 			() -> menu.close(new dev.mordo.kairo.gui.welcome.WelcomeScreen(null))).textSize(11.5f);
+		updateNow = new Button("Update", Icon.ARROW_RIGHT, Button.Style.PRIMARY, () -> {
+			var release = dev.mordo.kairo.core.update.UpdateChecker.latest();
+			if (release != null) {
+				dev.mordo.kairo.core.update.UpdateInstaller.install(release);
+			}
+		}).textSize(12);
+		viewOnGitHub = new Button("View on GitHub", Icon.LINK, Button.Style.SUBTLE, () -> {
+			var release = dev.mordo.kairo.core.update.UpdateChecker.latest();
+			String url = release != null ? release.pageUrl() : "https://github.com/" + dev.mordo.kairo.core.update.UpdateChecker.REPO + "/releases";
+			// Only ever this repository's pages.
+			if (url.startsWith("https://github.com/" + dev.mordo.kairo.core.update.UpdateChecker.REPO + "/")) {
+				try {
+					org.lwjgl.sdl.SDLMisc.SDL_OpenURL(url); // the system browser, like FilePicker.openFolder
+				} catch (Throwable t) {
+					Toasts.show(url, Theme.accent());
+				}
+			}
+		}).textSize(11.5f);
 	}
 
 	@Override
 	public void show() {
 		super.show();
 		refreshProfiles();
+	}
+
+	/** Switches to the About tab (used by the visual tour). */
+	public void showAbout() {
+		tab = Tab.ABOUT;
 	}
 
 	@Override
@@ -234,6 +271,9 @@ public final class SettingsPage extends PanelPage {
 	}
 
 	private void renderAbout(GuiGraphicsExtractor g, float top, float mx, float my, float fade, boolean live) {
+		// Two columns: about on the left, updates on the right.
+		float leftW = Math.min(contentW * 0.5f, 480);
+		renderUpdates(g, contentX + leftW + 32, top, contentW - leftW - 32, py + ph - 20 - top, mx, my, fade, live);
 		float cx = contentX + 40;
 		float cy = top + 46;
 		logoX = cx;
@@ -277,7 +317,7 @@ public final class SettingsPage extends PanelPage {
 		y += 10;
 		Fonts.draw(g, Typeface.MONO_BOLD, "CONFIG FOLDER", contentX, y, 8.5f, Theme.text(0.45f, fade), Fonts.Align.LEFT, 2f, false);
 		String path = FabricLoader.getInstance().getConfigDir().resolve(ClientInfo.MOD_ID).toString();
-		Fonts.draw(g, Typeface.MONO_MEDIUM, Fonts.ellipsize(Typeface.MONO_MEDIUM, path, 10.5f, contentW), contentX, y + 20, 10.5f,
+		Fonts.draw(g, Typeface.MONO_MEDIUM, Fonts.ellipsize(Typeface.MONO_MEDIUM, path, 10.5f, leftW), contentX, y + 20, 10.5f,
 			Theme.text(0.7f, fade));
 		Fonts.draw(g, Typeface.OUTFIT_REGULAR, "Profile: " + ConfigManager.activeProfile(), contentX, y + 40, 11, Theme.text(0.55f, fade));
 
@@ -291,16 +331,149 @@ public final class SettingsPage extends PanelPage {
 		// Unlocked by the easter egg.
 		if (dev.mordo.kairo.core.ClientSettings.INSTANCE.ringSpinUnlocked.isOn()) {
 			float ry = y + 118;
-			Shapes.rect(g, contentX, ry, contentW, 58, 14, Colors.multiplyAlpha(Colors.withAlpha(Theme.pvpAccent(), 0.08f), fade),
+			Shapes.rect(g, contentX, ry, leftW, 58, 14, Colors.multiplyAlpha(Colors.withAlpha(Theme.pvpAccent(), 0.08f), fade),
 				Colors.multiplyAlpha(Colors.withAlpha(Theme.pvpAccent(), 0.3f), fade), 1);
 			IconRenderer.draw(g, Icon.REFRESH, contentX + 26, ry + 29, 18, Colors.multiplyAlpha(Theme.pvpAccent(), fade), 2f);
 			Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, "Spinning ring", contentX + 48, ry + 21, 13.5f, Theme.text(1, fade));
-			Fonts.draw(g, Typeface.OUTFIT_REGULAR, "Drag, flick or scroll the ring menu to spin it. You found the easter egg!", contentX + 48, ry + 39, 10.5f,
-				Theme.text(0.55f, fade));
-			ringSpinToggle.bounds(contentX + contentW - 16 - dev.mordo.kairo.gui.widgets.ToggleSwitch.WIDTH, ry + 19,
+			Fonts.draw(g, Typeface.OUTFIT_REGULAR, Fonts.ellipsize(Typeface.OUTFIT_REGULAR, "Drag, flick or scroll the ring menu to spin it. You found the easter egg!",
+					10.5f, leftW - 48 - 70), contentX + 48, ry + 39, 10.5f, Theme.text(0.55f, fade));
+			ringSpinToggle.bounds(contentX + leftW - 16 - dev.mordo.kairo.gui.widgets.ToggleSwitch.WIDTH, ry + 19,
 				dev.mordo.kairo.gui.widgets.ToggleSwitch.WIDTH, dev.mordo.kairo.gui.widgets.ToggleSwitch.HEIGHT);
 			put(ringSpinToggle, g, mx, my, fade, live);
 		}
+	}
+
+	/** Updates: the opt-in switch, what it does, and a newer version with its notes when there is one. */
+	private void renderUpdates(GuiGraphicsExtractor g, float x, float y, float w, float h, float mx, float my, float fade, boolean live) {
+		boolean on = dev.mordo.kairo.core.ClientSettings.INSTANCE.checkUpdates.isOn();
+		if (on && dev.mordo.kairo.core.update.UpdateChecker.state() == dev.mordo.kairo.core.update.UpdateChecker.State.IDLE) {
+			dev.mordo.kairo.core.update.UpdateChecker.checkOnce(); // just switched on
+		}
+		Fonts.draw(g, Typeface.MONO_BOLD, "UPDATES", x, y + 6, 8.5f, Theme.text(0.45f, fade), Fonts.Align.LEFT, 2f, false);
+
+		// The switch and what it does.
+		float cy = y + 22;
+		List<String> about = wrap(Typeface.OUTFIT_REGULAR, "Once per launch, Kairo asks GitHub for the latest version. It sends nothing about you "
+			+ "or your game, and nothing is downloaded or installed until you click Update. Off by default.", 10.5f, w - 32);
+		float cardH = 52 + about.size() * 15;
+		Shapes.rect(g, x, cy, w, cardH, 14, Colors.multiplyAlpha(Theme.SURFACE, fade), Colors.multiplyAlpha(Theme.BORDER, fade), 1);
+		Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, "Check for updates on GitHub", x + 16, cy + 22, 13.5f, Theme.text(1, fade));
+		checkUpdates.bounds(x + w - 16 - dev.mordo.kairo.gui.widgets.ToggleSwitch.WIDTH, cy + 12,
+			dev.mordo.kairo.gui.widgets.ToggleSwitch.WIDTH, dev.mordo.kairo.gui.widgets.ToggleSwitch.HEIGHT);
+		put(checkUpdates, g, mx, my, fade, live);
+		for (int i = 0; i < about.size(); i++) {
+			Fonts.draw(g, Typeface.OUTFIT_REGULAR, about.get(i), x + 16, cy + 44 + i * 15, 10.5f, Theme.text(0.55f, fade));
+		}
+		cy += cardH + 18;
+
+		var state = dev.mordo.kairo.core.update.UpdateChecker.state();
+		var release = dev.mordo.kairo.core.update.UpdateChecker.latest();
+		var stage = dev.mordo.kairo.core.update.UpdateInstaller.stage();
+		String status = !on ? ClientInfo.NAME + " " + ClientInfo.VERSION + ". Not checking (Kairo stays offline)."
+			: switch (state) {
+				case IDLE, CHECKING -> "Checking GitHub…";
+				case UP_TO_DATE -> "You have the latest version (" + ClientInfo.VERSION + ").";
+				case FAILED -> "Couldn't reach GitHub. Kairo tries again next launch.";
+				case AVAILABLE -> "";
+			};
+		if (!on || state != dev.mordo.kairo.core.update.UpdateChecker.State.AVAILABLE || release == null) {
+			Fonts.draw(g, Typeface.OUTFIT_REGULAR, status, x, cy + 6, 12, Theme.text(0.7f, fade));
+			return;
+		}
+
+		// A newer version.
+		int accent = Theme.accent();
+		Fonts.draw(g, Typeface.OUTFIT_BOLD, ClientInfo.NAME + " " + release.version() + " is available", x, cy + 8, 18, Theme.text(1, fade));
+		Fonts.draw(g, Typeface.OUTFIT_REGULAR, "You have " + ClientInfo.VERSION + ".", x, cy + 30, 11, Theme.text(0.55f, fade));
+		cy += 48;
+		String reason = dev.mordo.kairo.core.update.UpdateInstaller.unavailableReason();
+		float bx = x;
+		switch (stage) {
+			case NONE, FAILED -> {
+				if (reason == null) {
+					updateNow.setLabel(stage == dev.mordo.kairo.core.update.UpdateInstaller.Stage.FAILED ? "Try again" : "Update");
+					float uw = updateNow.preferredWidth() + 8;
+					updateNow.bounds(bx, cy, uw, 34);
+					put(updateNow, g, mx, my, fade, live);
+					bx += uw + 10;
+				}
+			}
+			case DOWNLOADING -> {
+				float pw = 180;
+				Shapes.rect(g, bx, cy + 13, pw, 8, 4, Colors.multiplyAlpha(Theme.TRACK, fade));
+				float p = Math.max(0.04f, dev.mordo.kairo.core.update.UpdateInstaller.progress());
+				Shapes.rect(g, bx, cy + 13, pw * p, 8, 4, Colors.multiplyAlpha(accent, fade));
+				Fonts.draw(g, Typeface.OUTFIT_MEDIUM, "Downloading…", bx + pw + 12, cy + 17, 11.5f, Theme.text(0.7f, fade));
+				bx += pw + 110;
+			}
+			case READY -> {
+				Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, "Restart Minecraft to finish the update", bx, cy + 17, 13, Colors.multiplyAlpha(accent, fade));
+				bx += Fonts.width(Typeface.OUTFIT_SEMIBOLD, "Restart Minecraft to finish the update", 13) + 18;
+			}
+		}
+		float vw = viewOnGitHub.preferredWidth() + 4;
+		viewOnGitHub.bounds(Math.min(bx, x + w - vw), cy, vw, 34);
+		put(viewOnGitHub, g, mx, my, fade, live);
+		cy += 44;
+		String note = stage == dev.mordo.kairo.core.update.UpdateInstaller.Stage.FAILED ? dev.mordo.kairo.core.update.UpdateInstaller.message()
+			: reason != null ? reason : "Downloads " + release.jarName() + " from GitHub, checks it against SHA256SUMS.txt, and swaps it in when the game closes.";
+		for (String line : wrap(Typeface.OUTFIT_REGULAR, note, 10.5f, w)) {
+			Fonts.draw(g, Typeface.OUTFIT_REGULAR, line, x, cy + 4, 10.5f, Theme.text(0.5f, fade));
+			cy += 15;
+		}
+		cy += 12;
+
+		// What's new, as plain text, scrolling.
+		Fonts.draw(g, Typeface.MONO_BOLD, "WHAT'S NEW", x, cy + 6, 8.5f, Theme.text(0.45f, fade), Fonts.Align.LEFT, 2f, false);
+		cy += 20;
+		notesX = x;
+		notesY = cy;
+		notesW = w;
+		notesH = Math.max(40, y + h - cy);
+		Shapes.rect(g, x, cy, w, notesH, 12, Colors.multiplyAlpha(Theme.SURFACE, fade), Colors.multiplyAlpha(Theme.BORDER, fade), 1);
+		if (!release.notes().equals(wrappedFor) || wrappedWidth != w) {
+			wrappedFor = release.notes();
+			wrappedWidth = w;
+			List<String> lines = new ArrayList<>();
+			for (String paragraph : release.notes().split("\n")) {
+				lines.addAll(paragraph.isBlank() ? List.of("") : wrap(Typeface.OUTFIT_REGULAR, paragraph, 11, w - 32));
+			}
+			wrappedNotes = lines;
+		}
+		float lineH = 17;
+		notesScroll.setSizes(wrappedNotes.size() * lineH + 24, notesH);
+		g.enableScissor((int) x, (int) cy + 1, (int) (x + w), (int) (cy + notesH - 1));
+		try {
+			float ly = cy + 18 - notesScroll.value();
+			for (String line : wrappedNotes) {
+				if (ly > cy - lineH && ly < cy + notesH + lineH) {
+					Fonts.draw(g, Typeface.OUTFIT_REGULAR, line, x + 16, ly, 11, Theme.text(0.75f, fade));
+				}
+				ly += lineH;
+			}
+		} finally {
+			g.disableScissor();
+		}
+		notesScroll.drawBar(g, x + w + 8, cy, fade);
+	}
+
+	/** Splits text into lines no wider than {@code maxW}. */
+	private static List<String> wrap(Typeface face, String text, float size, float maxW) {
+		List<String> lines = new ArrayList<>();
+		StringBuilder line = new StringBuilder();
+		for (String word : text.split(" ")) {
+			String next = line.isEmpty() ? word : line + " " + word;
+			if (Fonts.width(face, next, size) > maxW && !line.isEmpty()) {
+				lines.add(line.toString());
+				line = new StringBuilder(word);
+			} else {
+				line = new StringBuilder(next);
+			}
+		}
+		if (!line.isEmpty()) {
+			lines.add(line.toString());
+		}
+		return lines;
 	}
 
 	@Override
@@ -311,7 +484,13 @@ public final class SettingsPage extends PanelPage {
 				profileScroll.scroll(amount);
 				yield true;
 			}
-			case ABOUT -> false;
+			case ABOUT -> {
+				if (mx >= notesX && mx <= notesX + notesW && my >= notesY && my <= notesY + notesH) {
+					notesScroll.scroll(amount);
+					yield true;
+				}
+				yield false;
+			}
 		};
 	}
 }

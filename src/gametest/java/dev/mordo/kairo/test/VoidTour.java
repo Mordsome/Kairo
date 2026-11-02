@@ -52,7 +52,7 @@ final class VoidTour {
 		input.setCursorPos(width * 0.5, height * 0.97);
 		ctx.waitTicks(60);
 		ctx.takeScreenshot("void_06_welcome_0");
-		for (int i = 1; i < 8; i++) {
+		for (int i = 1; i < 9; i++) {
 			input.pressKey(key(InputConstants.KEY_RIGHT));
 			ctx.waitTicks(20);
 			ctx.takeScreenshot("void_06_welcome_" + i);

@@ -501,7 +501,7 @@ final class DashboardMenu {
 		// What it is and its size, as a small badge in the bottom-left corner.
 		String badge = (w >= 150 ? tile.type.label.toUpperCase(Locale.ROOT) + "  " : "") + tile.w + "×" + tile.h;
 		float bw = Fonts.width(Typeface.MONO_BOLD, badge, 8, 1.5f) + 14;
-		Shapes.rect(g, x + 8, y + h - 26, bw, 18, 9, Colors.multiplyAlpha(0xCC0C1018, fade), Colors.multiplyAlpha(0x33FFFFFF, fade), 1);
+		Shapes.rect(g, x + 8, y + h - 26, bw, 18, 9, Colors.multiplyAlpha(Theme.tintBackground(0xCC0C1018), fade), Colors.multiplyAlpha(0x33FFFFFF, fade), 1);
 		Fonts.draw(g, Typeface.MONO_BOLD, badge, x + 15, y + h - 17, 8, Theme.text(0.8f, fade), Fonts.Align.LEFT, 1.5f, false);
 		if (popup) {
 			return;

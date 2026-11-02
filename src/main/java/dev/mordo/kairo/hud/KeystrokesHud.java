@@ -34,9 +34,30 @@ public final class KeystrokesHud extends HudElement {
 
 	public final EnumSetting<KeyStyle> style = add(new EnumSetting<>("style", "Key labels", KeyStyle.ARROWS)
 		.description("Letters (W A S D) or arrows"));
+	/** What the mouse buttons show: their names, your live clicks per second, or both. */
+	public enum MouseText implements EnumSetting.Labeled {
+		LABEL("Label"),
+		CPS("CPS"),
+		BOTH("Both");
+
+		private final String label;
+
+		MouseText(String label) {
+			this.label = label;
+		}
+
+		@Override
+		public String label() {
+			return label;
+		}
+	}
+
 	public final BooleanSetting showSpace = add(new BooleanSetting("show_space", "Space bar", false));
 	public final BooleanSetting showMouse = add(new BooleanSetting("show_mouse", "Mouse buttons", true)
 		.description("LMB | RMB row under the keys"));
+	public final EnumSetting<MouseText> mouseText = add(new EnumSetting<>("mouse_text", "Show CPS in Keystrokes", MouseText.LABEL)
+		.description("Mouse buttons show LMB / RMB, your live CPS for each button, or both (small label above the number)")
+		.visibleWhen(showMouse::isOn));
 	public final SliderSetting keySize = add(new SliderSetting("key_size", "Key size", 22, 14, 36, 1).unit("px"));
 	public final SliderSetting gap = add(new SliderSetting("gap", "Gap", 2, 0, 6, 1).unit("px"));
 	public final ColorSetting pressedColor = add(new ColorSetting("pressed_color", "Pressed color", 0xBFFFFFFF).accentable());
@@ -56,7 +77,15 @@ public final class KeystrokesHud extends HudElement {
 		}
 	}
 
+	/** True if the mouse buttons show live CPS (so the separate CPS box can step aside). */
+	public boolean showsCps() {
+		return showMouse.isOn() && mouseText.get() != MouseText.LABEL;
+	}
+
 	private float mouseRowHeight() {
+		if (showMouse.isOn() && mouseText.get() == MouseText.BOTH) {
+			return Math.max(19, keySize.floatValue() * 0.9f);
+		}
 		return Math.max(12, keySize.floatValue() * 0.8f);
 	}
 
@@ -92,22 +121,31 @@ public final class KeystrokesHud extends HudElement {
 		float ks = keySize.floatValue();
 		float gp = gap.floatValue();
 		boolean arrows = style.get() == KeyStyle.ARROWS;
-		key(g, W, ks + gp, 0, ks, ks, arrows ? null : "W", -Math.PI / 2);
-		key(g, A, 0, ks + gp, ks, ks, arrows ? null : "A", Math.PI);
-		key(g, S, ks + gp, ks + gp, ks, ks, arrows ? null : "S", Math.PI / 2);
-		key(g, D, (ks + gp) * 2, ks + gp, ks, ks, arrows ? null : "D", 0);
+		key(g, W, ks + gp, 0, ks, ks, arrows ? null : "W", -Math.PI / 2, null);
+		key(g, A, 0, ks + gp, ks, ks, arrows ? null : "A", Math.PI, null);
+		key(g, S, ks + gp, ks + gp, ks, ks, arrows ? null : "S", Math.PI / 2, null);
+		key(g, D, (ks + gp) * 2, ks + gp, ks, ks, arrows ? null : "D", 0, null);
 		float y = ks * 2 + gp * 2;
 		if (showMouse.isOn()) {
 			float half = (width - gp) / 2;
 			float mh = mouseRowHeight();
-			key(g, LMB, 0, y, half, mh, "LMB", 0);
-			key(g, RMB, half + gp, y, half, mh, "RMB", 0);
+			MouseText text = mouseText.get();
+			if (text == MouseText.LABEL) {
+				key(g, LMB, 0, y, half, mh, "LMB", 0, null);
+				key(g, RMB, half + gp, y, half, mh, "RMB", 0, null);
+			} else {
+				String left = Integer.toString(preview ? 0 : dev.mordo.kairo.core.keybinds.InputTracker.leftCps());
+				String right = Integer.toString(preview ? 0 : dev.mordo.kairo.core.keybinds.InputTracker.rightCps());
+				boolean both = text == MouseText.BOTH;
+				key(g, LMB, 0, y, half, mh, left, 0, both ? "LMB" : null);
+				key(g, RMB, half + gp, y, half, mh, right, 0, both ? "RMB" : null);
+			}
 			y += mh + gp;
 		}
 		if (showSpace.isOn()) {
 			float sh = spaceHeight();
 			int i = SPACE;
-			key(g, i, 0, y, width, sh, null, Double.NaN);
+			key(g, i, 0, y, width, sh, null, Double.NaN, null);
 			float t = press[i].value();
 			int line = Colors.lerp(textColor.argb(), pressedTextColor.argb(), t);
 			Shapes.rect(g, width / 2 - ks * 0.6f, y + sh / 2 - 0.75f, ks * 1.2f, 1.5f, 0.75f, line);
@@ -127,8 +165,11 @@ public final class KeystrokesHud extends HudElement {
 		return dev.mordo.kairo.render.Visuals.on() && dev.mordo.kairo.core.VoidSettings.INSTANCE.keyRipples.isOn();
 	}
 
-	/** One key box. {@code label} null with a finite angle draws an arrow pointing that way. */
-	private void key(GuiGraphicsExtractor g, int index, float x, float y, float w, float h, String label, double arrowAngle) {
+	/**
+	 * One key box. {@code label} null with a finite angle draws an arrow pointing that way; {@code caption} (or null)
+	 * is a small label drawn above the main one.
+	 */
+	private void key(GuiGraphicsExtractor g, int index, float x, float y, float w, float h, String label, double arrowAngle, String caption) {
 		float t = press[index].value();
 		int idle = background.isOn() ? backgroundColor.argb() : 0;
 		int fill = Colors.lerp(idle, pressedColor.argb(), t);
@@ -161,7 +202,15 @@ public final class KeystrokesHud extends HudElement {
 			Shapes.rect(g, x - grow, y - grow, w + grow * 2, h + grow * 2, radius + grow, 0, Colors.withAlpha(accent, 0.85f * (1 - k) * (1 - k)), 1.3f);
 		}
 		int fg = Colors.lerp(textColor.argb(), pressedTextColor.argb(), t);
-		if (label != null) {
+		if (label != null && caption != null) {
+			// Small caption on top, the number under it.
+			g.pose().pushMatrix();
+			g.pose().translate(x + w / 2, y + 2.5f);
+			g.pose().scale(0.6f, 0.6f);
+			HudText.drawCentered(g, caption, 0, 0, Colors.multiplyAlpha(fg, 0.75f), false);
+			g.pose().popMatrix();
+			HudText.drawCentered(g, label, x + w / 2, y + h - 10.5f, fg, shadow() && t < 0.5f);
+		} else if (label != null) {
 			HudText.drawCentered(g, label, x + w / 2, y + (h - 8) / 2, fg, shadow() && t < 0.5f);
 		} else if (!Double.isNaN(arrowAngle)) {
 			float size = Math.max(5, w * 0.32f);

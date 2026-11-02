@@ -47,11 +47,11 @@ import java.util.function.BooleanSupplier;
 public final class WelcomeScreen extends MainMenuBase {
 	/** The kinds of step; each edition shows its own list of them. */
 	private enum Kind {
-		WELCOME, SAFETY, COLOUR, PRESET, QUALITY, STYLE, FEEL, HUD, LOOK, DONE
+		WELCOME, SAFETY, COLOUR, PRESET, QUALITY, STYLE, FEEL, HUD, LOOK, UPDATES, DONE
 	}
 
-	private static final Kind[] KAIRO_STEPS = {Kind.WELCOME, Kind.SAFETY, Kind.COLOUR, Kind.STYLE, Kind.FEEL, Kind.HUD, Kind.LOOK, Kind.DONE};
-	private static final Kind[] VOID_STEPS = {Kind.WELCOME, Kind.SAFETY, Kind.PRESET, Kind.QUALITY, Kind.STYLE, Kind.HUD, Kind.LOOK, Kind.DONE};
+	private static final Kind[] KAIRO_STEPS = {Kind.WELCOME, Kind.SAFETY, Kind.COLOUR, Kind.STYLE, Kind.FEEL, Kind.HUD, Kind.LOOK, Kind.UPDATES, Kind.DONE};
+	private static final Kind[] VOID_STEPS = {Kind.WELCOME, Kind.SAFETY, Kind.PRESET, Kind.QUALITY, Kind.STYLE, Kind.HUD, Kind.LOOK, Kind.UPDATES, Kind.DONE};
 	private final Kind[] kinds = dev.mordo.kairo.core.Edition.isVoid() ? VOID_STEPS : KAIRO_STEPS;
 	private final int STEPS = kinds.length;
 	private static final int[] PALETTE = {
@@ -71,6 +71,7 @@ public final class WelcomeScreen extends MainMenuBase {
 	private final Button back;
 	private final Button skip;
 	private final List<List<Widget>> stepWidgets = new ArrayList<>();
+	private final dev.mordo.kairo.gui.widgets.WallpaperSwatches wallpaperRow = new dev.mordo.kairo.gui.widgets.WallpaperSwatches(false);
 	private int hudPreset = -1;
 
 	/** {@code after}: where to go when it's done (null = the game, or the main menu if there's no world). */
@@ -91,6 +92,34 @@ public final class WelcomeScreen extends MainMenuBase {
 		buildFeelStep();
 		buildHudStep();
 		buildLookStep();
+		buildUpdatesStep();
+	}
+
+	// ---- updates: opt-in, off unless chosen ----
+
+	private void buildUpdatesStep() {
+		ClientSettings s = ClientSettings.INSTANCE;
+		widgets(Kind.UPDATES).add(new Card("Don't check", "Kairo never goes online (you can switch it on later)", () -> !s.checkUpdates.isOn(),
+			() -> s.checkUpdates.set(false), (g, x, y, w, h, a) -> updateArt(g, false, x, y, w, h, a)));
+		widgets(Kind.UPDATES).add(new Card("Check on GitHub", "Tells you when a new version is out", () -> s.checkUpdates.isOn(),
+			() -> s.checkUpdates.set(true), (g, x, y, w, h, a) -> updateArt(g, true, x, y, w, h, a)));
+	}
+
+	/** A plain offline mark, or a small "new version" badge. */
+	private static void updateArt(GuiGraphicsExtractor g, boolean check, float x, float y, float w, float h, float a) {
+		Shapes.rect(g, x, y, w, h, 12, Colors.argb(0.35f * a, 0x000000));
+		float cx = x + w / 2;
+		float cy = y + h / 2;
+		int accent = Theme.accent();
+		if (!check) {
+			Shapes.ring(g, cx, cy, 22, 3, Colors.multiplyAlpha(Theme.text(0.5f), a));
+			Shapes.line(g, cx - 16, cy + 16, cx + 16, cy - 16, 3, Colors.multiplyAlpha(Theme.text(0.5f), a));
+			return;
+		}
+		Shapes.rect(g, cx - 58, cy - 18, 116, 36, 18, Colors.multiplyAlpha(Colors.withAlpha(accent, 0.16f), a),
+			Colors.multiplyAlpha(Colors.withAlpha(accent, 0.8f), a), 1.25f);
+		IconRenderer.draw(g, Icon.REFRESH, cx - 36, cy, 15, Colors.multiplyAlpha(accent, a), 2f);
+		Fonts.draw(g, Typeface.MONO_BOLD, "NEW", cx + 8, cy, 11, Colors.multiplyAlpha(accent, a), Fonts.Align.CENTER, 2f, false);
 	}
 
 	private List<Widget> widgets(Kind kind) {
@@ -557,18 +586,24 @@ public final class WelcomeScreen extends MainMenuBase {
 			case COLOUR -> {
 				title(g, "Pick your colour", "It's used for highlights everywhere. Change it any time in Visuals.", 170, a);
 				List<Widget> sw = widgets(Kind.COLOUR);
-				float size = 70;
+				// With your own background, its colours are offered too (and the palette moves up a little).
+				boolean wallpaper = dev.mordo.kairo.render.background.WallpaperColors.isCustom();
+				float size = wallpaper ? 62 : 70;
 				float gap = 22;
 				int perRow = 6;
 				float rowW = perRow * size + (perRow - 1) * gap;
 				for (int i = 0; i < sw.size(); i++) {
 					float x = cx - rowW / 2 + (i % perRow) * (size + gap);
-					float y = 290 + (i / perRow) * (size + 40);
+					float y = (wallpaper ? 262 : 290) + (i / perRow) * (size + 40);
 					sw.get(i).bounds(x, y, size, size);
 					put(sw.get(i), g, mx, my, a, live);
 				}
+				if (wallpaper) {
+					float ww = 560;
+					wallpaperRow.render(g, cx - ww / 2, 470, ww, a, widget -> put(widget, g, mx, my, a, live));
+				}
 				// A little sample of how it looks.
-				float py = 540;
+				float py = wallpaper ? 560 : 540;
 				Shapes.glassRect(g, cx - 210, py, 420, 70, 20, Theme.glassTint(), 0x26FFFFFF, 1.25f, a);
 				Shapes.rect(g, cx - 190, py + 18, 130, 34, 12, Colors.multiplyAlpha(Theme.accent(), a));
 				Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, "Button", cx - 125, py + 35, 13, Colors.multiplyAlpha(Theme.DARK_TEXT, a), Fonts.Align.CENTER, 0, false);
@@ -620,6 +655,19 @@ public final class WelcomeScreen extends MainMenuBase {
 				List<Widget> all = widgets(Kind.LOOK);
 				layoutCards(g, all.subList(0, 6), 250, 160, 190, mx, my, a, live);
 				layoutCards(g, all.subList(6, all.size()), 465, 180, 150, mx, my, a, live);
+			}
+			case UPDATES -> {
+				title(g, "Updates", "Want to hear about new versions? It's off unless you switch it on.", 170, a);
+				layoutCards(g, widgets(Kind.UPDATES), 280, 300, 220, mx, my, a, live);
+				String[] lines = {
+					"With it on, " + ClientInfo.NAME + " asks GitHub for the latest version once per launch. That's all it sends:",
+					"nothing about you or your game. A new version is only downloaded and installed when you click Update.",
+					"Change it any time in Right Shift → Settings → About."
+				};
+				for (int i = 0; i < lines.length; i++) {
+					Fonts.draw(g, Typeface.OUTFIT_REGULAR, lines[i], cx, 540 + i * 22, 13, Theme.text(i == 2 ? 0.45f : 0.6f, a),
+						Fonts.Align.CENTER, 0, false);
+				}
 			}
 			case DONE -> {
 				title(g, "You're all set", "The keys worth remembering:", 170, a);

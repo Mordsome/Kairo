@@ -48,9 +48,19 @@ public final class HudManager {
 		return Collections.unmodifiableList(ELEMENTS);
 	}
 
+	/** On, and not stepping aside (CPS hides while the Keystrokes mouse buttons show it, if the player wants that). */
+	public static boolean isShown(HudElement element) {
+		return element.isEnabled() && !isCovered(element);
+	}
+
+	/** CPS is on but hidden because Keystrokes shows the CPS (in the mode the player is in). */
+	public static boolean isCovered(HudElement element) {
+		return element == cps && cps.coveredByKeystrokes();
+	}
+
 	public static void renderAll(GuiGraphicsExtractor g, boolean preview) {
 		for (HudElement element : ELEMENTS) {
-			if (element.isEnabled()) {
+			if (isShown(element)) {
 				prepare(element, preview);
 				float[] p = place(element, g.guiWidth(), g.guiHeight());
 				render(g, element, p[0], p[1], p[2], preview);

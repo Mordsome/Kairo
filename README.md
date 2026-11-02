@@ -41,9 +41,13 @@ Kairo replaces the title screen with one of five styles: **Kairo** (glass rows a
 
 <p align="center"><img src="docs/menus.png" alt="The main menu styles" width="100%"></p>
 
+## ✦ Colours from your wallpaper
+
+Like Material You on Android: pick any image, GIF or panorama as your main menu background and Kairo reads its colours. Click a swatch in *Visuals → Theme* (or switch on **Use wallpaper colours** to follow your background) and the whole client takes it on: buttons, toggles and the ring in the main colour, panels in a dark tone of it, text in a very light tint. Each tint has its own switch and strength, every mod can follow the theme or keep its own colours, and text always stays readable (WCAG 4.5:1). Look codes carry your colours, never your picture.
+
 ## ✦ Your HUD, your way
 
-Keystrokes, CPS, FPS, ping, coordinates, a compass and armor status. Drag them, resize them, multi-select, undo and redo in the layout editor. PvP mode gets a **separate layout**, and elements glide between the two when you flip it.
+Keystrokes, CPS, FPS, ping, coordinates, a compass and armor status. Keystrokes can show your live CPS on the mouse buttons, and the CPS label is yours to change (or drop). Drag them, resize them, multi-select, undo and redo in the layout editor. PvP mode gets a **separate layout**, and elements glide between the two when you flip it.
 
 <p align="center"><img src="docs/hud.png" alt="HUD and layout editor" width="100%"></p>
 
@@ -71,7 +75,7 @@ Keystrokes, CPS, FPS, ping, coordinates, a compass and armor status. Drag them, 
 
 | Mod | What it does |
 |---|---|
-| Keystrokes, CPS, FPS, Ping, Coordinates, Armor Status, Direction HUD | HUD elements you place with the layout editor |
+| Keystrokes, CPS, FPS, Ping, Coordinates, Armor Status, Direction HUD | HUD elements you place with the layout editor; Keystrokes can show your CPS, and the CPS label is editable |
 | Zoom | Hold **C**, scroll to zoom further; smooth, with optional hand hiding |
 | Fullbright | Raises the gamma value only. No Night Vision, no lighting changes |
 | Crosshair | Cross, dot, circle, T or your own pixel grid; outline and cooldown styles |
@@ -105,7 +109,7 @@ Every mod has its own settings and an **In PvP mode** section. The [feature guid
 2. Put these in your `mods` folder:
    - [Fabric API](https://modrinth.com/mod/fabric-api) for 26.3
    - [Sodium](https://modrinth.com/mod/sodium) 0.9.x for 26.3 (required)
-   - `kairo-0.1.0.jar` from [Releases](https://github.com/Mordsome/Kairo/releases/latest)
+   - `kairo-0.2.0.jar` from [Releases](https://github.com/Mordsome/Kairo/releases/latest)
 3. Start the game. A short setup runs the first time. In game, press **Right Shift**.
 
 Tested on Windows.
@@ -116,7 +120,7 @@ Tested on Windows.
 ## 🛡️ Fair play and privacy
 
 - **No cheats.** Kairo only changes what your own screen draws and plays. No automation, no packet changes, no reach, no ESP.
-- **No internet.** No accounts, no telemetry, no analytics. Settings, waypoints and your images and sounds stay in `config/kairo`.
+- **Offline unless you say so.** No accounts, no telemetry, no analytics. Settings, waypoints and your images and sounds stay in `config/kairo`. The only thing that can go online is **Check for updates on GitHub**, which is off by default: when you turn it on (in the first-run setup or *Settings → About*), Kairo asks GitHub for the latest version once per launch. It sends nothing about you, and nothing is downloaded or installed until you click **Update** (the download is checked against the release's `SHA256SUMS.txt` and swapped in when the game closes).
 - **Server rules still apply.** Some servers have rules about client mods (Fullbright or Zoom, for example). Check them before you play.
 
 ## 🔨 Build from source

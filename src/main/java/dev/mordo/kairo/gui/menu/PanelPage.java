@@ -116,13 +116,28 @@ public abstract class PanelPage extends Page {
 		put(back, g, mx, my, fade, live);
 		Fonts.draw(g, Typeface.MONO_BOLD, navLabel(), x + 4, py + 82, 8.5f, Theme.text(0.42f, fade), Fonts.Align.LEFT, 2f, false);
 		float y = py + 98;
-		for (NavItem item : navItems()) {
-			float ih = item.isHeader() ? 24 : 38;
-			item.bounds(x, y, w, ih);
-			put(item, g, mx, my, fade, live);
-			y += ih + 4;
+		float cardTop = py + ph - 18 - 60;
+		// Long lists (Visuals) get slightly shorter rows so they always end above the mode card.
+		List<NavItem> items = navItems();
+		float natural = 0;
+		for (NavItem item : items) {
+			natural += (item.isHeader() ? 24 : 38) + 4;
 		}
-		modeCard.bounds(x, py + ph - 18 - 60, w, 60);
+		float squeeze = Math.clamp((cardTop - 10 - y) / Math.max(1, natural), 0.7f, 1f);
+		g.enableScissor((int) Math.floor(x - 4), (int) Math.floor(y - 4), (int) Math.ceil(x + w + 4), (int) Math.floor(cardTop - 6));
+		try {
+			for (NavItem item : items) {
+				float ih = (item.isHeader() ? 24 : 38) * squeeze;
+				item.bounds(x, y, w, ih);
+				if (y + ih <= cardTop - 6) {
+					put(item, g, mx, my, fade, live);
+				}
+				y += ih + 4 * squeeze;
+			}
+		} finally {
+			g.disableScissor();
+		}
+		modeCard.bounds(x, cardTop, w, 60);
 		put(modeCard, g, mx, my, fade, live);
 	}
 

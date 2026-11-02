@@ -109,9 +109,9 @@ public final class LayoutScreen extends KairoScreen {
 		visibility = new Button("Hide", null, Button.Style.SUBTLE, () -> {
 			if (selected != null) {
 				HISTORY.push(LayoutHistory.capture());
-				boolean show = !selected.isEnabled();
+				boolean show = !HudManager.isShown(selected);
 				for (HudElement element : selection) {
-					element.enabled.setEffective(show);
+					setShown(element, show);
 				}
 			}
 		}).textSize(11.5f);
@@ -144,6 +144,18 @@ public final class LayoutScreen extends KairoScreen {
 		return ModuleManager.get(CpsHud.class);
 	}
 
+	/**
+	 * Shows or hides an element in the mode the player is in. CPS hidden because Keystrokes shows the CPS comes back by
+	 * turning that off (it's still enabled).
+	 */
+	private static void setShown(HudElement element, boolean show) {
+		if (show && HudManager.isCovered(element)) {
+			cps().hideWithKeystrokes.setEffective(false);
+		} else {
+			element.enabled.setEffective(show);
+		}
+	}
+
 	@Override
 	protected void init() {
 		super.init();
@@ -174,7 +186,7 @@ public final class LayoutScreen extends KairoScreen {
 		ghosts.clear();
 		for (HudElement element : HudManager.elements()) {
 			HudManager.prepare(element, false);
-			boolean shown = element.isEnabled();
+			boolean shown = HudManager.isShown(element);
 			float x;
 			float y;
 			float scale;
@@ -324,7 +336,7 @@ public final class LayoutScreen extends KairoScreen {
 				float tw = Fonts.width(Typeface.MONO_BOLD, text, 6.5f) + 6;
 				float tx = Math.min(gripX(b) + 5, guiW - tw - 2);
 				float ty = Math.min(gripY(b) + 4, guiH - 12);
-				Shapes.rect(g, tx, ty, tw, 10, 3, 0xE6111720);
+				Shapes.rect(g, tx, ty, tw, 10, 3, Theme.tintBackground(0xE6111720));
 				Fonts.draw(g, Typeface.MONO_BOLD, text, tx + 3, ty + 5, 6.5f, Theme.TEXT);
 			}
 		}
@@ -344,7 +356,9 @@ public final class LayoutScreen extends KairoScreen {
 		if (HudManager.isAttached(element)) {
 			name += " · attached";
 		}
-		if (ghosts.contains(element)) {
+		if (HudManager.isCovered(element)) {
+			name += " · shown in Keystrokes";
+		} else if (ghosts.contains(element)) {
 			name += PvpMode.isActive() ? " · hidden in PvP" : " · hidden";
 		} else if (PvpMode.isActive() && element.hasPvpPlacement()) {
 			name += " · PvP position";
@@ -354,7 +368,7 @@ public final class LayoutScreen extends KairoScreen {
 		float h = 11;
 		float x = Math.clamp(b[0], 2, guiW - w - 2);
 		float y = b[1] - h - 4 < 2 ? b[1] + b[3] + 4 : b[1] - h - 4;
-		Shapes.rect(g, x, y, w, h, 3, 0xE6111720);
+		Shapes.rect(g, x, y, w, h, 3, Theme.tintBackground(0xE6111720));
 		Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, name, x + 4, y + h / 2, size, Theme.TEXT);
 	}
 
@@ -376,7 +390,7 @@ public final class LayoutScreen extends KairoScreen {
 		boolean hasSelection = selected != null && !selection.isEmpty();
 		int count = selection.size();
 		visibility.setEnabled(hasSelection);
-		visibility.setLabel(hasSelection && !selected.isEnabled() ? (count > 1 ? "Show " + count : "Show") : (count > 1 ? "Hide " + count : "Hide"));
+		visibility.setLabel(hasSelection && !HudManager.isShown(selected) ? (count > 1 ? "Show " + count : "Show") : (count > 1 ? "Hide " + count : "Hide"));
 		resetElement.setEnabled(hasSelection);
 		resetElement.setLabel(count > 1 ? "Reset " + count + " elements" : "Reset element");
 		// CPS can sit under Keystrokes; offer it right here whenever CPS (or Keystrokes) is selected.
@@ -541,8 +555,8 @@ public final class LayoutScreen extends KairoScreen {
 		float[] b = boxes.get(element);
 		if (onClose(b, x * unit, y * unit)) {
 			HISTORY.push(LayoutHistory.capture());
-			boolean show = !element.isEnabled();
-			element.enabled.setEffective(show);
+			boolean show = !HudManager.isShown(element);
+			setShown(element, show);
 			dev.mordo.kairo.sound.UiSounds.toggle(show);
 			if (!selection.contains(element)) {
 				selectOnly(element);

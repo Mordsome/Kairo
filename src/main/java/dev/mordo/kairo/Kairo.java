@@ -41,6 +41,7 @@ public final class Kairo implements ClientModInitializer {
 			module.init();
 		}
 		dev.mordo.kairo.render.background.MenuBackground.prepareAtStartup();
+		dev.mordo.kairo.core.update.UpdateInstaller.init();
 		dev.mordo.kairo.render.HitFx.init();
 		dev.mordo.kairo.render.WorldFx.init();
 		// Registered after the config is loaded, so restoring the saved mode at start-up stays silent.
@@ -61,9 +62,16 @@ public final class Kairo implements ClientModInitializer {
 			dev.mordo.kairo.render.GlintTint.tick(client);
 			ModuleManager.get(dev.mordo.kairo.mods.TotemChanger.class).tickRebuild();
 			ModuleManager.get(dev.mordo.kairo.mods.InventoryGlass.class).tickRebuild();
+			dev.mordo.kairo.render.background.WallpaperColors.tick();
+			dev.mordo.kairo.gui.Theme.refresh();
+			dev.mordo.kairo.core.update.UpdateChecker.tick(client);
 			ConfigManager.tick();
 		});
-		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> ConfigManager.save());
+		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
+			ConfigManager.save();
+			// Only if the player clicked Update and the download checked out.
+			dev.mordo.kairo.core.update.UpdateInstaller.onExit();
+		});
 
 		LOGGER.info("{} ready: {} modules, profile '{}'", ClientInfo.NAME, ModuleManager.modules().size(), ConfigManager.activeProfile());
 	}

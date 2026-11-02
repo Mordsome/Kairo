@@ -96,8 +96,9 @@ public final class MainMenuSettingsScreen extends MainMenuBase {
 			MainMenuScreen.startEditing = true;
 			close(new MainMenuScreen());
 		}).textSize(12);
-		List<Setting<?>> bg = List.of(m.backgroundDim, m.backgroundBlur, m.backgroundMotion);
-		backgroundList = SettingsList.forSettings(host, null, bg, false);
+		List<Setting<?>> bg = List.of(ClientSettings.INSTANCE.wallpaperColors, m.backgroundDim, m.backgroundBlur, m.backgroundMotion);
+		backgroundList = SettingsList.forSettings(host, null, bg, false)
+			.header(new dev.mordo.kairo.gui.widgets.WallpaperSwatches(false).section());
 		for (String id : MainMenuSettings.BUTTONS) {
 			eyes.put(id, new Button("", Icon.EYE, Button.Style.GHOST, () -> toggleHidden(id)));
 			eyesOff.put(id, new Button("", Icon.EYE_OFF, Button.Style.GHOST, () -> toggleHidden(id)));
@@ -400,7 +401,7 @@ public final class MainMenuSettingsScreen extends MainMenuBase {
 		openFolder.bounds(x + w - ofw, y - 6, ofw, 26);
 		put(openFolder, g, mx, my, a, live);
 
-		float settingsH = 170;
+		float settingsH = Math.min(320, h * 0.48f);
 		gridX = x;
 		gridW = w;
 		gridTop = y + 30;
@@ -465,7 +466,7 @@ public final class MainMenuSettingsScreen extends MainMenuBase {
 			case IMAGE -> "IMAGE";
 		};
 		float tagW = Fonts.width(Typeface.MONO_BOLD, tag, 7, 1) + 10;
-		Shapes.rect(g, x + 6, y + 6, tagW, 14, 5, Colors.argb(0.7f * a, 0x0C1018));
+		Shapes.rect(g, x + 6, y + 6, tagW, 14, 5, Colors.argb(0.7f * a, Theme.tintBackground(0xFF0C1018)));
 		Fonts.draw(g, Typeface.MONO_BOLD, tag, x + 6 + tagW / 2, y + 13, 7, Theme.text(0.85f, a), Fonts.Align.CENTER, 1, false);
 		if (selected) {
 			Shapes.circle(g, x + tileW - 14, y + 14, 8, Colors.multiplyAlpha(accent, a));

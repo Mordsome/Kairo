@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.2.0
+
+Both editions.
+
+- **Wallpaper colours:** like Material You, the theme can come from your main menu background. A custom image, GIF
+  (first frame) or panorama gives 4 to 6 swatches (Minecraft's panorama and the Void scene have built-in ones), shown
+  in Visuals → Theme (Void: Interface → Wallpaper colours), the background picker and the first-run colour step.
+  Click one to use it; **Use wallpaper colours** follows the background when it changes. Read once per picture, cached.
+- **Theme tints:** **Tint backgrounds** gives panels, popups, toasts, Minecraft's restyled menus and HUD boxes a dark
+  tone of your colour; **Tint text** gives main text a very light tint and secondary text a softer one. Both have a
+  strength slider. Text is kept at WCAG 4.5:1 contrast or better. Void keeps its flat style.
+- **Per mod:** **Follow theme colours** (every mod with colours) and **Tinted background** (every mod with a
+  background), built on the existing accent system.
+- **Look codes** carry the colours and tint settings, never the wallpaper.
+- **CPS label:** editable (`CPS` by default; empty shows just `8 | 6`).
+- **Show CPS in Keystrokes:** the mouse buttons show Label, CPS or Both (small label above the number). The CPS box
+  hides while Keystrokes shows it (optional); the layout editor and the PvP layout handle both.
+- **Panel edge light:** the light running along the top of big panels has its own switch (Visuals → Menus).
+- **Updates (opt-in, off by default):** "Check for updates on GitHub" in the first-run setup and Settings → About.
+  Once per launch it asks GitHub for the latest release (nothing about you is sent); a newer version shows a notice
+  on the main menu and an Update button with the release notes in Settings → About. Update downloads your edition's
+  jar over HTTPS, checks it against `SHA256SUMS.txt` and swaps it in after the game closes. Nothing installs without
+  a click.
+- **Config:** profiles from 0.1.0 load unchanged (config v2): the tints start off for them, and the panel edge light
+  stays off if Living menus was off.
+- First-run setup has nine steps (the updates step is new).
+
 ## 0.1.0 (first public release)
 
 A visuals-only client for Minecraft Java 26.3 (Fabric + Sodium). No cheats, no automation, nothing extra sent to servers.

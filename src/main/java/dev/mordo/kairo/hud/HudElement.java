@@ -25,11 +25,11 @@ public abstract class HudElement extends Module {
 
 	public final SliderSetting scale = add(new SliderSetting("scale", "Scale", 1.0, 0.5, 2.5, 0.05).multiplier());
 	public final BooleanSetting background = add(new BooleanSetting("background", "Background", true));
-	public final ColorSetting backgroundColor = add(new ColorSetting("background_color", "Background color", 0x73000000)
+	public final ColorSetting backgroundColor = add(new ColorSetting("background_color", "Background color", 0x73000000).themeBackground()
 		.visibleWhen(background::isOn));
 	public final SliderSetting cornerRadius = add(new SliderSetting("corner_radius", "Corner radius", 0, 0, 8, 0.5).unit("px")
 		.visibleWhen(background::isOn));
-	public final ColorSetting textColor = add(new ColorSetting("text_color", "Label color", 0xFFFFFFFF));
+	public final ColorSetting textColor = add(new ColorSetting("text_color", "Label color", 0xFFFFFFFF).themeText());
 	public final ColorSetting valueColor = add(new ColorSetting("value_color", "Value color", 0xFF7FD8FF).followsAccent());
 	public final BooleanSetting textShadow = add(new BooleanSetting("text_shadow", "Text shadow", true));
 	public final SliderSetting padding = add(new SliderSetting("padding", "Padding", 3, 0, 10, 1).unit("px"));

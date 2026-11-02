@@ -47,7 +47,8 @@ What it adds is in the game itself, every part of it switchable in Visuals:
 Void keeps its own settings (`config/kairo-void`). Both jars use the mod id `kairo`, so install one or the other.
 
 Mod colours that use the accent (HUD values, hotbar selection, cape) follow it until you pick your own; Visuals →
-Theme → **Accent on every mod** makes every mod colour use it (both editions).
+Theme → **Accent on every mod** makes every mod colour use it, and each mod's own **Follow theme colours** does the
+same for just that mod (both editions). See [Theme and wallpaper colours](#theme-and-wallpaper-colours).
 
 ## Photosensitivity warning
 
@@ -64,15 +65,16 @@ with **Reduce motion**.
 
 ## First-run setup
 
-The first time the game starts, a black welcome screen walks you through eight quick steps before the main menu.
+The first time the game starts, a black welcome screen walks you through nine quick steps before the main menu.
 
 - **Kairo:** welcome, the photosensitivity warning (Full effects or Fewer flashes, plus Reduce motion), your accent
-  colour (12 swatches, applied live), your main menu style (Kairo, Dock, Orbit, Custom or Minecraft), a few comfort
-  switches, a HUD preset (Clean, PvP, Everything or Nothing), a cape and wings, and the keys worth remembering.
+  colour (12 swatches, applied live, plus your wallpaper's colours when a custom background is set), your main menu
+  style (Kairo, Dock, Orbit, Custom or Minecraft), a few comfort switches, a HUD preset (Clean, PvP, Everything or
+  Nothing), a cape and wings, whether to check for updates (off unless you choose it), and the keys worth remembering.
 - **Kairo Void:** a welcome that sets Void next to plain Kairo (menus, combat, sky, world, crystals, looks) over a
   changing atmosphere, the same warning, a whole look (eight presets with pictures), how much effect you want (Low,
   Medium, High or Insane, each with a picture of what it adds), the menu style (Stage, Simple or Minecraft), a HUD
-  preset, a cape and wings, and the keys (including J for all visuals off and on).
+  preset, a cape and wings, whether to check for updates, and the keys (including J for all visuals off and on).
 
 Arrow keys / Enter move through it, Esc or "Skip setup" leaves it. Run it again from Settings → About.
 
@@ -153,13 +155,38 @@ a tile grid per category. Cosmetics are drawn only on your own player, on your s
   colours, buttons and every visual on the clipboard; **Paste a look** wears a code a friend sent. Keybinds, HUD
   positions and anything personal are never in it.
 - **Living ring and living menus** (both editions, Visuals → Ring and Menus): the ring breathes, lights orbit it and
-  the centre pulses; drifting light moves behind the menus and a light runs along big panels.
+  the centre pulses; drifting light moves behind the menus. **Panel edge light** (Visuals → Menus, or Interface in
+  Kairo Void) is the short light running along the top edge of big panels, with its own switch.
 
 ## Colours
 
 Every colour setting has three modes in its picker: **Static**, **Chroma** (a rainbow at the saturation and brightness
 of your colour) and **Gradient** (flows through 2 to 5 colours you pick), with a speed slider. Your accent colour can
 move too, and everything that uses it follows.
+
+## Theme and wallpaper colours
+
+Like Material You on Android, the client can take its colours from your main menu background.
+
+- **Swatches:** with a custom image, GIF (its first frame) or panorama as the background, Kairo reads 4 to 6 colours
+  from it (the picture is shrunk, its colours grouped, and each group scored by how much of the picture it covers and
+  how colourful it is; near-greys only count when the whole picture is grey). Minecraft's panorama and Kairo Void's
+  space scene have built-in palettes. They show in Visuals → Theme (Kairo Void: Interface → Wallpaper colours), in
+  the background picker of the main menu settings, and in the first-run colour step. Click one to make it your theme
+  colour. Colours are read once per picture in the background, never every frame.
+- **Use wallpaper colours:** the theme colour follows your background: change the wallpaper and the client changes
+  with it (to the same swatch position you picked). A colour you set by hand stays until the background changes.
+- **What the theme colours:** the accent (buttons, toggles, the ring highlight, HUD values that follow the accent);
+  with **Tint backgrounds** the glass panels (Kairo) or flat panels (Kairo Void), popups, toasts, the restyled
+  Minecraft menus and HUD boxes take a dark tone of it; with **Tint text** main text takes a very light tint and
+  secondary text a softer one. Each tint has a strength slider. Kairo Void keeps its flat style; only the colours change.
+- **Per mod:** every mod with colours has **Follow theme colours** (its colours use the theme colour, even ones you
+  picked) and every mod with a background has **Tinted background** (off: the neutral grey background).
+- **Readable:** text is kept at WCAG 4.5:1 contrast or better against its panel; if a tint would lower it, the text
+  is made lighter automatically. Swatches are adjusted to a lightness that reads well on dark panels.
+- **Look codes** carry your colours and tint settings, never the wallpaper itself. Wearing a friend's look switches
+  off "Use wallpaper colours" so their colours stay.
+- Profiles from 0.1.0 keep exactly the look they had: the tints start off there (one switch turns them on).
 
 ## Ring menu
 
@@ -237,7 +264,7 @@ The switcher next to the search box in the Mods panel shows mods as Cards, Large
 
 | Mod | What it does |
 |---|---|
-| Keystrokes, CPS, FPS, Ping, Coordinates, Armor Status, Direction HUD | HUD elements, placed with the layout editor (ring → Layout): drag to move, drag the corner grip (or scroll) to resize, × on the corner hides an element and + brings it back, right-click for its settings. Shift/Ctrl-click or drag a box over empty space to select several (Ctrl+A selects all): they move, resize, hide and reset together. Ctrl+Z undoes and Ctrl+Y (or Ctrl+Shift+Z) redoes, also with the arrow buttons in the toolbar. With CPS or Keystrokes selected, the toolbar has Attach / Detach CPS. Direction HUD is a compass bar (N, NE, E… with degree ticks, your heading and your waypoints on it) or just the direction you face |
+| Keystrokes, CPS, FPS, Ping, Coordinates, Armor Status, Direction HUD | HUD elements, placed with the layout editor (ring → Layout). CPS has an editable **Label** (`CPS` by default; empty shows just `8 | 6`). Keystrokes → **Show CPS in Keystrokes**: the mouse buttons show Label, CPS (your live clicks per second for each button) or Both (a small label above the number); CPS then hides its own box unless you turn off "Hide when Keystrokes shows CPS" (the layout editor marks it "shown in Keystrokes", and the PvP layout can choose differently): drag to move, drag the corner grip (or scroll) to resize, × on the corner hides an element and + brings it back, right-click for its settings. Shift/Ctrl-click or drag a box over empty space to select several (Ctrl+A selects all): they move, resize, hide and reset together. Ctrl+Z undoes and Ctrl+Y (or Ctrl+Shift+Z) redoes, also with the arrow buttons in the toolbar. With CPS or Keystrokes selected, the toolbar has Attach / Detach CPS. Direction HUD is a compass bar (N, NE, E… with degree ticks, your heading and your waypoints on it) or just the direction you face |
 | Zoom | Hold **C**; scroll to zoom further; smooth, optional hand hiding and cinematic camera |
 | Fullbright | Raises the gamma value only (no Night Vision, no lighting changes); optional toggle key |
 | Crosshair | Cross / dot / circle / T / custom pixel grid, outline, attack-cooldown style |
@@ -310,9 +337,22 @@ Outfit and JetBrains Mono are licensed under the SIL Open Font License 1.1; see 
 
 ## Privacy
 
-Kairo doesn't connect to the internet, has no accounts, no telemetry and no analytics. Everything it saves (settings,
-waypoints, your images and sounds) stays in your `config/kairo` (or `config/kairo-void`) folder. Cosmetics and
-emotes are drawn only on your own screen; nothing is sent to servers or other players.
+Kairo has no accounts, no telemetry and no analytics. Everything it saves (settings, waypoints, your images and
+sounds) stays in your `config/kairo` (or `config/kairo-void`) folder. Cosmetics and emotes are drawn only on your own
+screen; nothing is sent to servers or other players. Your wallpaper's colours are worked out on your computer; the
+picture never leaves it.
+
+It only goes online if you switch on **Check for updates on GitHub** (off by default; in the first-run setup or
+Settings → About). Then, once per launch, it asks GitHub's public API for the latest release of `Mordsome/Kairo`.
+That request sends nothing about you or your game (just a User-Agent naming the updater, which GitHub requires), and
+any failure is silent. If a newer version exists, the main menu shows a short notice and Settings → About shows the
+version, its release notes and two buttons:
+
+- **Update** downloads only your edition's jar (`kairo-X.jar` or `kairo-void-X.jar`) from that release over HTTPS,
+  checks it against the release's `SHA256SUMS.txt` (a mismatch throws it away), and keeps it in `config/kairo/update`.
+  When the game closes, a small helper waits for Minecraft to exit, removes the old Kairo jar from `mods` and moves the
+  new one in ("Restart Minecraft to finish the update"). It touches nothing else, and nothing ever installs on its own.
+- **View on GitHub** opens the release page in your browser.
 
 ## Servers
 

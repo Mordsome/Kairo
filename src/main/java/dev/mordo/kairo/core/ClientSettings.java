@@ -13,8 +13,31 @@ public final class ClientSettings extends SettingHolder {
 	public final ColorSetting pvpAccent = add(new ColorSetting("pvp_accent", "PvP accent color", 0xFFFF9A52, false));
 	public final BooleanSetting accentEverywhere = add(new BooleanSetting("accent_everywhere", "Accent on every mod", false)
 		.description("Every mod colour (crosshair, outlines, keystrokes...) uses your accent, even ones you picked yourself"));
+
+	// ---- wallpaper colours and theme tints (Visuals → Theme) ----
+
+	/** The accent follows the main menu background's colours (see WallpaperColors). */
+	public final BooleanSetting wallpaperColors = add(new BooleanSetting("wallpaper_colors", "Use wallpaper colours", false)
+		.description("Your theme colour comes from your main menu background and changes with it. The swatches above pick which one"));
+	/** Which swatch the theme follows (0 = the wallpaper's main colour). */
+	public final SliderSetting wallpaperSwatch = add(new SliderSetting("wallpaper_swatch", "Wallpaper swatch", 0, 0, 5, 1)
+		.<SliderSetting>hidden());
+	/** The background whose colour was applied last, so a colour picked by hand stays until the background changes. */
+	public final dev.mordo.kairo.core.settings.TextSetting wallpaperSource = add(new dev.mordo.kairo.core.settings.TextSetting(
+		"wallpaper_source", "Wallpaper colours taken from", "", 200).<dev.mordo.kairo.core.settings.TextSetting>hidden());
+	public final BooleanSetting tintBackgrounds = add(new BooleanSetting("tint_backgrounds", "Tint backgrounds", true)
+		.description("Panels, menus and popups take a dark tone of your theme colour instead of neutral grey"));
+	public final SliderSetting backgroundTint = add(new SliderSetting("background_tint", "Background tint", 0.6, 0.1, 1.0, 0.05).percent()
+		.description("How much of your colour the dark backgrounds take")
+		.visibleWhen(tintBackgrounds::isOn));
+	public final BooleanSetting tintText = add(new BooleanSetting("tint_text", "Tint text", true)
+		.description("Text takes a very light tint of your colour, secondary text a softer one. It always stays readable"));
+	public final SliderSetting textTint = add(new SliderSetting("text_tint", "Text tint", 0.5, 0.1, 1.0, 0.05).percent()
+		.description("How much of your colour the text takes")
+		.visibleWhen(tintText::isOn));
+
 	/** rgba(12,16,24,0.44) */
-	public final ColorSetting glassTint = add(new ColorSetting("glass_tint", "Glass tint", 0x700C1018));
+	public final ColorSetting glassTint = add(new ColorSetting("glass_tint", "Glass tint", 0x700C1018).themeBackground());
 	public final SliderSetting blurStrength = add(new SliderSetting("blur_strength", "Blur strength", 1.0, 0.0, 2.0, 0.05)
 		.percent()
 		.description("How strongly menus blur the world behind them"));
@@ -109,7 +132,7 @@ public final class ClientSettings extends SettingHolder {
 	public final BooleanSetting buttonGlow = add(new BooleanSetting("button_glow", "Hover glow", true)
 		.description("A soft accent glow under the button you point at"));
 	public final BooleanSetting buttonOutline = add(new BooleanSetting("button_outline", "Outline", true));
-	public final ColorSetting buttonColor = add(new ColorSetting("button_color", "Button color", 0x9E0E131B));
+	public final ColorSetting buttonColor = add(new ColorSetting("button_color", "Button color", 0x9E0E131B).themeBackground());
 	public final EnumSetting<ClickEffect> buttonClick = add(new EnumSetting<>("button_click", "Click effect", ClickEffect.RIPPLE)
 		.description("What happens when you click a button"));
 
@@ -117,7 +140,13 @@ public final class ClientSettings extends SettingHolder {
 	public final BooleanSetting livingRing = add(new BooleanSetting("living_ring", "Living ring", true)
 		.description("The ring breathes, lights orbit it and the centre pulses"));
 	public final BooleanSetting menuFx = add(new BooleanSetting("menu_fx", "Living menus", true)
-		.description("Drifting light and motes behind the menus, and a light running along big panels"));
+		.description("Drifting light and motes behind the menus"));
+	public final BooleanSetting panelEdgeLight = add(new BooleanSetting("panel_edge_light", "Panel edge light", true)
+		.description("A short light that runs along the top edge of big panels"));
+
+	/** Opt-in: asks GitHub for the latest version once per launch. Never downloads or installs without a click. */
+	public final BooleanSetting checkUpdates = add(new BooleanSetting("check_updates", "Check for updates on GitHub", false)
+		.description("Once per launch, asks GitHub for the latest version. Sends nothing about you; installs only when you click Update"));
 
 	public final BooleanSetting hidePauseExtras = add(new BooleanSetting("hide_pause_extras", "Hide extra pause buttons", false)
 		.description("The small icon row (bug report, feedback, friends, player reporting) in the pause menu"));
@@ -139,5 +168,8 @@ public final class ClientSettings extends SettingHolder {
 		// Mod colours that follow the accent read it from here.
 		ColorSetting.accentSource = () -> accent.argb();
 		ColorSetting.accentEverywhere = accentEverywhere::isOn;
+		// Background and text tints come from the theme.
+		ColorSetting.backgroundTinter = dev.mordo.kairo.gui.Theme::tintBackground;
+		ColorSetting.themeText = () -> dev.mordo.kairo.gui.Theme.TEXT;
 	}
 }

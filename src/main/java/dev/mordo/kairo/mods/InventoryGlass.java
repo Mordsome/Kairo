@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  * frosted panel is drawn behind them, so every arrow, flame and icon in those textures stays where it was.
  */
 public final class InventoryGlass extends Module {
-	public final ColorSetting tint = add(new ColorSetting("tint", "Panel tint", 0xB00C1018)
+	public final ColorSetting tint = add(new ColorSetting("tint", "Panel tint", 0xB00C1018).themeBackground()
 		.description("Colour and opacity of the glass behind inventories"));
 	public final BooleanSetting frosted = add(new BooleanSetting("frosted", "Frosted", true)
 		.description("Blur the world behind the panel"));

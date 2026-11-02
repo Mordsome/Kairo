@@ -285,7 +285,7 @@ public final class Screenshots extends Module {
 		float x = g.guiWidth() - cardW - 6 + Animation.motion((1 - a) * 30, 0);
 		float y = 6;
 		Shapes.shadow(g, x, y + 3, cardW, cardH, 7, 8, Colors.argb(0.4f * a, 0));
-		Shapes.rect(g, x, y, cardW, cardH, 7, Colors.argb(0.85f * a, 0x0C1018), Colors.argb(0.2f * a, 0xFFFFFF), 1);
+		Shapes.rect(g, x, y, cardW, cardH, 7, Colors.argb(0.85f * a, dev.mordo.kairo.gui.Theme.tintBackground(0xFF0C1018)), Colors.argb(0.2f * a, 0xFFFFFF), 1);
 		g.blit(PREVIEW, Math.round(x + pad), Math.round(y + pad), Math.round(x + pad + w), Math.round(y + pad + h), 0, 1, 0, 1);
 		Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, "Screenshot saved", x + pad + 1, y + pad + h + 7, 6.5f, Colors.argb(a, 0xF4F8FB));
 		Fonts.draw(g, Typeface.OUTFIT_REGULAR, "T: copy · open · delete", x + pad + 1, y + pad + h + 16, 5.5f, Colors.argb(0.6f * a, 0xF4F8FB));

@@ -39,11 +39,29 @@ public class ColorSetting extends Setting<Integer> {
 		OPTIONAL
 	}
 
+	/** How a colour relates to the theme's tints (Visuals → Theme → Tint backgrounds / Tint text). */
+	public enum ThemeRole {
+		/** Left alone. */
+		NONE,
+		/** A background (panel, box, button fill): takes a dark tone of the theme colour while tints are on. */
+		BACKGROUND,
+		/** A light text colour: takes the theme's text tint while its mod follows the theme and it's left at default. */
+		TEXT
+	}
+
 	/** Set by the client settings: the accent right now, and whether "Accent on every mod" is on. */
 	public static java.util.function.IntSupplier accentSource = () -> 0xFF7FD8FF;
 	public static java.util.function.BooleanSupplier accentEverywhere = () -> false;
+	/** Set by the theme: turns a background colour into its tinted version (or returns it unchanged when tints are off). */
+	public static java.util.function.IntUnaryOperator backgroundTinter = c -> c;
+	/** Set by the theme: the main text colour right now. */
+	public static java.util.function.IntSupplier themeText = () -> 0xFFFFFFFF;
 
 	private AccentRole accentRole = AccentRole.NONE;
+	private ThemeRole themeRole = ThemeRole.NONE;
+	/** The owning mod's "Follow theme colours" and "Tinted background" switches (always on for client colours). */
+	private java.util.function.BooleanSupplier followTheme = () -> false;
+	private java.util.function.BooleanSupplier tintBackground = () -> true;
 
 	private final boolean alpha;
 	private Mode mode = Mode.STATIC;
@@ -79,18 +97,40 @@ public class ColorSetting extends Setting<Integer> {
 		return accentRole;
 	}
 
+	/** A background colour: tinted with the theme while "Tint backgrounds" (and its mod's "Tinted background") is on. */
+	public ColorSetting themeBackground() {
+		themeRole = ThemeRole.BACKGROUND;
+		return this;
+	}
+
+	/** A light text colour: takes the theme's text tint while its mod follows the theme colours. */
+	public ColorSetting themeText() {
+		themeRole = ThemeRole.TEXT;
+		return this;
+	}
+
+	public ThemeRole themeRole() {
+		return themeRole;
+	}
+
+	/** Connects this colour to its mod's "Follow theme colours" and "Tinted background" switches. */
+	public void bindTheme(java.util.function.BooleanSupplier follow, java.util.function.BooleanSupplier tinted) {
+		this.followTheme = follow;
+		this.tintBackground = tinted;
+	}
+
 	/** True when this colour is showing the accent instead of its own value right now. */
 	public boolean usesAccent() {
 		if (accentRole == AccentRole.NONE) {
 			return false;
 		}
-		if (accentEverywhere.getAsBoolean()) {
+		if (accentEverywhere.getAsBoolean() || followTheme.getAsBoolean()) {
 			return true;
 		}
 		return accentRole == AccentRole.FOLLOW && mode == Mode.STATIC && getNormal().equals(getDefault()) && !hasPvpOverride();
 	}
 
-	/** The colour right now (moves over time in Chroma and Gradient modes). */
+	/** The colour right now (moves over time in Chroma and Gradient modes, follows the theme where it should). */
 	public int argb() {
 		if (usesAccent()) {
 			// Keep this colour's own transparency.
@@ -98,11 +138,18 @@ public class ColorSetting extends Setting<Integer> {
 			return keepAlpha | (accentSource.getAsInt() & 0xFFFFFF);
 		}
 		int base = get();
-		return switch (mode) {
+		if (themeRole == ThemeRole.TEXT && mode == Mode.STATIC && base == getDefault() && followTheme.getAsBoolean()) {
+			return (base & 0xFF000000) | (themeText.getAsInt() & 0xFFFFFF);
+		}
+		int c = switch (mode) {
 			case STATIC -> base;
 			case CHROMA -> chroma(base, speed);
 			case GRADIENT -> gradient(base, stops, speed);
 		};
+		if (themeRole == ThemeRole.BACKGROUND && tintBackground.getAsBoolean()) {
+			return backgroundTinter.applyAsInt(c);
+		}
+		return c;
 	}
 
 	/** Rainbow at the base colour's saturation and brightness (grey or very dark bases get a vivid rainbow). */

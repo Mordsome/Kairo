@@ -54,6 +54,7 @@ final class LayoutHistory {
 			list.add(e.enabled);
 		}
 		list.add(ModuleManager.get(CpsHud.class).attachToKeystrokes);
+		list.add(ModuleManager.get(CpsHud.class).hideWithKeystrokes);
 		return list;
 	}
 

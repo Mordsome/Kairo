@@ -334,7 +334,8 @@ public final class MenuBackground {
 		try (GpuBufferSlice.MappedView view = buffer.map(false, true)) {
 			Std140Builder.intoBuffer(view.data())
 				.putVec4(u0, v0, du, dv)
-				.putVec4(darken(s.backgroundDim.floatValue()), 0, 0, 0);
+				// A very bright picture is darkened a little more, so text on it stays readable.
+				.putVec4(darken(Math.max(s.backgroundDim.floatValue(), WallpaperColors.readableDim())), 0, 0, 0);
 		}
 		var encoder = RenderSystem.getDevice().createCommandEncoder();
 		try (RenderPass pass = encoder.createRenderPass(() -> "Kairo menu background", target, Optional.empty())) {
