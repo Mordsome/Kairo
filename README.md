@@ -19,6 +19,7 @@
   <a href="https://github.com/MordoMordeczek/Kairo/releases/latest"><b>Download</b></a> ·
   <a href="#-install"><b>Install</b></a> ·
   <a href="docs/FEATURES.md"><b>Feature guide</b></a> ·
+  <a href="https://mordomordeczek.github.io/Kairo/"><b>Website</b></a> ·
   <a href="https://github.com/MordoMordeczek/KairoVoid"><b>Kairo Void</b></a>
 </p>
 

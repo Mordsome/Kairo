@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en" data-edition="kairo">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kairo: a visual client for Minecraft 26.3</title>
+<meta name="description" content="Kairo is a free, visuals-only Minecraft 26.3 client for Fabric: glass menus, a drag-and-drop HUD, PvP mode, cosmetics and emotes. No cheats.">
+<meta name="theme-color" content="#0a1322">
+<meta property="og:title" content="Kairo: a visual client for Minecraft 26.3">
+<meta property="og:description" content="Glass menus, a HUD you drag into place, PvP mode, cosmetics and emotes. No cheats.">
+<meta property="og:image" content="img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Pixelify+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="pixels" aria-hidden="true"></canvas>
+<canvas id="wipe" aria-hidden="true"></canvas>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <a class="brand" href="#top" aria-label="Kairo home">
+    <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14" class="mark-ring"/><path d="M14.5 7.6 A14 14 0 0 1 25.5 7.6" class="mark-arc"/><circle cx="20" cy="20" r="5.6" class="mark-dot"/></svg>
+    <span class="brand-name">Kairo<span class="brand-void"> Void</span></span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#tour">Tour</a>
+    <a href="#editions">Editions</a>
+    <a href="#install">Install</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <div class="switch" role="radiogroup" aria-label="Edition">
+    <button type="button" role="radio" data-set="kairo" aria-checked="true">Kairo</button>
+    <button type="button" role="radio" data-set="void" aria-checked="false">Void</button>
+    <span class="switch-thumb" aria-hidden="true"></span>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero" id="top">
+  <div class="hero-copy">
+    <h1 class="title"><span class="scramble" data-kairo="Kairo" data-void="Kairo Void">Kairo</span></h1>
+    <p class="lede" data-kairo="A visual client for Minecraft 26.3. Frosted glass menus, a HUD you drag into place, a PvP mode, cosmetics and emotes." data-void="Kairo, turned all the way up. Energy blades, nine atmospheres, a cosmic night sky and crystals that glow, in flat dark menus.">A visual client for Minecraft 26.3. Frosted glass menus, a HUD you drag into place, a PvP mode, cosmetics and emotes.</p>
+    <div class="cta">
+      <a class="btn btn-main" id="download" href="https://github.com/MordoMordeczek/Kairo/releases/latest">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>
+        <span data-kairo="Download Kairo" data-void="Download Kairo Void">Download Kairo</span>
+      </a>
+      <a class="btn btn-ghost" id="source" href="https://github.com/MordoMordeczek/Kairo">View on GitHub</a>
+    </div>
+    <p class="fine">Free and open source. Needs Fabric and Sodium. No cheats, ever.</p>
+  </div>
+
+  <div class="ring-wrap">
+    <svg class="ring" id="ring" viewBox="0 0 600 600" role="group" aria-label="Kairo's Right Shift menu. Each section links to part of this page."></svg>
+    <div class="ring-core" aria-live="polite">
+      <span class="core-kick" id="coreKick">Right Shift menu</span>
+      <span class="core-title" id="coreTitle">Menu</span>
+      <span class="core-desc" id="coreDesc">Hover a section</span>
+    </div>
+    <p class="ring-hint">This is the real menu layout. Go on, poke it.</p>
+  </div>
+</section>
+
+<section class="tour" id="tour">
+  <div class="section-head">
+    <h2>Press Right Shift and the world blurs</h2>
+    <p>Everything Kairo does is one key away. Pick a part of the client to see it.</p>
+  </div>
+  <div class="tour-body">
+    <div class="tour-list" role="tablist" aria-label="Parts of the client" id="tourList"></div>
+    <figure class="tour-shot" id="tourShot">
+      <div class="shot-frame"><img id="tourImg" src="img/kairo/11_ring_menu.jpg" alt="" width="1600" height="900"></div>
+      <figcaption id="tourCap"></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="strip" aria-label="Screenshots">
+  <div class="strip-track" id="strip"></div>
+</section>
+
+<section class="editions" id="editions">
+  <div class="section-head">
+    <h2>Two editions, one jar each</h2>
+    <p>Same mods, same HUD editor, same PvP mode. Void adds a lot more light and colour. Install one of them, not both.</p>
+  </div>
+  <div class="ed-grid">
+    <article class="ed ed-kairo">
+      <img src="img/kairo/00_main_menu_classic.jpg" alt="Kairo's main menu with glass buttons" loading="lazy" width="1600" height="900">
+      <div class="ed-text">
+        <h3>Kairo</h3>
+        <p>Frosted glass everywhere, five main menu styles, colour filters, hit effects, capes, wings and 37 emotes. Clean enough to play with every day.</p>
+        <ul class="ticks">
+          <li>25+ mods and a drag-and-drop HUD</li>
+          <li>PvP mode with its own layout</li>
+          <li>11 colour filters, bloom and motion blur</li>
+        </ul>
+        <a class="btn btn-small" href="https://github.com/MordoMordeczek/Kairo/releases/latest">Get Kairo</a>
+      </div>
+    </article>
+    <article class="ed ed-void">
+      <div class="atmo">
+        <img id="atmoImg" src="img/void/40_atmosphere_galaxy.jpg" alt="The Galaxy atmosphere in Kairo Void" loading="lazy" width="1600" height="900">
+        <div class="atmo-pick" role="radiogroup" aria-label="Atmosphere" id="atmoPick"></div>
+      </div>
+      <div class="ed-text">
+        <h3>Kairo Void</h3>
+        <p>Everything Kairo has, plus energy blades on your weapon, impact shockwaves, a spiral galaxy and a ringed planet in the night sky, and nine atmospheres to try.</p>
+        <ul class="ticks">
+          <li>Low, Medium, High and Insane presets</li>
+          <li>Prism, Void core, Plasma and Hologram crystals</li>
+          <li>Press J to turn every visual off</li>
+        </ul>
+        <a class="btn btn-small" href="https://github.com/MordoMordeczek/KairoVoid/releases/latest">Get Kairo Void</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="install" id="install">
+  <div class="section-head">
+    <h2>Install in about two minutes</h2>
+    <p>Kairo is a Fabric mod for Minecraft Java 26.3. Tested on Windows.</p>
+  </div>
+  <ol class="steps">
+    <li>
+      <span class="step-n" aria-hidden="true">1</span>
+      <div><h3>Get Fabric</h3><p>Install <a href="https://fabricmc.net/use/">Fabric Loader</a> for Minecraft 26.3, or make a 26.3 Fabric instance in Prism or the Modrinth App.</p></div>
+    </li>
+    <li>
+      <span class="step-n" aria-hidden="true">2</span>
+      <div><h3>Add the two helpers</h3><p>Put <a href="https://modrinth.com/mod/fabric-api">Fabric API</a> and <a href="https://modrinth.com/mod/sodium">Sodium</a> 0.9.x for 26.3 into your <code>mods</code> folder.</p></div>
+    </li>
+    <li>
+      <span class="step-n" aria-hidden="true">3</span>
+      <div><h3>Drop in <span class="jarname">kairo-0.1.0.jar</span></h3><p>From the <a class="rel-link" href="https://github.com/MordoMordeczek/Kairo/releases/latest">releases page</a>. One edition only.</p></div>
+    </li>
+    <li>
+      <span class="step-n" aria-hidden="true">4</span>
+      <div><h3>Start the game</h3><p>A short setup runs the first time. In game, press <kbd>Right Shift</kbd>.</p></div>
+    </li>
+  </ol>
+  <aside class="warn" role="note">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5L22 20.5H2Z"/><path d="M12 10v5M12 17.6v.4"/></svg>
+    <p><strong>Photosensitivity warning.</strong> Both editions have flashing lights, bright bursts of colour and screen shakes, and Void has far more. If you or anyone in your family has had seizures or epilepsy, talk to a doctor before playing. The first-run setup has <em>Fewer flashes</em> and <em>Reduce motion</em>.</p>
+  </aside>
+</section>
+
+<section class="faq" id="faq">
+  <div class="section-head"><h2>Questions people ask</h2></div>
+  <div class="qa">
+    <details><summary>Is this a hacked client?</summary><p>No. Kairo only changes what your own screen draws and plays. There's no automation, no reach, no ESP and no packet tricks, and Fullbright only raises your gamma.</p></details>
+    <details><summary>Can I get banned for using it?</summary><p>Kairo sends nothing extra to servers, but some servers have their own rules about client mods like Zoom or Fullbright. Check a server's rules before you play there.</p></details>
+    <details><summary>Can other players see my cape and emotes?</summary><p>No. Cosmetics and emotes are drawn only on your screen. Kairo has no accounts and never connects to the internet.</p></details>
+    <details><summary>Can I install Kairo and Void together?</summary><p>No, they use the same mod id. Pick one. Void keeps its settings in its own folder, so switching back and forth is painless.</p></details>
+    <details><summary>Who made this?</summary><p>MordoMordeczek, with a lot of help from AI. Kairo is proudly 100% vibecoded: the ideas, taste and playtesting are mine, the code and the shaders came from the machine. If something breaks, open an issue and blame the vibes.</p></details>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="foot-row">
+    <span class="foot-brand">Kairo</span>
+    <a href="https://github.com/MordoMordeczek/Kairo">Kairo on GitHub</a>
+    <a href="https://github.com/MordoMordeczek/KairoVoid">Kairo Void on GitHub</a>
+    <a href="https://github.com/MordoMordeczek/Kairo/blob/main/LICENSE">GPL-3.0</a>
+  </div>
+  <p class="legal">Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft. Fabric and Sodium are separate projects and are never bundled.</p>
+  <p class="slop"><span class="pix">certified ai slop</span> handmade by a person and a very busy robot</p>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
