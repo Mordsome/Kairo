@@ -5,7 +5,7 @@ The first public release, in two editions built from the same code. Pick **one**
 - **`kairo-0.1.0.jar`**: Kairo Client. Frosted glass menus, HUD mods, PvP mode, cosmetics, emotes and visual
   tweaks.
 - **`kairo-void-0.1.0.jar`**: Kairo Void, the visual edition. Everything Kairo has, plus energy blades, impact
-  shockwaves, hit-stop, a cosmic night sky, ten atmospheres, crystal styles, presets and flat dark menus.
+  shockwaves, hit-stop, a cosmic night sky, nine atmospheres, crystal styles, presets and flat dark menus.
 
 Both are **visual and client-side only**: no cheats, no automation, no packet changes, and nothing is sent anywhere.
 

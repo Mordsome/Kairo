@@ -19,7 +19,7 @@
   <a href="https://github.com/MordoMordeczek/Kairo/releases/latest"><b>Download</b></a> ·
   <a href="#-install"><b>Install</b></a> ·
   <a href="docs/FEATURES.md"><b>Feature guide</b></a> ·
-  <a href="https://github.com/MordoMordeczek/kairo-void"><b>Kairo Void</b></a>
+  <a href="https://github.com/MordoMordeczek/KairoVoid"><b>Kairo Void</b></a>
 </p>
 
 <br>
@@ -96,7 +96,7 @@ Every mod has its own settings and an **In PvP mode** section. The [feature guid
 
 ## ✦ Kairo Void
 
-<a href="https://github.com/MordoMordeczek/kairo-void"><b>Kairo Void</b></a> is the second edition, built from this same code: flat dark menus, and over-the-top combat and sky visuals (energy blades, impact shockwaves, ten atmospheres, crystal styles, a cosmic night sky). Install **one** of the two, not both.
+<a href="https://github.com/MordoMordeczek/KairoVoid"><b>Kairo Void</b></a> is the second edition, built from this same code: flat dark menus, and over-the-top combat and sky visuals (energy blades, impact shockwaves, nine atmospheres, crystal styles, a cosmic night sky). Install **one** of the two, not both.
 
 ## 📦 Install
 
