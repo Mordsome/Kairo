@@ -139,6 +139,7 @@
     edition = ed;
     root.dataset.edition = ed;
     document.querySelector('meta[name="theme-color"]').setAttribute("content", COLORS[ed].bg);
+    document.querySelector('link[rel="icon"]').href = ed === "void" ? "img/icon-void.png" : "img/icon.png";
     document.querySelectorAll(".switch button").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.set === ed)));
     document.querySelectorAll("[data-kairo]").forEach((el) => { if (el !== scr) el.textContent = el.dataset[ed]; });
     animate ? scramble(scr, scr.dataset[ed]) : (scr.textContent = scr.dataset[ed]);
