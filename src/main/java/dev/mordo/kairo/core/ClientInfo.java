@@ -12,7 +12,7 @@ public final class ClientInfo {
 	public static final String NAME = Edition.isVoid() ? "Kairo Void" : "Kairo";
 	public static final String FULL_NAME = Edition.isVoid() ? NAME : NAME + " Client";
 	public static final String MOD_ID = "kairo";
-	public static final String AUTHOR = "MordoMordeczek";
+	public static final String AUTHOR = "Mordsome";
 	public static final String MC_VERSION = "26.3";
 
 	/** Full version from fabric.mod.json, e.g. "0.1.0". */

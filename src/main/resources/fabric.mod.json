@@ -5,7 +5,7 @@
 	"name": "Kairo Client",
 	"description": "A visuals-focused client: animated menus, HUD mods and PvP visual tweaks. Visual and client-side only, no cheats.",
 	"authors": [
-		"MordoMordeczek"
+		"Mordsome"
 	],
 	"license": "GPL-3.0-only",
 	"icon": "assets/kairo/icon.png",

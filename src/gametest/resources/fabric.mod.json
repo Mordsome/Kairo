@@ -5,7 +5,7 @@
 	"name": "Kairo visual tests",
 	"description": "Dev-only: automated screenshot tour of the client's screens.",
 	"authors": [
-		"MordoMordeczek"
+		"Mordsome"
 	],
 	"environment": "client",
 	"entrypoints": {

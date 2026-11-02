@@ -5,7 +5,7 @@ Everything Kairo and Kairo Void can do, in detail. Back to the [README](../READM
 A visuals-focused client for **Minecraft Java 26.3** (Fabric): animated glass menus, HUD mods and PvP visual tweaks.
 Visual and client-side only. No cheats, no automation, nothing extra sent to servers.
 
-By MordoMordeczek.
+By Mordsome.
 
 Features: its own main menu (with Singleplayer and Multiplayer screens) and a matching restyle of Minecraft's
 other menus, a Right Shift ring menu, glass panels for mods and settings, a HUD with a drag-and-drop layout editor,
@@ -324,7 +324,7 @@ play there; you're responsible for following them.
 
 Kairo Client is free software under the [GNU General Public License v3.0](../LICENSE): you can use, study, change and share it,
 and anything you share that's built from it has to stay under the same licence, with its source available.
-Copyright (C) 2026 MordoMordeczek. It comes with no warranty, as the licence explains.
+Copyright (C) 2026 Mordsome. It comes with no warranty, as the licence explains.
 
 Third-party parts and what they're licensed under are listed in [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 

@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/MordoMordeczek/Kairo/releases/latest"><img src="https://img.shields.io/github/v/release/MordoMordeczek/Kairo?style=for-the-badge&label=download&color=7fd8ff&labelColor=0b0f17" alt="Download"></a>
+  <a href="https://github.com/Mordsome/Kairo/releases/latest"><img src="https://img.shields.io/github/v/release/Mordsome/Kairo?style=for-the-badge&label=download&color=7fd8ff&labelColor=0b0f17" alt="Download"></a>
   <img src="https://img.shields.io/badge/minecraft-26.3-7fd8ff?style=for-the-badge&labelColor=0b0f17" alt="Minecraft 26.3">
   <img src="https://img.shields.io/badge/loader-fabric-ff9a52?style=for-the-badge&labelColor=0b0f17" alt="Fabric">
   <img src="https://img.shields.io/badge/needs-sodium-ff9a52?style=for-the-badge&labelColor=0b0f17" alt="Needs Sodium">
@@ -16,11 +16,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/MordoMordeczek/Kairo/releases/latest"><b>Download</b></a> ·
+  <a href="https://github.com/Mordsome/Kairo/releases/latest"><b>Download</b></a> ·
   <a href="#-install"><b>Install</b></a> ·
   <a href="docs/FEATURES.md"><b>Feature guide</b></a> ·
-  <a href="https://mordomordeczek.github.io/Kairo/"><b>Website</b></a> ·
-  <a href="https://github.com/MordoMordeczek/KairoVoid"><b>Kairo Void</b></a>
+  <a href="https://mordsome.github.io/Kairo/"><b>Website</b></a> ·
+  <a href="https://github.com/Mordsome/KairoVoid"><b>Kairo Void</b></a>
 </p>
 
 <br>
@@ -97,7 +97,7 @@ Every mod has its own settings and an **In PvP mode** section. The [feature guid
 
 ## ✦ Kairo Void
 
-<a href="https://github.com/MordoMordeczek/KairoVoid"><b>Kairo Void</b></a> is the second edition, built from this same code: flat dark menus, and over-the-top combat and sky visuals (energy blades, impact shockwaves, nine atmospheres, crystal styles, a cosmic night sky). Install **one** of the two, not both.
+<a href="https://github.com/Mordsome/KairoVoid"><b>Kairo Void</b></a> is the second edition, built from this same code: flat dark menus, and over-the-top combat and sky visuals (energy blades, impact shockwaves, nine atmospheres, crystal styles, a cosmic night sky). Install **one** of the two, not both.
 
 ## 📦 Install
 
@@ -105,7 +105,7 @@ Every mod has its own settings and an **In PvP mode** section. The [feature guid
 2. Put these in your `mods` folder:
    - [Fabric API](https://modrinth.com/mod/fabric-api) for 26.3
    - [Sodium](https://modrinth.com/mod/sodium) 0.9.x for 26.3 (required)
-   - `kairo-0.1.0.jar` from [Releases](https://github.com/MordoMordeczek/Kairo/releases/latest)
+   - `kairo-0.1.0.jar` from [Releases](https://github.com/Mordsome/Kairo/releases/latest)
 3. Start the game. A short setup runs the first time. In game, press **Right Shift**.
 
 Tested on Windows.
@@ -139,6 +139,6 @@ If something breaks, it's a feature of the vibes. Open an issue anyway.
 
 ## 📄 License
 
-Kairo is free software under the [GNU General Public License v3.0](LICENSE). Copyright © 2026 MordoMordeczek. The bundled fonts (Outfit, JetBrains Mono) are under the SIL Open Font License; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Kairo is free software under the [GNU General Public License v3.0](LICENSE). Copyright © 2026 Mordsome. The bundled fonts (Outfit, JetBrains Mono) are under the SIL Open Font License; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 <sub>Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft. Minecraft is a trademark of Mojang Synergies AB. Fabric and Sodium are separate projects with their own licences and are never bundled.</sub>

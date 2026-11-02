@@ -5,8 +5,8 @@
   const $ = (s) => document.querySelector(s);
 
   const REPO = {
-    kairo: "https://github.com/MordoMordeczek/Kairo",
-    void: "https://github.com/MordoMordeczek/KairoVoid",
+    kairo: "https://github.com/Mordsome/Kairo",
+    void: "https://github.com/Mordsome/KairoVoid",
   };
   const COLORS = {
     kairo: { bg: "#0a1322", accent: [127, 216, 255], hot: [255, 154, 82] },

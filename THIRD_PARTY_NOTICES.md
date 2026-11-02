@@ -1,7 +1,7 @@
 # Third-party notices
 
 Kairo Client and Kairo Void are licensed under the GNU General Public License v3.0 (see [LICENSE](LICENSE)).
-Copyright (C) 2026 MordoMordeczek.
+Copyright (C) 2026 Mordsome.
 
 ## Included in the jars
 
