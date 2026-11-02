@@ -265,7 +265,7 @@ public final class SettingsPage extends PanelPage {
 
 		float y = cy + 70;
 		String[] lines = {
-			"Made by Mordo.",
+			"Made by Mordsome.",
 			"Visual and client-side only: no automation, nothing extra sent to servers.",
 			"Requires Fabric API and Sodium.",
 			"Fonts: Outfit and JetBrains Mono (SIL Open Font License).",
