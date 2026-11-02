@@ -1,11 +1,13 @@
 name: Build
 
-# Builds both jars (Kairo and Kairo Void) on every push and pull request, so anyone can check that the
-# source builds. Releases are made by hand on the Releases page with the tested jars.
+# Builds both jars (Kairo and Kairo Void) on every push and pull request.
+# Pushing a version tag (for example v0.2.0) also publishes a GitHub release with both jars and SHA256SUMS.txt,
+# using docs/release-notes/<tag>.md as its text. The in-game updater reads that release.
 
 on:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
   pull_request:
   workflow_dispatch:
 
@@ -28,8 +30,41 @@ jobs:
       - name: Build
         run: ./gradlew build --no-configuration-cache
 
-      - name: Upload the jars
-        uses: actions/upload-artifact@v4
+      - name: Collect the jars
+        run: |
+          mkdir -p dist
+          cp build/libs/kairo-[0-9]*.jar build/libs/kairo-void-[0-9]*.jar dist/
+          rm -f dist/*-sources.jar
+          (cd dist && sha256sum *.jar > SHA256SUMS.txt && cat SHA256SUMS.txt)
+
+      - uses: actions/upload-artifact@v4
         with:
           name: kairo-jars
-          path: build/libs/*.jar
+          path: dist/*
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: kairo-jars
+          path: dist
+
+      - name: Check the version and release notes
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="$(grep '^mod_version=' gradle.properties | cut -d= -f2)"
+          if [ "v${VERSION}" != "${TAG}" ]; then echo "Tag ${TAG} doesn't match mod_version ${VERSION} in gradle.properties"; exit 1; fi
+          if [ ! -f "docs/release-notes/${TAG}.md" ]; then echo "Missing docs/release-notes/${TAG}.md"; exit 1; fi
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Kairo ${{ github.ref_name }}
+          body_path: docs/release-notes/${{ github.ref_name }}.md
+          files: dist/*
