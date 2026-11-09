@@ -64,11 +64,11 @@ final class Trails {
 		}
 		if (style == Cosmetics.TrailStyle.NOTES) {
 			// Note particles take their colour from the x speed.
-			mc.level.addParticle(particle, x, y + 0.6, z, RANDOM.nextDouble(), 0, 0);
+			dev.mordo.kairo.render.LightParticles.add(mc.level, particle, x, y + 0.6, z, RANDOM.nextDouble(), 0, 0);
 		} else if (style == Cosmetics.TrailStyle.HEARTS || style == Cosmetics.TrailStyle.TOTEM) {
-			mc.level.addParticle(particle, x, y + 0.3, z, 0, up, 0);
+			dev.mordo.kairo.render.LightParticles.add(mc.level, particle, x, y + 0.3, z, 0, up, 0);
 		} else {
-			mc.level.addParticle(particle, x, y, z, 0, up * 0.5, 0);
+			dev.mordo.kairo.render.LightParticles.add(mc.level, particle, x, y, z, 0, up * 0.5, 0);
 		}
 	}
 }

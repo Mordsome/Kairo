@@ -30,6 +30,11 @@ abstract class BlockOutlineMixin {
 	private void kairo$blockOutline(PoseStack poseStack, SubmitNodeCollector collector, LevelRenderState levelState, CallbackInfo ci) {
 		BlockOutline mod = ModuleManager.get(BlockOutline.class);
 		BlockOutlineRenderState state = levelState.blockOutlineRenderState;
+		// Kairo Void's block overlay (gliding from block to block) takes the outline's place. High contrast stays vanilla.
+		if (dev.mordo.kairo.render.VoidWorldFx.overlayReplacesOutline() && (state == null || !state.highContrast())) {
+			ci.cancel();
+			return;
+		}
 		if (!mod.isEnabled() || state == null || state.highContrast()) {
 			return;
 		}

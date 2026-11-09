@@ -32,6 +32,7 @@ abstract class GameRendererMixin {
 	private void kairo$voidSky(CallbackInfo ci) {
 		var level = ((GameRenderer) (Object) this).gameRenderState().levelRenderState;
 		dev.mordo.kairo.render.VoidSky.render(level.cameraRenderState, level.skyRenderState);
+		dev.mordo.kairo.render.VoidNoir.render(level.cameraRenderState); // the cinematic kill, when one is playing
 	}
 
 	/** PvP mode option: no walking sway for the camera or the hand. */

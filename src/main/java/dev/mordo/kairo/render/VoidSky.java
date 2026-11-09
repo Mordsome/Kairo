@@ -56,7 +56,7 @@ public final class VoidSky {
 		}
 		VoidSettings s = VoidSettings.INSTANCE;
 		boolean overworld = sky.skybox == DimensionType.Skybox.OVERWORLD;
-		boolean skyFx = overworld && (s.cosmicSky.isOn() || s.aurora.isOn() || s.sunsets.isOn());
+		boolean skyFx = overworld && (s.cosmicSky.isOn() || s.aurora.isOn() || s.sunsets.isOn() || (s.customSky.isOn() && SkyImage.ready()));
 		return skyFx || s.depthFog.floatValue() > 0.001f || Atmospheres.current() != VoidSettings.Atmosphere.NONE;
 	}
 
@@ -76,6 +76,9 @@ public final class VoidSky {
 			CommandEncoder encoder = RenderSystem.getDevice().createCommandEncoder();
 			GpuSampler linear = RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR);
 			GpuSampler nearest = RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST);
+			// The sky picture is fetched (and uploaded, if new) before any pass opens.
+			GpuTextureView skyView = SkyImage.view();
+			GpuSampler skySampler = SkyImage.sampler();
 			copy(encoder, mainView, linear);
 
 			GpuBuffer buffer = config.currentBuffer();
@@ -87,6 +90,7 @@ public final class VoidSky {
 				RenderSystem.bindDefaultUniforms(pass);
 				pass.setUniform("InSampler", copyView, linear);
 				pass.setUniform("DepthSampler", depthView, nearest);
+				pass.setUniform("SkyImage", skyView, skySampler);
 				pass.setUniform("SkyConfig", buffer);
 				pass.draw(3, 1, 0, 0);
 			}
@@ -151,6 +155,18 @@ public final class VoidSky {
 		float snow = s.snowGround.isOn() ? look.snow() * k : 0;
 		b.putVec4(snow, look.caustics() * k, look.feature(), Atmospheres.flash() * k);
 		b.putVec4(k, (float) (camera.pos.x % 4096.0), (float) (camera.pos.z % 4096.0), 0);
+		// Custom sky picture: how much shows (by time of day), brightness, turn, keep the sun / moon / stars on top.
+		float picture = 0;
+		if (overworld && s.customSky.isOn() && SkyImage.ready()) {
+			picture = switch (s.skyTime.get()) {
+				case ALWAYS -> 1;
+				case NIGHT -> night;
+				case DAY -> 1 - night;
+			};
+		}
+		b.putVec4(picture, s.skyBrightness.floatValue(), time * 0.01f * s.skySpin.floatValue(), s.skyStars.isOn() ? 1 : 0);
+		// Aurora: style (0 curtains, 1 ribbons), colour (0 classic, 1 yours, 2 rainbow, 3 sunset), brightness.
+		b.putVec4(s.auroraStyle.get().ordinal(), s.auroraColor.get().ordinal(), s.auroraStrength.floatValue(), 0);
 	}
 
 	private static void ensureTargets(int w, int h) {
@@ -168,7 +184,7 @@ public final class VoidSky {
 			GpuFormat.RGBA8_UNORM, w, h, 1, 1);
 		copyView = device.createTextureView(copyTexture);
 		if (config == null) {
-			config = new MappableRingBuffer(() -> "Kairo void sky", GpuBuffer.USAGE_UNIFORM | GpuBuffer.USAGE_MAP_WRITE, 64 + 16 * 16);
+			config = new MappableRingBuffer(() -> "Kairo void sky", GpuBuffer.USAGE_UNIFORM | GpuBuffer.USAGE_MAP_WRITE, 64 + 16 * 18);
 		}
 	}
 }

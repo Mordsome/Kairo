@@ -21,6 +21,14 @@ public class VisualTour implements FabricClientGameTest {
 	@Override
 	public void runTest(ClientGameTestContext ctx) {
 		TestInput input = ctx.getInput();
+		if (ShowcaseTour.flag("tour-030")) {
+			new Update030Tour().run(ctx);
+			return;
+		}
+		if (ShowcaseTour.flag("tour-vk")) {
+			new VulkanBisect().run(ctx);
+			return;
+		}
 		input.resizeWindow(width, height);
 		if (ShowcaseTour.flag("tour-020")) {
 			new Update020Tour().run(ctx);

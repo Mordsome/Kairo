@@ -28,6 +28,17 @@ abstract class AvatarRendererMixin {
 		if (cosmetics.isEnabled() && Cosmetics.isLocal(state)) {
 			Capes.apply(cosmetics, state);
 		}
+		dev.mordo.kairo.render.VoidLook.extract(state); // Kairo Void "Your look: Outline" (your own player only)
+	}
+
+	/** Kairo Void "Your own nametag in F5": vanilla never shows your own name; this shows it in third person. */
+	@Inject(method = "shouldShowName(Lnet/minecraft/world/entity/Avatar;D)Z", at = @At("HEAD"), cancellable = true)
+	private void kairo$ownName(Avatar entity, double distance, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Boolean> cir) {
+		net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+		if (entity == mc.player && dev.mordo.kairo.render.Visuals.on() && dev.mordo.kairo.core.VoidSettings.INSTANCE.ownNametag.isOn()
+			&& !mc.options.getCameraType().isFirstPerson() && !entity.isInvisible()) {
+			cir.setReturnValue(true);
+		}
 	}
 
 	@Inject(method = "setupRotations(Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;FF)V",

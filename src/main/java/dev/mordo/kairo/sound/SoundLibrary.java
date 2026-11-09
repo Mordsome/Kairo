@@ -87,6 +87,48 @@ public final class SoundLibrary {
 		lastScan = 0;
 	}
 
+	// ---- songs (music emotes) ----
+
+	/** Longest song a music emote plays (it loops). */
+	public static final float SONG_SECONDS = 300;
+
+	/** "No song", then the player's files. */
+	public static List<Choice> songChoices() {
+		List<Choice> list = new ArrayList<>();
+		list.add(new Choice("", "No song", ""));
+		list.addAll(files());
+		return list;
+	}
+
+	/**
+	 * The engine key for a song file ("file:name"), or null while it's still being read (reading starts in the
+	 * background the first time). Songs are read whole, so they're kept apart from the short sounds.
+	 */
+	public static @Nullable String resolveSong(String choiceId) {
+		if (choiceId == null || !choiceId.startsWith("file:")) {
+			return null;
+		}
+		String key = "s" + keyFor(choiceId).substring(1);
+		if (SOUNDS.containsKey(key)) {
+			return key;
+		}
+		String pendingId = "song|" + choiceId;
+		if (PENDING.putIfAbsent(pendingId, Boolean.TRUE) == null) {
+			Path file = folder().resolve(choiceId.substring(5));
+			Util.backgroundExecutor().execute(() -> {
+				try {
+					SOUNDS.put(key, AudioDecoder.decodeSong(file, SONG_SECONDS));
+					BUFFERS.remove(key);
+					PENDING.remove(pendingId);
+				} catch (IOException | RuntimeException e) {
+					Kairo.LOGGER.warn("Couldn't load song {}: {}", file, e.getMessage());
+					Minecraft.getInstance().execute(() -> Toasts.show("Couldn't load " + file.getFileName() + ": " + e.getMessage(), 0xFFFF7A7A));
+				}
+			});
+		}
+		return null;
+	}
+
 	// ---- loading ----
 
 	/**
@@ -159,8 +201,8 @@ public final class SoundLibrary {
 
 	/** Forget a file's decoded audio (it was replaced on disk) and allow retrying failed files. */
 	public static void invalidateFiles() {
-		SOUNDS.keySet().removeIf(k -> k.startsWith("f_"));
-		BUFFERS.keySet().removeIf(k -> k.startsWith("f_"));
+		SOUNDS.keySet().removeIf(k -> k.startsWith("f_") || k.startsWith("s_"));
+		BUFFERS.keySet().removeIf(k -> k.startsWith("f_") || k.startsWith("s_"));
 		PENDING.clear();
 		rescanSoon();
 	}

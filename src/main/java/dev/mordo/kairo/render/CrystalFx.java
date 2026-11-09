@@ -260,11 +260,11 @@ public final class CrystalFx {
 		// A flat ring racing out along the ground, and sparks thrown up.
 		for (int i = 0; i < 48; i++) {
 			double a = i * Math.PI * 2 / 48;
-			level.addParticle(new DustParticleOptions(accent & 0xFFFFFF, 2.2f), at.x, at.y - 0.6, at.z, Math.cos(a) * 0.7, 0.02, Math.sin(a) * 0.7);
+			dev.mordo.kairo.render.LightParticles.add(level, new DustParticleOptions(accent & 0xFFFFFF, 2.2f), at.x, at.y - 0.6, at.z, Math.cos(a) * 0.7, 0.02, Math.sin(a) * 0.7);
 		}
 		for (int i = 0; i < 40; i++) {
 			Vec3 d = new Vec3(RANDOM.nextGaussian(), Math.abs(RANDOM.nextGaussian()) + 0.3, RANDOM.nextGaussian()).normalize().scale(0.35 + RANDOM.nextDouble() * 0.3);
-			level.addParticle(i % 2 == 0 ? ParticleTypes.END_ROD : ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z, d.x, d.y, d.z);
+			dev.mordo.kairo.render.LightParticles.add(level, i % 2 == 0 ? ParticleTypes.END_ROD : ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z, d.x, d.y, d.z);
 		}
 	}
 }

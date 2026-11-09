@@ -104,17 +104,17 @@ public final class WorldFx {
 			double z = feet.z + sin * r;
 			double out = 0.08 * scale;
 			switch (effect) {
-				case DUST -> level.addParticle(ParticleTypes.POOF, x, y, z, cos * out * 0.6, 0.02, sin * out * 0.6);
-				case RING -> level.addParticle(accentDust(1.2f), x, y + 0.1, z, cos * out * 3, 0, sin * out * 3);
-				case SPARKLES -> level.addParticle(i % 2 == 0 ? ParticleTypes.END_ROD : ParticleTypes.FIREWORK, x, y, z, cos * out * 0.3, 0.08, sin * out * 0.3);
-				case FLAMES -> level.addParticle(ParticleTypes.FLAME, x, y, z, cos * out * 0.5, 0.03, sin * out * 0.5);
+				case DUST -> dev.mordo.kairo.render.LightParticles.add(level, ParticleTypes.POOF, x, y, z, cos * out * 0.6, 0.02, sin * out * 0.6);
+				case RING -> dev.mordo.kairo.render.LightParticles.add(level, accentDust(1.2f), x, y + 0.1, z, cos * out * 3, 0, sin * out * 3);
+				case SPARKLES -> dev.mordo.kairo.render.LightParticles.add(level, i % 2 == 0 ? ParticleTypes.END_ROD : ParticleTypes.FIREWORK, x, y, z, cos * out * 0.3, 0.08, sin * out * 0.3);
+				case FLAMES -> dev.mordo.kairo.render.LightParticles.add(level, ParticleTypes.FLAME, x, y, z, cos * out * 0.5, 0.03, sin * out * 0.5);
 				case HEARTS -> {
 					if (i % 3 == 0) {
-						level.addParticle(ParticleTypes.HEART, x, y + 0.3, z, 0, 0.05, 0);
+						dev.mordo.kairo.render.LightParticles.add(level, ParticleTypes.HEART, x, y + 0.3, z, 0, 0.05, 0);
 					}
 				}
-				case CLOUD -> level.addParticle(ParticleTypes.CLOUD, x, y, z, cos * out * 0.5, 0.01, sin * out * 0.5);
-				case SOUL -> level.addParticle(i % 2 == 0 ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.SOUL, x, y, z, cos * out * 0.4, 0.04, sin * out * 0.4);
+				case CLOUD -> dev.mordo.kairo.render.LightParticles.add(level, ParticleTypes.CLOUD, x, y, z, cos * out * 0.5, 0.01, sin * out * 0.5);
+				case SOUL -> dev.mordo.kairo.render.LightParticles.add(level, i % 2 == 0 ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.SOUL, x, y, z, cos * out * 0.4, 0.04, sin * out * 0.4);
 				case NONE -> {
 				}
 			}
@@ -173,7 +173,7 @@ public final class WorldFx {
 				}
 				default -> p = ParticleTypes.POOF;
 			}
-			level.addParticle(p, center.x, center.y + 0.5, center.z, vel.x, vel.y, vel.z);
+			dev.mordo.kairo.render.LightParticles.add(level, p, center.x, center.y + 0.5, center.z, vel.x, vel.y, vel.z);
 		}
 	}
 
@@ -222,6 +222,10 @@ public final class WorldFx {
 		if (!GameVisuals.INSTANCE.damageNumbers.isOn() || amount < 0.05f || !Visuals.live()) {
 			return;
 		}
+		if (KineticNumbers.active()) {
+			KineticNumbers.add(entity, amount, VoidFx.lastWasCrit());
+			return;
+		}
 		String text = amount == Math.floor(amount) ? String.valueOf((int) amount) : String.format(Locale.ROOT, "%.1f", amount);
 		boolean big = amount >= 6;
 		int color = big ? 0xFFFFB347 : 0xFFFFFFFF;
@@ -255,6 +259,7 @@ public final class WorldFx {
 	// ---- damage numbers ----
 
 	private static void drawNumbers(GuiGraphicsExtractor g) {
+		KineticNumbers.draw(g);
 		if (NUMBERS.isEmpty()) {
 			return;
 		}
