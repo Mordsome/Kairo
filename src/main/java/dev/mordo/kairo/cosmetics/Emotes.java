@@ -35,7 +35,8 @@ public final class Emotes {
 		DANCES("Dances"),
 		REACTIONS("Reactions"),
 		POSES("Poses"),
-		MOVES("Moves");
+		MOVES("Moves"),
+		MUSIC("Music");
 
 		private final String label;
 
@@ -90,7 +91,13 @@ public final class Emotes {
 		FRONTFLIP("Front flip", 1.0f, false, Icon.REFRESH, Kind.MOVES),
 		CARTWHEEL("Cartwheel", 1.2f, false, Icon.REFRESH, Kind.MOVES),
 		JUMP_FOR_JOY("Jump for joy", 1.4f, false, Icon.HEART, Kind.MOVES),
-		LEVITATE("Levitate", 0, true, Icon.SPARKLE, Kind.MOVES);
+		LEVITATE("Levitate", 0, true, Icon.SPARKLE, Kind.MOVES),
+		// Made for music: they move on the beat
+		BEAT_BOUNCE("Beat bounce", 0, true, Icon.NOTE, Kind.DANCES),
+		BEAT_STEP("Beat step", 0, true, Icon.NOTE, Kind.DANCES),
+		// Music emotes: your own song, danced to (names and songs in the wardrobe's emote options)
+		MUSIC_1("Music 1", 0, true, Icon.VOLUME, Kind.MUSIC),
+		MUSIC_2("Music 2", 0, true, Icon.VOLUME, Kind.MUSIC);
 
 		private final String label;
 		private final float duration;
@@ -107,7 +114,7 @@ public final class Emotes {
 		}
 
 		public String label() {
-			return label;
+			return MusicEmotes.isMusic(this) ? MusicEmotes.name(this, label) : label;
 		}
 
 		public Icon icon() {
@@ -224,6 +231,17 @@ public final class Emotes {
 		startNanos = System.nanoTime();
 		ticks = 0;
 		burst();
+		MusicEmotes.start(emote);
+	}
+
+	/** The beat starts now (a music emote's song just started playing). */
+	static void restartClock() {
+		startNanos = System.nanoTime();
+	}
+
+	/** The dance actually shown: a music emote does the dance chosen for it. */
+	private static Emote shown() {
+		return MusicEmotes.isMusic(current) ? MusicEmotes.dance(current) : current;
 	}
 
 	/** Plays on the stand-in player of a menu (no world needed). Joining a world stops it. */
@@ -243,14 +261,23 @@ public final class Emotes {
 	public static void stop() {
 		preview = false;
 		current = null;
+		MusicEmotes.stop();
 		if (savedCamera != null) {
 			Minecraft.getInstance().options.setCameraType(savedCamera);
 			savedCamera = null;
 		}
 	}
 
+	/**
+	 * Seconds since the emote started. For a music emote the clock runs at the song's tempo (the dances are made for
+	 * 120 BPM), shifted by its beat offset.
+	 */
 	private static float elapsed() {
-		return (System.nanoTime() - startNanos) / 1e9f;
+		float seconds = (System.nanoTime() - startNanos) / 1e9f;
+		if (MusicEmotes.isMusic(current)) {
+			return Math.max(0, (seconds + MusicEmotes.offset(current)) * MusicEmotes.bpm(current) / 120f);
+		}
+		return seconds;
 	}
 
 	/** A small burst of light in your colour round your feet as an emote starts (Cosmetics → Emotes). */
@@ -266,13 +293,14 @@ public final class Emotes {
 			double a = i * Math.PI * 2 / 18;
 			double cos = Math.cos(a);
 			double sin = Math.sin(a);
-			level.addParticle(i % 3 == 0 ? ParticleTypes.END_ROD : dust, player.getX() + cos * 0.45, player.getY() + 0.1, player.getZ() + sin * 0.45,
+			dev.mordo.kairo.render.LightParticles.add(level, i % 3 == 0 ? ParticleTypes.END_ROD : dust, player.getX() + cos * 0.45, player.getY() + 0.1, player.getZ() + sin * 0.45,
 				cos * 0.09, 0.02, sin * 0.09);
 		}
 	}
 
 	/** Every client tick: ends finished emotes, and any emote once you move. */
 	static void tick() {
+		MusicEmotes.tick();
 		if (current == null) {
 			return;
 		}
@@ -301,7 +329,7 @@ public final class Emotes {
 		// A little light under you while you float.
 		if ((current == Emote.LEVITATE || current == Emote.MEDITATE) && ticks % 3 == 0 && mc.level != null && dev.mordo.kairo.render.Visuals.live()) {
 			double a = ticks * 0.4;
-			mc.level.addParticle(new DustParticleOptions(Theme.accent() & 0xFFFFFF, 0.8f), mc.player.getX() + Math.cos(a) * 0.4,
+			dev.mordo.kairo.render.LightParticles.add(mc.level, new DustParticleOptions(Theme.accent() & 0xFFFFFF, 0.8f), mc.player.getX() + Math.cos(a) * 0.4,
 				mc.player.getY() + (current == Emote.LEVITATE ? 0.45 : 0.15), mc.player.getZ() + Math.sin(a) * 0.4, 0, -0.01, 0);
 		}
 	}
@@ -337,7 +365,7 @@ public final class Emotes {
 		float t = elapsed();
 		float k = envelope(t);
 		float pi = (float) Math.PI;
-		switch (current) {
+		switch (shown()) {
 			case WAVE -> {
 				pose(m.rightArm, 0, 0, 2.6f + 0.35f * sin(t * 9), k);
 				pose(m.head, 0, -0.15f, 0.08f, k);
@@ -375,6 +403,28 @@ public final class Emotes {
 				float clap = sin(t * 12) * 0.5f + 0.5f;
 				pose(m.rightArm, -1.25f, -(0.15f + 0.4f * clap), 0, k);
 				pose(m.leftArm, -1.25f, 0.15f + 0.4f * clap, 0, k);
+			}
+			case BEAT_BOUNCE -> {
+				// Fist pumps on every beat, alternating arms, a nod and a little knee bend with each one.
+				float beat = t * 2;
+				float on = 1 - Math.abs(sin(beat * pi));
+				boolean right = ((int) Math.floor(beat + 0.5f)) % 2 == 0;
+				pose(m.rightArm, -2.5f + (right ? 0.7f * on : 0.1f), 0, 0.2f, k);
+				pose(m.leftArm, -2.5f + (right ? 0.1f : 0.7f * on), 0, -0.2f, k);
+				pose(m.head, 0.32f * on, 0, 0, k);
+				pose(m.rightLeg, -0.22f * on, 0, 0.04f, k);
+				pose(m.leftLeg, -0.22f * on, 0, -0.04f, k);
+			}
+			case BEAT_STEP -> {
+				// A step to the side on each beat, arms swinging out the other way, the head tipping with it.
+				float beat = t * 2;
+				float sway = sin(beat * pi / 2);
+				float on = 1 - Math.abs(sin(beat * pi));
+				pose(m.rightArm, -0.35f - 0.45f * Math.max(0, sway), 0, 0.25f + 0.55f * Math.max(0, -sway), k);
+				pose(m.leftArm, -0.35f - 0.45f * Math.max(0, -sway), 0, -0.25f - 0.55f * Math.max(0, sway), k);
+				pose(m.rightLeg, 0, 0, 0.28f * Math.max(0, sway), k);
+				pose(m.leftLeg, 0, 0, -0.28f * Math.max(0, -sway), k);
+				pose(m.head, 0.14f * on, 0, -0.14f * sway, k);
 			}
 			case DANCE -> {
 				float s = sin(t * 8);
@@ -573,7 +623,7 @@ public final class Emotes {
 		}
 		float t = elapsed();
 		float k = envelope(t);
-		switch (current) {
+		switch (shown()) {
 			case BACKFLIP, FRONTFLIP -> {
 				float p = Math.clamp(t / 1.0f, 0, 1);
 				float eased = p * p * (3 - 2 * p);
@@ -596,6 +646,17 @@ public final class Emotes {
 				ps.translate(0, 0.75, 0);
 				ps.rotate(Axis.XP, (-0.7f * k));
 				ps.translate(0, -0.75, 0);
+			}
+			case BEAT_BOUNCE -> {
+				// Down on every beat, and a quarter turn back and forth every four.
+				double beat = t * 2;
+				ps.translate(0, -(1 - Math.abs(Math.sin(beat * Math.PI))) * 0.09 * k, 0);
+				ps.rotate(Axis.YP, (float) Math.sin(beat * Math.PI / 4) * 0.3f * k);
+			}
+			case BEAT_STEP -> {
+				double beat = t * 2;
+				ps.translate(Math.sin(beat * Math.PI / 2) * 0.17 * k, Math.abs(Math.sin(beat * Math.PI)) * 0.04 * k, 0);
+				ps.rotate(Axis.YP, (float) Math.sin(beat * Math.PI / 2) * 0.22f * k);
 			}
 			case DANCE -> {
 				ps.translate(0, Math.abs(Math.sin(t * 8)) * 0.07 * k, 0);

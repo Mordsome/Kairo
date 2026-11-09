@@ -160,7 +160,32 @@ public final class KairoPipelines {
 
 	static final BindGroupLayout SKY_INPUTS = BindGroupLayout.builder()
 		.withUniform("DepthSampler", UniformType.COMBINED_IMAGE_SAMPLER)
+		.withUniform("SkyImage", UniformType.COMBINED_IMAGE_SAMPLER)
 		.withUniform("SkyConfig", UniformType.UNIFORM_BUFFER)
+		.build();
+
+	static final BindGroupLayout NOIR_INPUTS = BindGroupLayout.builder()
+		.withUniform("DepthSampler", UniformType.COMBINED_IMAGE_SAMPLER)
+		.withUniform("NoirConfig", UniformType.UNIFORM_BUFFER)
+		.build();
+
+	/** Kairo Void's cinematic kill: the world as a white drawing with black outlines, over a copy of it (before the hand). */
+	public static final RenderPipeline VOID_NOIR = RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
+		.withLocation(ClientInfo.id("pipeline/void_noir"))
+		.withVertexShader("core/screenquad")
+		.withFragmentShader(ClientInfo.id("post/void_noir"))
+		.withBindGroupLayout(BindGroupLayouts.IN_SAMPLER)
+		.withBindGroupLayout(NOIR_INPUTS)
+		.withPrimitiveTopology(PrimitiveTopology.TRIANGLES)
+		.withColorTargetState(ColorTargetState.DEFAULT)
+		.build();
+
+	/** "Your look: Hologram": your own player in see-through light with scan lines (vanilla's entity vertex shader). */
+	public static final RenderPipeline HOLOGRAM = RenderPipeline.builder(RenderPipelines.ENTITY_EMISSIVE_SNIPPET)
+		.withLocation(ClientInfo.id("pipeline/hologram"))
+		.withFragmentShader(ClientInfo.id("core/hologram"))
+		.withShaderDefine("NO_OVERLAY")
+		.withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
 		.build();
 
 	/** Kairo Void's cosmic sky, aurora, sunsets and depth fog, over a copy of the world (before the hand). */
@@ -214,7 +239,7 @@ public final class KairoPipelines {
 
 	/** Compiles every pipeline now (call once resources are loaded). Failures are logged by the cache. */
 	public static void warmUp() {
-		for (RenderPipeline pipeline : new RenderPipeline[]{SHAPE, GLASS, TEXT, KAWASE_DOWN, KAWASE_UP, BACKGROUND, FX_COPY, FX_GRADE, FX_BLEND, BLOOM_PREFILTER, BLOOM_ADD, ITEM_SILHOUETTE, VOID_FX, VOID_SKY, VOID_PANORAMA}) {
+		for (RenderPipeline pipeline : new RenderPipeline[]{SHAPE, GLASS, TEXT, KAWASE_DOWN, KAWASE_UP, BACKGROUND, FX_COPY, FX_GRADE, FX_BLEND, BLOOM_PREFILTER, BLOOM_ADD, ITEM_SILHOUETTE, VOID_FX, VOID_SKY, VOID_PANORAMA, VOID_NOIR, HOLOGRAM}) {
 			com.mojang.blaze3d.systems.RenderSystem.getCompiledPipeline(pipeline);
 		}
 	}

@@ -42,6 +42,8 @@ public final class VisualCard extends Widget {
 	private final float phase;
 	private @Nullable Art art;
 	private boolean pickOnly;
+	private java.util.function.BooleanSupplier favourite = () -> false;
+	private @Nullable Runnable toggleFavourite;
 
 	public VisualCard(String name, String description, Icon icon, Binding<Boolean> value, boolean hasSettings, Runnable openSettings) {
 		this.name = name;
@@ -57,6 +59,13 @@ public final class VisualCard extends Widget {
 
 	public VisualCard art(Art art) {
 		this.art = art;
+		return this;
+	}
+
+	/** Right-click stars or unstars it; a starred card shows a heart in its corner. */
+	public VisualCard favourite(java.util.function.BooleanSupplier starred, Runnable toggle) {
+		this.favourite = starred;
+		this.toggleFavourite = toggle;
 		return this;
 	}
 
@@ -152,6 +161,11 @@ public final class VisualCard extends Widget {
 			IconRenderer.draw(g, Icon.CHECK, ax + aw - 16, ay + 16, 11 * t, Colors.multiplyAlpha(Theme.DARK_TEXT, a), 3f);
 		}
 
+		if (favourite.getAsBoolean()) {
+			Shapes.circle(g, ax + 16, ay + 16, 9, Colors.multiplyAlpha(0x99000000, a));
+			IconRenderer.draw(g, Icon.HEART, ax + 16, ay + 16.5f, 10, Colors.multiplyAlpha(Colors.lerp(accent, 0xFFFFFFFF, 0.35f), a), 2f);
+		}
+
 		// Name, one line, switch and gear.
 		float textY = cy + h - TEXT_H + 18;
 		float maxName = w - 28 - (pickOnly ? 0 : ToggleSwitch.WIDTH + 8) - (hasSettings ? 30 : 0);
@@ -193,6 +207,10 @@ public final class VisualCard extends Widget {
 
 	@Override
 	public boolean mouseClicked(float mx, float my, int button) {
+		if (button == InputConstants.MOUSE_BUTTON_RIGHT && toggleFavourite != null) {
+			toggleFavourite.run();
+			return true;
+		}
 		if (button != InputConstants.MOUSE_BUTTON_LEFT) {
 			return false;
 		}

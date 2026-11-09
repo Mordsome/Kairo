@@ -11,6 +11,16 @@ public final class SoundChoices {
 	private SoundChoices() {
 	}
 
+	/** A song picker for a music emote: "No song" or one of the player's files, with "Add song…". */
+	public static ChoiceSetting music(String id, String name, String description) {
+		return new ChoiceSetting(id, name, "", SoundLibrary::songChoices).<ChoiceSetting>description(description)
+			.browseWith("Add song…", done -> FilePicker.importInto(SoundLibrary.folder(), "Songs (OGG, WAV)", "ogg;wav;aiff;aif;au",
+				file -> {
+					SoundLibrary.invalidateFiles();
+					done.accept("file:" + file.getFileName());
+				}));
+	}
+
 	/**
 	 * @param vanillaEvent the sound being replaced (played when previewing "Vanilla")
 	 * @param volume       preview volume

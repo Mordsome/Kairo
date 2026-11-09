@@ -1,5 +1,49 @@
 # Changelog
 
+## 0.3.0
+
+Mostly Kairo Void: new visuals that look nothing like vanilla (custom geometry and shaders, no particles), every one
+switchable in Visuals and respecting Fewer flashes and Reduce motion.
+
+- **Start-up intro (Void):** when the game opens, "Kairo" rises into place and "Void" pops in next to it with a ring of
+  light. Once per launch, never when you leave a world; click to skip.
+- **Custom sky (Void):** your own picture as the sky (a 2:1 panorama wraps all the way round), slowly turning, day and
+  night or only one of them, with the sun, moon and stars kept on top if you like. Pictures live in
+  `config/kairo-void/skies`.
+- **Living aurora (Void):** ribbons of light winding across the whole night sky, with light running along them and
+  brighter folds; colours: green and violet, your colour, rainbow or sunset. The old curtains are still a style.
+- **Aura and line glyphs (Void):** orbiting cubes, light ribbons, prism shards or halo rings around you, and animated
+  angular lines (ticks, brackets, runes) turning at your feet, waist and over your head. Only around your own player.
+- **Through your own eyes (Void):** in first person your aura and glyphs spread out a few blocks round you (wide rings
+  at your feet, one just below eye level, one high above), so the view is alive without anything in your face.
+- **Light ribbons (Void):** long ribbons of light hanging and twisting in the air around you, like an aurora you walk
+  through. They belong to places in the world, so you pass them as you travel; brightest at night, fainter by day.
+- **Floating motes (Void):** small lights hanging in the air close around you that drift and slowly breathe.
+- **Light particles (Void):** Kairo's effects (hits, kills, jumps, explosions, crystals, atmospheres, trails, emotes)
+  and Minecraft's combat, death, potion and explosion particles are drawn as sparks, shards, orbs, rings, petals and
+  flakes of light instead of pixel sprites. Ambient ones (torches, smoke, rain) stay as they are.
+- **Player trail (Void):** a fading ribbon, comet, twin streaks or prism trail behind you.
+- **Your look (Void):** an outline, a glow or a hologram (see-through light with scan lines) on your own player only.
+- **Hit impact (Void):** shards, a sigil, a cross slash, a star or rings of light where your hit lands; bigger on crits.
+- **Animated damage markers (Void):** numbers punch in with a slash behind them, stack into combos (×3), get spikes and a
+  CRIT tag on critical hits, and break into slices as they fade.
+- **Cinematic kill (Void):** after a kill a drawing (white with black outlines, black with white lines, or in your
+  colour) spreads out from the kill like a wave of ink across the world, then draws back into it. Slow and smooth or
+  sharp and quick; with Fewer flashes it's always the smooth, calm grey one.
+- **Block overlay (Void):** brackets, a scan, a hologram grid or a pulse on the block you look at, in place of the
+  outline. It glides and reshapes smoothly from one block to the next and fades in and out (on by default as brackets).
+- **Nametags (Void):** Glass, Neon, Hologram or Shimmer styles for players' names, shown exactly when Minecraft shows
+  them (nothing through walls that vanilla wouldn't show), and optionally your own name in F5.
+- **Music emotes (both editions):** two emotes that play your own song (OGG or WAV, up to 5 minutes, only you hear it)
+  while you dance to it. Set the song's BPM and a beat offset so the dance lands on the beat; pick the dance, including
+  two new ones made for it (Beat bounce and Beat step, also on the Dances page). A new Music page on the wheel.
+- New "You" group in Void's Visuals; every new effect has its own card with its options.
+- **Favourites (Void):** Visuals opens on a Favourites tab with the most important effects already in it (hand
+  animations, held item glow, blades, aura, glyphs, ribbons, motes, aurora, cosmic sky, block overlay, light
+  particles, hit impacts, damage markers, cinematic kill, trail). Right-click any card to add or remove it.
+- Dev: `-Pvulkan` starts dev runs on Minecraft's Vulkan backend, `-Pnokairo` without Kairo (to tell a Kairo problem
+  from a Minecraft or driver one), and a backend comparison tour (`build/tour-vk`).
+
 ## 0.2.0
 
 Both editions.

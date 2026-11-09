@@ -50,6 +50,16 @@ public final class CustomSoundInstance extends AbstractSoundInstance {
 		return s;
 	}
 
+	/** A song for a music emote: non-positional, looping, on the Jukebox/Note Blocks volume. */
+	public static CustomSoundInstance song(String key, float volume) {
+		CustomSoundInstance s = new CustomSoundInstance(key, SoundSource.RECORDS, volume, 1);
+		s.relative = true;
+		s.attenuation = Attenuation.NONE;
+		s.looping = true;
+		s.delay = 0;
+		return s;
+	}
+
 	/** A vanilla sound event, non-positional (previewing "Vanilla" in a sound picker). */
 	public static SoundInstance vanillaUi(Identifier event, float volume) {
 		return SimpleSoundInstance.forUI(SoundEvent.createVariableRangeEvent(event), 1, volume);

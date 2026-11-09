@@ -104,6 +104,8 @@ public final class HitFx {
 					Vec3 centre = lastPos.add(0, lastHeight * 0.6, 0);
 					Vec3 towards = mc.player != null ? mc.player.getEyePosition().subtract(centre).normalize() : Vec3.ZERO;
 					burst(level, v.hitBurst.get(), centre.add(towards.scale(living.getBbWidth() * 0.75 + 0.15)), lastHeight, v.hitAmount.floatValue());
+					// Kairo Void: an impact of light drawn at the same spot.
+					VoidWorldFx.onHit(centre.add(towards.scale(living.getBbWidth() * 0.6 + 0.1)), lastHeight, VoidFx.lastWasCrit());
 				}
 			}
 			if (sinceHit > 100) {
@@ -126,6 +128,7 @@ public final class HitFx {
 		if (killed) {
 			packKill(lastPos.add(0, lastHeight * 0.5, 0));
 			VoidFx.onKill(lastPos.add(0, lastHeight * 0.5, 0));
+			VoidNoir.onKill(lastPos.add(0, lastHeight * 0.5, 0));
 		}
 		targetId = -1;
 	}
@@ -161,7 +164,7 @@ public final class HitFx {
 				case STARS, FLAMES, SOUL -> 0.35f;
 				default -> 1f;
 			};
-			level.addParticle(p, x, y, z, vx * speed, vy * speed, vz * speed);
+			dev.mordo.kairo.render.LightParticles.add(level, p, x, y, z, vx * speed, vy * speed, vz * speed);
 		}
 	}
 
@@ -179,7 +182,7 @@ public final class HitFx {
 				if (WorldFx.calm()) {
 					// Fewer flashes: a column of sparks where the bolt would strike, without the sky flash.
 					for (int i = 0; i < 40; i++) {
-						level.addParticle(ParticleTypes.ELECTRIC_SPARK, at.x + RANDOM.nextGaussian() * 0.2, at.y + RANDOM.nextDouble() * 3, at.z + RANDOM.nextGaussian() * 0.2,
+						dev.mordo.kairo.render.LightParticles.add(level, ParticleTypes.ELECTRIC_SPARK, at.x + RANDOM.nextGaussian() * 0.2, at.y + RANDOM.nextDouble() * 3, at.z + RANDOM.nextGaussian() * 0.2,
 							0, 0.05, 0);
 					}
 					return;
@@ -193,7 +196,7 @@ public final class HitFx {
 			case FIREWORK -> {
 				for (int i = 0; i < 70; i++) {
 					Vec3 d = randomDir().scale(0.25 + RANDOM.nextDouble() * 0.1);
-					level.addParticle(i % 3 == 0 ? accentDust(1.4f) : ParticleTypes.FIREWORK, mid.x, mid.y + 0.4, mid.z, d.x, d.y, d.z);
+					dev.mordo.kairo.render.LightParticles.add(level, i % 3 == 0 ? accentDust(1.4f) : ParticleTypes.FIREWORK, mid.x, mid.y + 0.4, mid.z, d.x, d.y, d.z);
 				}
 				play(level, mid, SoundEvents.FIREWORK_ROCKET_LARGE_BLAST, sound, 0.8f, 1.1f);
 			}
@@ -202,31 +205,31 @@ public final class HitFx {
 					for (int i = 0; i < 4; i++) {
 						double a = RANDOM.nextDouble() * Math.PI * 2;
 						double r = 0.3 + RANDOM.nextDouble() * 0.3;
-						lv.addParticle(i % 2 == 0 ? ParticleTypes.SOUL : ParticleTypes.SCULK_SOUL,
+						dev.mordo.kairo.render.LightParticles.add(lv, i % 2 == 0 ? ParticleTypes.SOUL : ParticleTypes.SCULK_SOUL,
 							at.x + Math.cos(a) * r, at.y + t * 0.08, at.z + Math.sin(a) * r, 0, 0.06, 0);
 					}
 				}, 24, new int[1]));
 				play(level, mid, SoundEvents.SOUL_ESCAPE.value(), sound, 1f, 0.9f);
 			}
 			case EXPLOSION -> {
-				level.addParticle(ParticleTypes.EXPLOSION, mid.x, mid.y, mid.z, 0, 0, 0);
+				dev.mordo.kairo.render.LightParticles.add(level, ParticleTypes.EXPLOSION, mid.x, mid.y, mid.z, 0, 0, 0);
 				for (int i = 0; i < 30; i++) {
 					Vec3 d = randomDir().scale(0.15);
-					level.addParticle(i % 2 == 0 ? ParticleTypes.POOF : ParticleTypes.CLOUD, mid.x, mid.y, mid.z, d.x, d.y, d.z);
+					dev.mordo.kairo.render.LightParticles.add(level, i % 2 == 0 ? ParticleTypes.POOF : ParticleTypes.CLOUD, mid.x, mid.y, mid.z, d.x, d.y, d.z);
 				}
 				play(level, mid, SoundEvents.GENERIC_EXPLODE.value(), sound, 0.35f, 1.4f);
 			}
 			case TOTEM -> {
 				for (int i = 0; i < 60; i++) {
 					Vec3 d = randomDir().scale(0.4);
-					level.addParticle(ParticleTypes.TOTEM_OF_UNDYING, mid.x, mid.y, mid.z, d.x, d.y + 0.25, d.z);
+					dev.mordo.kairo.render.LightParticles.add(level, ParticleTypes.TOTEM_OF_UNDYING, mid.x, mid.y, mid.z, d.x, d.y + 0.25, d.z);
 				}
 				play(level, mid, SoundEvents.TOTEM_USE, sound, 0.35f, 1.3f);
 			}
 			case HEARTS -> {
 				RUNNING.add(new Effect((lv, t) -> {
 					if (t % 2 == 0) {
-						lv.addParticle(ParticleTypes.HEART, at.x + RANDOM.nextGaussian() * 0.4, at.y + height + t * 0.05, at.z + RANDOM.nextGaussian() * 0.4, 0, 0.1, 0);
+						dev.mordo.kairo.render.LightParticles.add(lv, ParticleTypes.HEART, at.x + RANDOM.nextGaussian() * 0.4, at.y + height + t * 0.05, at.z + RANDOM.nextGaussian() * 0.4, 0, 0.1, 0);
 					}
 				}, 20, new int[1]));
 				play(level, mid, SoundEvents.AMETHYST_BLOCK_CHIME, sound, 1f, 1.4f);
@@ -235,7 +238,7 @@ public final class HitFx {
 				var blood = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.REDSTONE_BLOCK.defaultBlockState());
 				for (int i = 0; i < 80; i++) {
 					Vec3 d = randomDir().scale(0.3);
-					level.addParticle(blood, mid.x, mid.y, mid.z, d.x, Math.abs(d.y) + 0.1, d.z);
+					dev.mordo.kairo.render.LightParticles.add(level, blood, mid.x, mid.y, mid.z, d.x, Math.abs(d.y) + 0.1, d.z);
 				}
 				play(level, mid, SoundEvents.HONEY_BLOCK_BREAK, sound, 1f, 0.7f);
 			}
@@ -244,7 +247,7 @@ public final class HitFx {
 					for (int arm = 0; arm < 3; arm++) {
 						double a = t * 0.45 + arm * Math.PI * 2 / 3;
 						double r = 1.1 - t * 0.03;
-						lv.addParticle(arm == 0 ? accentDust(1.2f) : ParticleTypes.END_ROD,
+						dev.mordo.kairo.render.LightParticles.add(lv, arm == 0 ? accentDust(1.2f) : ParticleTypes.END_ROD,
 							at.x + Math.cos(a) * r, at.y + t * 0.09, at.z + Math.sin(a) * r, 0, 0.01, 0);
 					}
 				}, 34, new int[1]));
@@ -258,7 +261,7 @@ public final class HitFx {
 					double x = at.x + RANDOM.nextGaussian() * 0.25;
 					double y = at.y + RANDOM.nextDouble() * height;
 					double z = at.z + RANDOM.nextGaussian() * 0.25;
-					level.addParticle(i % 3 == 0 ? shard : accentDust(1.5f + RANDOM.nextFloat()), x, y, z, d.x, Math.abs(d.y) * 0.6 + 0.05, d.z);
+					dev.mordo.kairo.render.LightParticles.add(level, i % 3 == 0 ? shard : accentDust(1.5f + RANDOM.nextFloat()), x, y, z, d.x, Math.abs(d.y) * 0.6 + 0.05, d.z);
 				}
 				play(level, mid, SoundEvents.GLASS_BREAK, sound, 0.7f, 1.3f);
 			}
@@ -269,13 +272,13 @@ public final class HitFx {
 						double r = 1.8 * (1 - t / 12.0) + 0.1;
 						for (int i = 0; i < 10; i++) {
 							Vec3 d = randomDir();
-							lv.addParticle(i % 2 == 0 ? ParticleTypes.REVERSE_PORTAL : accentDust(1.3f), mid.x + d.x * r, mid.y + d.y * r, mid.z + d.z * r,
+							dev.mordo.kairo.render.LightParticles.add(lv, i % 2 == 0 ? ParticleTypes.REVERSE_PORTAL : accentDust(1.3f), mid.x + d.x * r, mid.y + d.y * r, mid.z + d.z * r,
 								-d.x * 0.12, -d.y * 0.12, -d.z * 0.12);
 						}
 					} else if (t == 12) {
 						for (int i = 0; i < 50; i++) {
 							Vec3 d = randomDir().scale(0.35);
-							lv.addParticle(i % 3 == 0 ? ParticleTypes.END_ROD : accentDust(1.8f), mid.x, mid.y, mid.z, d.x, d.y, d.z);
+							dev.mordo.kairo.render.LightParticles.add(lv, i % 3 == 0 ? ParticleTypes.END_ROD : accentDust(1.8f), mid.x, mid.y, mid.z, d.x, d.y, d.z);
 						}
 						VoidFx.crystalPop(mid);
 						play(lv, mid, SoundEvents.BEACON_DEACTIVATE, sound, 0.9f, 1.6f);
@@ -291,9 +294,9 @@ public final class HitFx {
 						double a = t * 0.5 + i * Math.PI / 3;
 						double r = 0.55 - t * 0.012;
 						double y = at.y + t * 0.12 + i * 0.05;
-						lv.addParticle(i % 2 == 0 ? ParticleTypes.END_ROD : accentDust(1.6f), at.x + Math.cos(a) * r, y, at.z + Math.sin(a) * r, 0, 0.08, 0);
+						dev.mordo.kairo.render.LightParticles.add(lv, i % 2 == 0 ? ParticleTypes.END_ROD : accentDust(1.6f), at.x + Math.cos(a) * r, y, at.z + Math.sin(a) * r, 0, 0.08, 0);
 					}
-					lv.addParticle(ParticleTypes.FIREWORK, at.x + RANDOM.nextGaussian() * 0.1, at.y + 0.2, at.z + RANDOM.nextGaussian() * 0.1, 0, 0.35, 0);
+					dev.mordo.kairo.render.LightParticles.add(lv, ParticleTypes.FIREWORK, at.x + RANDOM.nextGaussian() * 0.1, at.y + 0.2, at.z + RANDOM.nextGaussian() * 0.1, 0, 0.35, 0);
 				}, 30, new int[1]));
 				play(level, mid, SoundEvents.BEACON_ACTIVATE, sound, 0.7f, 1.4f);
 			}

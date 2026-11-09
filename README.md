@@ -27,7 +27,7 @@
 
 |  |  |  |
 |:--|:--|:--|
-| 🧊 **Glass everything**<br>Blurred, frosted panels and a breathing Right Shift ring, all animated. | ⚔️ **PvP mode**<br>One switch for calmer explosions, smaller totem pops, no hurt tilt and its own HUD layout. | 👤 **Only on your screen**<br>Capes, wings, hats and 37 emotes, drawn for you alone. No accounts, no telemetry. |
+| 🧊 **Glass everything**<br>Blurred, frosted panels and a breathing Right Shift ring, all animated. | ⚔️ **PvP mode**<br>One switch for calmer explosions, smaller totem pops, no hurt tilt and its own HUD layout. | 👤 **Only on your screen**<br>Capes, wings, hats and 41 emotes (two with your own music), drawn for you alone. No accounts, no telemetry. |
 
 ## ✦ The Right Shift menu
 
@@ -63,7 +63,7 @@ Keystrokes, CPS, FPS, ping, coordinates, a compass and armor status. Keystrokes 
 
 ## ✦ Cosmetics & emotes
 
-16 capes (some animated, or use any image), 9 wings, 12 hats with fit sliders, bandanas and trails. **37 emotes** in four pages: hold **B**, point, let go. Only you see them.
+16 capes (some animated, or use any image), 9 wings, 12 hats with fit sliders, bandanas and trails. **41 emotes** in five pages: hold **B**, point, let go. Two music emotes play your own song while you dance on its beat. Only you see (and hear) them.
 
 <p align="center"><img src="docs/cosmetics.png" alt="Wardrobe, emote wheel and emotes" width="100%"></p>
 
@@ -101,7 +101,9 @@ Every mod has its own settings and an **In PvP mode** section. The [feature guid
 
 ## ✦ Kairo Void
 
-<a href="https://github.com/Mordsome/KairoVoid"><b>Kairo Void</b></a> is the second edition, built from this same code: flat dark menus, and over-the-top combat and sky visuals (energy blades, impact shockwaves, nine atmospheres, crystal styles, a cosmic night sky). Install **one** of the two, not both.
+<a href="https://github.com/Mordsome/KairoVoid"><b>Kairo Void</b></a> is the second edition, built from this same code: flat dark menus, and over-the-top combat and sky visuals (energy blades, impact shockwaves, nine atmospheres, crystal styles, a cosmic night sky). Since 0.3.0 it also has a start-up intro, your own picture as the sky, a living aurora, auras and line glyphs around you, light trails, an outline / glow / hologram look for yourself, custom hit impacts, animated damage markers, a cinematic kill effect, an animated block overlay and styled nametags. All of it is drawn with its own geometry and shaders, not vanilla particles. Install **one** of the two, not both.
+
+Both editions also have **music emotes**: bring your own song, set its BPM, and dance on the beat (only you hear it).
 
 ## 📦 Install
 
@@ -109,7 +111,7 @@ Every mod has its own settings and an **In PvP mode** section. The [feature guid
 2. Put these in your `mods` folder:
    - [Fabric API](https://modrinth.com/mod/fabric-api) for 26.3
    - [Sodium](https://modrinth.com/mod/sodium) 0.9.x for 26.3 (required)
-   - `kairo-0.2.0.jar` from [Releases](https://github.com/Mordsome/Kairo/releases/latest)
+   - `kairo-0.3.0.jar` from [Releases](https://github.com/Mordsome/Kairo/releases/latest)
 3. Start the game. A short setup runs the first time. In game, press **Right Shift**.
 
 Tested on Windows.

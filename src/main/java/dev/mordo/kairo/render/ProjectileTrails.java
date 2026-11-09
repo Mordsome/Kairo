@@ -57,7 +57,7 @@ public final class ProjectileTrails {
 			int steps = (int) Math.clamp(Math.sqrt(moved) * 3, 2, 8);
 			for (int i = 0; i < steps; i++) {
 				Vec3 at = from.lerp(to, i / (double) steps).add(0, e.getBbHeight() * 0.5, 0);
-				level.addParticle(particle(style, e, i), at.x, at.y, at.z, RANDOM.nextGaussian() * 0.004, RANDOM.nextGaussian() * 0.004, RANDOM.nextGaussian() * 0.004);
+				dev.mordo.kairo.render.LightParticles.add(level, particle(style, e, i), at.x, at.y, at.z, RANDOM.nextGaussian() * 0.004, RANDOM.nextGaussian() * 0.004, RANDOM.nextGaussian() * 0.004);
 			}
 		}
 	}
@@ -91,7 +91,7 @@ public final class ProjectileTrails {
 			double a = i * Math.PI * 2 / 28;
 			double cos = Math.cos(a);
 			double sin = Math.sin(a);
-			level.addParticle(i % 4 == 0 ? ParticleTypes.REVERSE_PORTAL : dust, at.x + cos * 0.3, at.y + 0.1, at.z + sin * 0.3, cos * 0.22, 0.01, sin * 0.22);
+			dev.mordo.kairo.render.LightParticles.add(level, i % 4 == 0 ? ParticleTypes.REVERSE_PORTAL : dust, at.x + cos * 0.3, at.y + 0.1, at.z + sin * 0.3, cos * 0.22, 0.01, sin * 0.22);
 		}
 		VoidFx.crystalPop(at.add(0, 0.5, 0));
 	}

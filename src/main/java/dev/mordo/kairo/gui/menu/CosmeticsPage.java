@@ -75,7 +75,9 @@ public final class CosmeticsPage extends PanelPage {
 	/** Emotes: one grid per page (dances, reactions...), hearts on your favourites (right-click a tile). */
 	private void emoteCategory(Cosmetics c) {
 		int index = categories.size();
-		SettingsList list = SettingsList.forSettings(host, "OPTIONS", List.of(c.emoteKey, c.emoteCamera, c.emoteBurst), false);
+		SettingsList list = SettingsList.forSettings(host, "OPTIONS", List.of(c.emoteKey, c.emoteCamera, c.emoteBurst,
+			c.music1Name, c.music1, c.music1Bpm, c.music1Offset, c.music1Dance, c.music2Name, c.music2, c.music2Bpm, c.music2Offset, c.music2Dance,
+			c.musicVolume), false);
 		List<List<Tile>> groups = new ArrayList<>();
 		for (Emotes.Kind kind : Emotes.Kind.values()) {
 			groups.add(emoteTiles(Emotes.of(kind)));

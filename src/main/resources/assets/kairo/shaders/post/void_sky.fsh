@@ -7,6 +7,7 @@
 
 uniform sampler2D InSampler;
 uniform sampler2D DepthSampler;
+uniform sampler2D SkyImage;
 
 layout(std140) uniform SkyConfig {
     mat4 InvViewProj; // clip space -> camera-relative world space
@@ -24,6 +25,8 @@ layout(std140) uniform SkyConfig {
     vec4 AtmoGrade;   // colour multiply, w saturation
     vec4 AtmoFx;      // x snow on the ground, y caustics, z feature (1 blood moon, 2 synth sun), w lightning flash
     vec4 AtmoMisc;    // x strength, yz camera x/z (wrapped)
+    vec4 SkyImg;      // custom sky picture: x how much shows, y brightness, z turn (radians), w keep sun/moon/stars
+    vec4 AuroraCfg;   // x style (0 curtains, 1 ribbons), y colour (0 classic, 1 accent, 2 rainbow, 3 sunset), z brightness
 };
 
 layout(location = 0) in vec2 texCoord;
@@ -281,6 +284,74 @@ float luma(vec3 c) {
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
 }
 
+vec3 hueColor(float h) {
+    return clamp(abs(mod(h * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+}
+
+// The aurora's colour for its height in the ribbon (0 bottom edge .. 1 top) and where along it you look.
+vec3 auroraColor(float up, float along, float time, vec3 accent) {
+    int mode = int(AuroraCfg.y + 0.5);
+    if (mode == 1) {
+        return mix(accent, mix(accent, vec3(1.0), 0.45), up);
+    }
+    if (mode == 2) {
+        return mix(hueColor(along * 0.25 + time * 0.02), hueColor(along * 0.25 + time * 0.02 + 0.15), up);
+    }
+    if (mode == 3) {
+        return mix(vec3(1.0, 0.45, 0.15), vec3(0.85, 0.2, 0.75), up);
+    }
+    return mix(vec3(0.15, 1.0, 0.55), mix(vec3(0.35, 0.45, 1.0), vec3(0.85, 0.3, 0.9), smoothstep(0.4, 1.0, up)), smoothstep(0.1, 0.7, up));
+}
+
+// Living ribbons: bands of light winding across the whole sky. Each has a bright folded lower edge and fine rays
+// rising from it; light runs along them, and they slowly twist, drift and breathe.
+vec3 auroraRibbons(vec3 dir, float time, vec3 accent, int quality) {
+    if (dir.y < 0.0) {
+        return vec3(0.0);
+    }
+    float az = atan(dir.x, -dir.z);
+    float el = asin(clamp(dir.y, -1.0, 1.0));
+    int count = quality >= 3 ? 5 : quality == 2 ? 4 : 3;
+    vec3 total = vec3(0.0);
+    for (int i = 0; i < 5; i++) {
+        if (i >= count) {
+            break;
+        }
+        float fi = float(i);
+        float speed = 0.04 + 0.015 * fi;
+        // Where the ribbon's lower edge sits, at this point around you.
+        float edge = 0.42 + 0.22 * sin(az * (1.0 + fi * 0.35) + time * speed + fi * 2.1)
+            + 0.07 * sin(az * 3.0 - time * 0.09 + fi * 1.7)
+            + 0.03 * sin(az * 7.0 + time * 0.21 + fi);
+        float slope = abs(0.22 * cos(az * (1.0 + fi * 0.35) + time * speed + fi * 2.1) + 0.21 * cos(az * 3.0 - time * 0.09 + fi * 1.7));
+        float d = el - edge;
+        // Bright, sharp lower edge; light fading up through the rays above it.
+        float lower = exp(-d * d / 0.0006);
+        float rays = 0.35 + 0.65 * pow(noise3(vec3(az * 26.0 + fi * 13.0, time * 0.35, fi)), 1.8);
+        float above = d > 0.0 ? exp(-d / (0.16 + 0.05 * fi)) * rays : 0.0;
+        float body = lower * 0.9 + above;
+        // Light running along it, and folds (where it turns) glowing brighter.
+        float run = 0.55 + 0.45 * sin(az * 6.0 - time * (0.6 + fi * 0.15) + fi * 3.0);
+        float fold = 1.0 + 1.6 * smoothstep(0.15, 0.0, slope);
+        // Each ribbon only covers part of the sky, and breathes in and out.
+        float reach = smoothstep(-0.2, 0.6, sin(az * 0.5 + fi * 1.9 + time * 0.013));
+        float breathe = 0.7 + 0.3 * sin(time * 0.17 + fi * 1.3);
+        float up = clamp(d / 0.35, 0.0, 1.0);
+        vec3 col = auroraColor(up, az + fi, time, accent);
+        total += col * body * run * fold * reach * breathe * 0.11;
+    }
+    float horizon = smoothstep(0.0, 0.12, dir.y);
+    return total * horizon;
+}
+
+// The custom sky picture in this direction (a 2:1 panorama wraps round; the bottom half mirrors the top).
+vec3 skyPicture(vec3 dir) {
+    float az = atan(dir.x, -dir.z) + SkyImg.z;
+    float u = fract(az / (2.0 * PI) + 0.5);
+    float v = clamp(acos(clamp(dir.y, -1.0, 1.0)) / PI, 0.0, 1.0);
+    return texture(SkyImage, vec2(u, v)).rgb;
+}
+
 // A huge red moon with dark seas, and a glow around it.
 vec3 bloodMoon(vec3 dir, out float cover) {
     vec3 m = normalize(vec3(0.45, 0.42, -0.55));
@@ -360,6 +431,16 @@ void main() {
     if (depth <= 0.0) {
         // ---- sky ----
         float above = clamp(dir.y, 0.0, 1.0);
+        bool layers = true;
+        if (SkyImg.x > 0.001) {
+            // Your own picture, darker at night. With "keep the sun, moon and stars" the bright things vanilla drew
+            // (anything brighter than its plain sky colour) stay on top, and the night layers below still draw.
+            vec3 picture = skyPicture(dir) * SkyImg.y * mix(0.3, 1.0, daylight);
+            vec3 celestial = max(color - SkyCol.rgb * 1.05, vec3(0.0));
+            vec3 replaced = picture + (SkyImg.w > 0.5 ? celestial : vec3(0.0));
+            color = mix(color, replaced, SkyImg.x);
+            layers = SkyImg.w > 0.5 || SkyImg.x < 0.999;
+        }
         if (AtmoLow.w > 0.0) {
             color = mix(color, atmoSky, AtmoLow.w);
         }
@@ -375,7 +456,7 @@ void main() {
             float around = max(dot(dir, sunDir), 0.0);
             color += Glow.rgb * pow(around, 24.0) * 0.6 * g;
         }
-        if (night > 0.001) {
+        if (night > 0.001 && layers) {
             float k = night * clear;
             if (cosmic) {
                 vec3 starDir = rotX(rotY(dir, PI * 0.5), -Flags2.w);
@@ -395,8 +476,12 @@ void main() {
                 }
             }
             if (Flags.w > 0.5 && AtmoLow.w < 0.5) {
-                int steps = quality >= 3 ? 24 : quality == 2 ? 16 : 10;
-                color += aurora(dir, time, accent, steps) * k;
+                if (AuroraCfg.x > 0.5) {
+                    color += auroraRibbons(dir, time, accent, quality) * k * AuroraCfg.z;
+                } else {
+                    int steps = quality >= 3 ? 24 : quality == 2 ? 16 : 10;
+                    color += aurora(dir, time, accent, steps) * k * AuroraCfg.z;
+                }
             }
         }
         int feature = int(AtmoFx.z + 0.5);

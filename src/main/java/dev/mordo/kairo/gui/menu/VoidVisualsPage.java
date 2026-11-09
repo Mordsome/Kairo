@@ -50,7 +50,10 @@ public final class VoidVisualsPage extends PanelPage {
 		SCREEN("Screen", Icon.EYE),
 		WORLD("World & sky", Icon.SUN),
 		ATMOSPHERE("Atmospheres", Icon.GLOBE),
-		INTERFACE("Interface", Icon.LAYOUT);
+		INTERFACE("Interface", Icon.LAYOUT),
+		YOU("You", Icon.USER),
+		/** Shown first: the cards you starred (right-click a card). */
+		FAVOURITES("Favourites", Icon.HEART);
 
 		final String label;
 		final Icon icon;
@@ -75,7 +78,7 @@ public final class VoidVisualsPage extends PanelPage {
 	private final TextField search;
 	private final ScrollState gridScroll = new ScrollState();
 	private final Button[] presets = new Button[4];
-	private @Nullable Group group;
+	private @Nullable Group group = Group.FAVOURITES;
 	private float gridTop;
 	private float gridBottom;
 
@@ -90,9 +93,15 @@ public final class VoidVisualsPage extends PanelPage {
 		super(menu);
 		search = new TextField("Search visuals", Icon.SEARCH).maxLength(32).onChange(text -> refresh());
 		build();
+		nav.add(new NavItem(Group.FAVOURITES.label, Group.FAVOURITES.icon,
+			() -> Long.toString(visuals.stream().filter(v -> isFavourite(v.name())).count()),
+			() -> group == Group.FAVOURITES, () -> selectGroup(Group.FAVOURITES)));
 		nav.add(new NavItem("All", Icon.GRID, () -> Integer.toString(visuals.size()),
 			() -> group == null, () -> selectGroup(null)));
 		for (Group g : Group.values()) {
+			if (g == Group.FAVOURITES) {
+				continue;
+			}
 			nav.add(new NavItem(g.label, g.icon, () -> Long.toString(visuals.stream().filter(v -> v.group() == g).count()),
 				() -> group == g, () -> selectGroup(g)));
 		}
@@ -178,6 +187,13 @@ public final class VoidVisualsPage extends PanelPage {
 		add("Damage numbers", "Floating numbers for the damage you deal", Icon.INFO, Group.COMBAT, bool(v.damageNumbers), List.of(), null);
 		add("Edge flash", "The screen edges flash in your colour when you land a hit", Icon.EYE, Group.COMBAT, bool(v.hitFlash), List.of(), null);
 		add("Totem blast", "Golden rays and a slow ripple when a totem saves you", Icon.TOTEM, Group.COMBAT, bool(vs.totemBlast), List.of(), null);
+		add("Hit impact", "Light drawn where your hit lands: shards, a sigil, a cross slash, a star or rings. Bigger on crits", Icon.SPARKLE,
+			Group.COMBAT, choice(vs.hitImpact, VoidSettings.HitImpact.NONE, VoidSettings.HitImpact.SHARDS), List.of(vs.hitImpactColor, vs.fxCustomColor),
+			grid("STYLE", tiles(vs.hitImpact, VoidSettings.HitImpact.NONE, Icon.SPARKLE)));
+		add("Damage markers", "Numbers punch in, slash, stack into combos and break apart; crits get spikes and a tag", Icon.INFO, Group.COMBAT,
+			bool(vs.kineticNumbers), List.of(v.damageNumbers), null);
+		add("Cinematic kill", "When you get a kill, the world becomes a drawing for a moment, then fades back", Icon.EYE, Group.COMBAT,
+			bool(vs.noirKill), List.of(vs.noirSpeed, vs.noirStyle, vs.noirLength), null);
 
 		// Hand
 		List<PickTile> swing = VisualsArt.swingTiles();
@@ -217,7 +233,19 @@ public final class VoidVisualsPage extends PanelPage {
 		// World & sky
 		add("Cosmic sky", "Nebula, a turning galaxy, a ringed planet and shooting stars at night", Icon.GLOBE, Group.WORLD, bool(vs.cosmicSky),
 			List.of(vs.planet, vs.shootingStars), null);
-		add("Aurora", "Curtains of light over the northern sky", Icon.SPARKLE, Group.WORLD, bool(vs.aurora), List.of(), null);
+		add("Aurora", "Living ribbons of light winding across the night sky, or curtains in the north", Icon.SPARKLE, Group.WORLD, bool(vs.aurora),
+			List.of(vs.auroraColor, vs.auroraStrength), grid("STYLE", tiles(vs.auroraStyle, null, Icon.SPARKLE)));
+		add("Custom sky", "Your own picture as the sky, slowly turning round you", Icon.IMAGE, Group.WORLD, bool(vs.customSky),
+			List.of(vs.skyTime, vs.skyBrightness, vs.skySpin, vs.skyStars), skyPictures());
+		add("Block overlay", "An animated overlay on the block you look at: brackets, a scan, a hologram grid or a pulse", Icon.CUBE, Group.WORLD,
+			choice(vs.blockOverlay, VoidSettings.BlockOverlay.NONE, VoidSettings.BlockOverlay.BRACKETS), List.of(vs.blockOverlayColor, vs.overlayGlide, vs.fxCustomColor),
+			grid("STYLE", tiles(vs.blockOverlay, VoidSettings.BlockOverlay.NONE, Icon.CUBE)));
+		add("Light ribbons", "Long ribbons of light drifting through the air around you, like an aurora you walk through", Icon.SPARKLE,
+			Group.WORLD, bool(vs.worldRibbons), List.of(vs.ribbonColor, vs.ribbonAmount, vs.ribbonsByDay), null);
+		add("Floating motes", "Small lights hanging in the air around you that drift, glow and fade", Icon.SPARKLE, Group.WORLD,
+			bool(vs.motes), List.of(vs.moteAmount, vs.ribbonColor), null);
+		add("Light particles", "Effects become sparks, shards and rings of light instead of Minecraft's pixel particles", Icon.SPARKLE,
+			Group.COMBAT, bool(vs.lightParticles), List.of(), null);
 		add("Rich sunsets", "Deeper, warmer colours at sunrise and sunset", Icon.SUN, Group.WORLD, bool(vs.sunsets), List.of(), null);
 		add("Depth fog", "Distant land fades into a sky-coloured haze", Icon.COMPASS, Group.WORLD, slider(vs.depthFog, 0, 0.5), List.of(vs.depthFog), null);
 		add("Fireflies", "Little lights drift over grass and flowers at night", Icon.SPARKLE, Group.WORLD, bool(vs.fireflies), List.of(), null);
@@ -272,13 +300,33 @@ public final class VoidVisualsPage extends PanelPage {
 			bool(cs.accentEverywhere), List.of(cs.accent), null);
 		add("Smooth motion", "How fast menus animate, or fades only", Icon.GAUGE, Group.INTERFACE, invert(cs.reduceMotion),
 			List.of(cs.animationSpeed), null);
+		add("Start-up intro", "When the game opens, Kairo appears and Void pops in next to it (click to skip)", Icon.SPARKLE, Group.INTERFACE,
+			bool(vs.intro), List.of(), null);
+		add("Nametags", "Players' names with a style: glass, neon, hologram or a shimmer. They show only when Minecraft would show them",
+			Icon.USER, Group.INTERFACE, choice(vs.nametags, VoidSettings.NametagStyle.VANILLA, VoidSettings.NametagStyle.GLASS), List.of(vs.ownNametag),
+			grid("STYLE", tiles(vs.nametags, VoidSettings.NametagStyle.VANILLA, Icon.USER)));
+
+		// You: only ever around and on your own player.
+		add("Aura", "Shapes of light floating around you: orbiting cubes, ribbons, prism shards or halo rings", Icon.SPARKLE, Group.YOU,
+			choice(vs.aura, VoidSettings.AuraStyle.NONE, VoidSettings.AuraStyle.CUBES),
+			List.of(vs.auraColor, vs.auraSize, vs.auraSpeed, vs.youInFirstPerson, vs.fxCustomColor),
+			grid("STYLE", tiles(vs.aura, VoidSettings.AuraStyle.NONE, Icon.SPARKLE)));
+		add("Line glyphs", "Animated angular lines turning around you: ticks, brackets and runes", Icon.COMPASS, Group.YOU, bool(vs.glyphs),
+			List.of(vs.glyphColor, vs.auraSize, vs.youInFirstPerson), null);
+		add("Player trail", "A fading trail of light behind you as you move", Icon.ARROW_RIGHT, Group.YOU,
+			choice(vs.playerTrail, VoidSettings.TrailStyle.NONE, VoidSettings.TrailStyle.RIBBON), List.of(vs.trailColor, vs.trailLength, vs.fxCustomColor),
+			grid("STYLE", tiles(vs.playerTrail, VoidSettings.TrailStyle.NONE, Icon.ARROW_RIGHT)));
+		add("Your look", "An outline, a glow or a hologram look on your own player (never on others)", Icon.USER, Group.YOU,
+			choice(vs.selfLook, VoidSettings.SelfLook.NONE, VoidSettings.SelfLook.HOLOGRAM), List.of(vs.auraColor),
+			grid("LOOK", tiles(vs.selfLook, VoidSettings.SelfLook.NONE, Icon.USER)));
 	}
 
 	private void add(String name, String description, Icon icon, Group group, Binding<Boolean> on, List<Setting<?>> settings,
 					 SettingsList.@Nullable Section header) {
 		Visual[] self = new Visual[1];
 		boolean hasSettings = !settings.isEmpty() || header != null;
-		VisualCard card = new VisualCard(name, description, icon, on, hasSettings, () -> openDetail(self[0]));
+		VisualCard card = new VisualCard(name, description, icon, on, hasSettings, () -> openDetail(self[0]))
+			.favourite(() -> isFavourite(name), () -> toggleFavourite(name));
 		self[0] = new Visual(name, description, icon, group, on, settings, header, card);
 		visuals.add(self[0]);
 	}
@@ -322,6 +370,46 @@ public final class VoidVisualsPage extends PanelPage {
 
 	private static SettingsList.Section grid(String title, List<PickTile> tiles) {
 		return (g, x, y, w, mx, my, fade, put) -> PickTile.grid(g, title, tiles, x, y, w, fade, put);
+	}
+
+	/** A tile for every choice of a setting (leaving out {@code skip}, its "off"); click one to pick it. */
+	private static <E extends Enum<E> & EnumSetting.Labeled> List<PickTile> tiles(EnumSetting<E> setting, @Nullable E skip, Icon icon) {
+		List<PickTile> list = new ArrayList<>();
+		for (E value : setting.values()) {
+			if (value == skip) {
+				continue;
+			}
+			list.add(PickTile.icon(value.label(), icon, 0xFFE6EEF6, () -> setting.getNormal() == value, () -> setting.set(value)));
+		}
+		return list;
+	}
+
+	/** Custom sky: your pictures (click one to use it) and a tile to add another. */
+	private static SettingsList.Section skyPictures() {
+		VoidSettings vs = VoidSettings.INSTANCE;
+		return (g, x, y, w, mx, my, fade, put) -> {
+			List<PickTile> tiles = new ArrayList<>();
+			for (java.nio.file.Path file : dev.mordo.kairo.render.SkyImage.list()) {
+				String name = file.getFileName().toString();
+				String id = "image:" + name;
+				var entry = new dev.mordo.kairo.render.background.Backgrounds.Entry("sky:" + name, name,
+					dev.mordo.kairo.render.background.Backgrounds.Kind.IMAGE, file);
+				tiles.add(new PickTile(name.replaceFirst("\\.[^.]+$", ""), (gg, tx, ty, size, t, a, on) -> {
+					var thumb = dev.mordo.kairo.render.background.Backgrounds.thumbnail(entry);
+					if (thumb != null && a > 0.5f) {
+						// The middle square of the 16:9 thumbnail.
+						gg.blit(thumb, Math.round(tx), Math.round(ty), Math.round(tx + size), Math.round(ty + size), 0.21875f, 0.78125f, 0, 1);
+					} else {
+						Shapes.rect(gg, tx, ty, size, size, 8, Colors.argb(0.06f * a, 0xFFFFFF));
+					}
+				}, () -> vs.skyImage.getNormal().equals(id), () -> {
+					vs.skyImage.set(id);
+					vs.customSky.set(true);
+				}));
+			}
+			tiles.add(PickTile.icon("Add picture…", Icon.PLUS, 0xFFE6EEF6, () -> false, dev.mordo.kairo.render.SkyImage::importImage));
+			return PickTile.grid(g, "YOUR PICTURES (A WIDE 2:1 PANORAMA WRAPS ALL THE WAY ROUND)", tiles, x, y, w, fade, put);
+		};
 	}
 
 	/** A card that does something when clicked (never shows as picked). */
@@ -460,11 +548,44 @@ public final class VoidVisualsPage extends PanelPage {
 		}
 	}
 
+	// ---- favourites ----
+
+	private static String favouritesText = null;
+	private static java.util.Set<String> favouriteNames = java.util.Set.of();
+
+	private static java.util.Set<String> favourites() {
+		String text = VoidSettings.INSTANCE.favourites.get();
+		if (!text.equals(favouritesText)) {
+			favouritesText = text;
+			favouriteNames = new java.util.LinkedHashSet<>(java.util.Arrays.asList(text.split("\\|")));
+		}
+		return favouriteNames;
+	}
+
+	private static boolean isFavourite(String name) {
+		return favourites().contains(name);
+	}
+
+	private void toggleFavourite(String name) {
+		java.util.Set<String> names = new java.util.LinkedHashSet<>(favourites());
+		boolean added = names.add(name);
+		if (!added) {
+			names.remove(name);
+		}
+		names.remove("");
+		VoidSettings.INSTANCE.favourites.set(String.join("|", names));
+		dev.mordo.kairo.gui.Toasts.show(added ? name + " added to Favourites" : name + " removed from Favourites", Theme.accent());
+		dev.mordo.kairo.sound.UiSounds.click();
+		if (group == Group.FAVOURITES) {
+			refresh();
+		}
+	}
+
 	private void refresh() {
 		shown.clear();
 		String query = search.text().trim().toLowerCase(Locale.ROOT);
 		for (Visual v : visuals) {
-			if (group != null && v.group() != group) {
+			if (group == Group.FAVOURITES ? !isFavourite(v.name()) : group != null && v.group() != group) {
 				continue;
 			}
 			if (!query.isEmpty() && !v.name().toLowerCase(Locale.ROOT).contains(query) && !v.description().toLowerCase(Locale.ROOT).contains(query)) {

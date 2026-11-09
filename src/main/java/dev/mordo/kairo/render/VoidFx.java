@@ -127,16 +127,24 @@ public final class VoidFx {
 		return VoidSettings.INSTANCE.slashGlow.floatValue();
 	}
 
+	private static boolean lastCrit;
+
+	/** Whether your last attack was a critical hit (for the size of the hit impact). */
+	public static boolean lastWasCrit() {
+		return lastCrit;
+	}
+
 	/** You attacked an entity (called before the game resolves the hit). */
 	public static void onEntityAttack(LocalPlayer player, Entity target) {
-		if (!on()) {
-			return;
-		}
-		VoidSettings s = VoidSettings.INSTANCE;
 		float strength = player.getAttackStrengthScale(0.5f);
 		boolean full = strength > 0.9f;
 		boolean crit = full && player.fallDistance > 0 && !player.onGround() && !player.onClimbable() && !player.isInWater()
 			&& !player.isPassenger() && !player.isSprinting() && target instanceof LivingEntity;
+		lastCrit = crit;
+		if (!on()) {
+			return;
+		}
+		VoidSettings s = VoidSettings.INSTANCE;
 		if (crit && s.slashes.isOn()) {
 			HandAnimations.markCrit();
 		}

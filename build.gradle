@@ -64,6 +64,22 @@ if (providers.gradleProperty('void').isPresent()) {
 	}
 }
 
+// Add -Pvulkan to any run (runClient, runVoidClient, runClientGameTest) to start the game on Minecraft's Vulkan
+// backend instead of OpenGL. Dev runs only; players pick it in Video Settings.
+if (providers.gradleProperty('vulkan').isPresent()) {
+	loom.runs.configureEach {
+		programArgs '--graphicsBackend', 'vulkan'
+	}
+}
+
+// Add -Pnokairo to runClient to start the same dev game without Kairo (Fabric API and Sodium only), to tell a
+// Kairo problem from a Minecraft, Sodium or driver one.
+if (providers.gradleProperty('nokairo').isPresent()) {
+	loom.runs.configureEach {
+		vmArg '-Dfabric.debug.disableModIds=kairo,kairo-test'
+	}
+}
+
 dependencies {
 	// 26.x ships unobfuscated, so there is no mappings line: Mojang's own names are used directly.
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"

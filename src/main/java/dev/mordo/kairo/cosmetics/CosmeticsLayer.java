@@ -25,6 +25,8 @@ final class CosmeticsLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
 	@Override
 	public void submit(PoseStack poseStack, SubmitNodeCollector collector, int light, AvatarRenderState state, float yRot, float xRot) {
 		Cosmetics c = cosmetics;
+		// Kairo Void "Your look: Glow" (only ever your own player).
+		dev.mordo.kairo.render.VoidLook.glowShell(poseStack, collector, getParentModel(), state, light, LivingEntityRenderer.getOverlayCoords(state, 0));
 		if (!c.isEnabled() || state.isInvisible || state.isSpectator || !Cosmetics.isLocal(state)) {
 			return;
 		}

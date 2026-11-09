@@ -44,6 +44,56 @@ What it adds is in the game itself, every part of it switchable in Visuals:
   a ringed planet and drifting crystal shards.
 - **PvP mode** works the same as in Kairo.
 
+New in 0.3.0, all drawn with Kairo's own geometry and shaders (no vanilla particles), all only on your screen:
+
+- **Start-up intro** (Interface): when the game opens, "Kairo" rises into place over black and "Void" pops in next to it
+  with a ring of light, then the first menu fades in. Once per launch, never when you leave a world; click to skip.
+  Reduce motion: fades only. Fewer flashes: no ring, a soft glow.
+- **Custom sky** (World & sky): your own picture as the sky. A wide 2:1 panorama wraps all the way round (any picture
+  works). Show it day and night or only one of them, set its brightness (it always darkens at night), let it turn
+  slowly, and keep the sun, moon, cosmic sky and aurora on top of it. **+** adds a picture; they live in
+  `config/kairo-void/skies`.
+- **Aurora** (World & sky): Living ribbons (bands of light winding across the whole night sky, light running along them,
+  brighter where they fold, slowly drifting and breathing) or the old Curtains in the north; colours green and violet,
+  your colour, rainbow or sunset; a brightness slider.
+- **Aura** (You): orbiting cubes of light (bright edges, faint faces), light ribbons spiralling round you, prism shards
+  or halo rings with lights running round them; colour (yours, rainbow, colour and white, or custom), size and speed.
+- **Line glyphs** (You): animated angular lines turning round you: rings of ticks, chevrons, brackets and little runes at
+  your feet, round your waist and over your head, writing themselves in and out.
+- **Player trail** (You): a fading light ribbon, a comet tail, twin streaks or a rainbow prism ribbon behind you, with a
+  length setting.
+- **Your look** (You): an outline (Minecraft's own glowing outline in your colour), a glow (a soft shell of light) or a
+  hologram (your skin as see-through light with scan lines). Only ever on your own player (F5, the inventory, the
+  menu), never on other players. Auras, glyphs and trails also only go round you. In first person (on by default) the
+  aura and glyphs spread out a few blocks round you: wide glyph rings at your feet, one turning just below eye level
+  and a big slow one high above, so the view is alive without anything in your face.
+- **Light ribbons** (World & sky): long ribbons of light hanging and twisting in the air, a few blocks above the ground,
+  bright along their lower edge with light running along them, like an aurora you walk through. They belong to places
+  in the world, so you pass them as you travel; they fade out near you and far away. Colours as the aurora, an amount
+  slider, and "Also by day" (fainter in daylight).
+- **Floating motes** (World & sky): small lights hanging in the air close around you (never inside blocks or right in
+  front of your eyes), drifting a little and slowly breathing.
+- **Light particles** (Combat): Kairo's effects (hit and kill effects, jumps and landings, explosions, crystal pops,
+  atmospheres, projectile and cosmetic trails, emote bursts) and Minecraft's combat, death, potion and explosion
+  particles become sparks, shards, orbs, rings, petals and flakes of light instead of pixel sprites. Ambient particles
+  (torches, smoke, rain, block breaking) stay as they are.
+- **Hit impact** (Combat): shards, a sigil, a cross slash, a star burst or rings of light where your hit lands, bigger on
+  critical hits.
+- **Damage markers** (Combat, with Damage numbers on): numbers punch in with a little tilt while a slash of light wipes
+  behind them, drift up and away, and break into slices as they fade. Hits on the same target stack into one marker
+  with a combo count; critical hits are bigger, in gold and your colour, with spikes and a CRIT tag.
+- **Cinematic kill** (Combat): when you get a kill the world becomes a drawing for a moment: white with black outlines,
+  black with white lines, or tinted in your colour. Outlines come from where distance jumps, where surfaces fold and
+  where colours change sharply; your hand stays as it is. It always fades in and out over a third of a second (never a
+  flash), and with Fewer flashes it's a calm grey drawing instead of a white one.
+- **Block overlay** (World & sky): an animated overlay on the block you look at: corner brackets that breathe, a band of
+  light scanning up it, a hologram grid, or frames pulsing outwards. It takes the outline's place, glides and reshapes
+  smoothly from one block to the next and fades in and out (Glide between blocks; with Reduce motion it settles faster).
+  High contrast outlines stay vanilla.
+- **Nametags** (Interface): Glass (a line of your colour under the name), Neon (a flowing colour and glowing bars),
+  Hologram (brackets and a scan line) or Shimmer (a light sweeping across). Minecraft still decides when a name shows
+  and whether it shows through walls; the light around it never shows through blocks. Optionally your own name in F5.
+
 Void keeps its own settings (`config/kairo-void`). Both jars use the mod id `kairo`, so install one or the other.
 
 Mod colours that use the accent (HUD values, hotbar selection, cape) follow it until you pick your own; Visuals →
@@ -114,14 +164,19 @@ a tile grid per category. Cosmetics are drawn only on your own player, on your s
   solid / stripes / dots pattern.
 - **Trails:** Hearts, Sparkles, Flames, Soul flames, Notes, Snow, Totem, Enchant, Clouds, Cherry petals, Rainbow dust,
   Electric; amount and "only while moving".
-- **Emotes:** 37 emotes in four pages, plus your favourites. Hold **B**, point at an emote and let go to play it (or
+- **Emotes:** 41 emotes in five pages, plus your favourites. Hold **B**, point at an emote and let go to play it (or
   tap B and click one); scroll, Tab or the tabs above the wheel change the page, and right-click adds an emote to your
   favourites (up to 12, the wheel's first page). The wardrobe's Emotes tab lists them by page; right-click a tile to
   favourite it there too.
-  - Dances: Dance, Zombie, Floss, Disco, Robot, Headbang, Shuffle, Wiggle.
+  - Dances: Dance, Zombie, Floss, Disco, Robot, Headbang, Shuffle, Wiggle, Beat bounce, Beat step.
   - Reactions: Wave, Clap, Cheer, Salute, Bow, Facepalm, Shrug, Laugh, Cry, Point, Think, Angry, Excited.
   - Poses: Sit, Lie down, Dab, T-pose, Meditate (floating), Hero pose, Kneel, Flex, Victory, Lounge.
   - Moves: Backflip, Spin, Front flip, Cartwheel, Jump for joy, Levitate.
+  - Music: two music emotes. Each plays your own song (OGG or WAV, up to 5 minutes, added with **+** in the wardrobe's
+    emote options; only you hear it, on the Jukebox/Note Blocks volume) while you dance to it. Give it a name, the song's
+    BPM (60 to 200) and a beat offset so the dance lands on the beat, and pick the dance: Beat bounce (fist pumps and a
+    dip on every beat) or Beat step (a step to the side on every beat) are made for it, or any of the looping dances.
+    The dance starts right away and lines up with the beat again the moment the song starts playing.
 
   A small burst of light in your colour marks the start (Emote sparkle, can be turned off). The camera swings to the
   front (or back, or stays, in the options) and moving, jumping, attacking or taking damage ends the emote. Emotes are

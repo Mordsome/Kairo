@@ -211,6 +211,55 @@ public final class Cosmetics extends Module {
 	public final EnumSetting<EmoteCamera> emoteCamera = add(new EnumSetting<>("emote_camera", "Camera during emotes", EmoteCamera.FRONT));
 	public final BooleanSetting emoteBurst = add(new BooleanSetting("emote_burst", "Emote sparkle", true)
 		.description("A small burst of light in your colour when an emote starts"));
+
+	// ---- music emotes: your own song, danced to on the beat ----
+
+	/** The dances a music emote can do (the two beat dances are made for it). */
+	public enum MusicDance implements dev.mordo.kairo.core.settings.EnumSetting.Labeled {
+		BEAT_BOUNCE("Beat bounce", Emotes.Emote.BEAT_BOUNCE),
+		BEAT_STEP("Beat step", Emotes.Emote.BEAT_STEP),
+		DANCE("Dance", Emotes.Emote.DANCE),
+		FLOSS("Floss", Emotes.Emote.FLOSS),
+		DISCO("Disco", Emotes.Emote.DISCO),
+		ROBOT("Robot", Emotes.Emote.ROBOT),
+		HEADBANG("Headbang", Emotes.Emote.HEADBANG),
+		SHUFFLE("Shuffle", Emotes.Emote.SHUFFLE),
+		WIGGLE("Wiggle", Emotes.Emote.WIGGLE);
+
+		private final String label;
+		final Emotes.Emote emote;
+
+		MusicDance(String label, Emotes.Emote emote) {
+			this.label = label;
+			this.emote = emote;
+		}
+
+		@Override
+		public String label() {
+			return label;
+		}
+	}
+
+	public final dev.mordo.kairo.core.settings.TextSetting music1Name = add(new dev.mordo.kairo.core.settings.TextSetting("music_1_name",
+		"Music emote 1 name", "Music 1", 24).description("What it's called on the emote wheel"));
+	public final dev.mordo.kairo.core.settings.ChoiceSetting music1 = add(dev.mordo.kairo.sound.SoundChoices.music("music_1", "Music emote 1 song",
+		"Your own song (OGG or WAV, up to 5 minutes). Only you hear it"));
+	public final SliderSetting music1Bpm = add(new SliderSetting("music_1_bpm", "Music emote 1 BPM", 120, 60, 200, 1)
+		.description("The song's beats per minute: the dance moves on the beat"));
+	public final SliderSetting music1Offset = add(new SliderSetting("music_1_offset", "Music emote 1 beat offset", 0, -500, 500, 10).unit(" ms")
+		.description("Nudges the dance earlier or later until it lands on the beat"));
+	public final EnumSetting<MusicDance> music1Dance = add(new EnumSetting<>("music_1_dance", "Music emote 1 dance", MusicDance.BEAT_BOUNCE));
+	public final dev.mordo.kairo.core.settings.TextSetting music2Name = add(new dev.mordo.kairo.core.settings.TextSetting("music_2_name",
+		"Music emote 2 name", "Music 2", 24).description("What it's called on the emote wheel"));
+	public final dev.mordo.kairo.core.settings.ChoiceSetting music2 = add(dev.mordo.kairo.sound.SoundChoices.music("music_2", "Music emote 2 song",
+		"Your own song (OGG or WAV, up to 5 minutes). Only you hear it"));
+	public final SliderSetting music2Bpm = add(new SliderSetting("music_2_bpm", "Music emote 2 BPM", 120, 60, 200, 1)
+		.description("The song's beats per minute: the dance moves on the beat"));
+	public final SliderSetting music2Offset = add(new SliderSetting("music_2_offset", "Music emote 2 beat offset", 0, -500, 500, 10).unit(" ms")
+		.description("Nudges the dance earlier or later until it lands on the beat"));
+	public final EnumSetting<MusicDance> music2Dance = add(new EnumSetting<>("music_2_dance", "Music emote 2 dance", MusicDance.BEAT_STEP));
+	public final SliderSetting musicVolume = add(new SliderSetting("music_volume", "Music emote volume", 0.8, 0.0, 1.0, 0.05).percent()
+		.description("Also follows Minecraft's Jukebox/Note Blocks volume"));
 	/** Your favourite emotes (the first page of the wheel), in order. Right-click an emote to add or remove it. */
 	public final dev.mordo.kairo.core.settings.TextSetting emoteFavourites = add(new dev.mordo.kairo.core.settings.TextSetting("emote_favourites",
 		"Favourite emotes", "WAVE,DANCE,BACKFLIP,FLOSS,DAB,CLAP,SIT,LAUGH", 400).<dev.mordo.kairo.core.settings.TextSetting>hidden());

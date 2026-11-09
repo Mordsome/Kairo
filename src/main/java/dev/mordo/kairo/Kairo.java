@@ -44,6 +44,10 @@ public final class Kairo implements ClientModInitializer {
 		dev.mordo.kairo.core.update.UpdateInstaller.init();
 		dev.mordo.kairo.render.HitFx.init();
 		dev.mordo.kairo.render.WorldFx.init();
+		if (dev.mordo.kairo.core.Edition.isVoid()) {
+			// Auras, glyphs, trails, hit impacts and the block overlay, drawn into the world.
+			net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents.COLLECT_SUBMITS.register(dev.mordo.kairo.render.VoidWorldFx::submit);
+		}
 		// Registered after the config is loaded, so restoring the saved mode at start-up stays silent.
 		dev.mordo.kairo.core.PvpMode.addListener(dev.mordo.kairo.sound.UiSounds::pvp);
 

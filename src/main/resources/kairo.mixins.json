@@ -32,6 +32,8 @@
 		"LightmapMixin",
 		"LivingEntitySwingMixin",
 		"LivingEntityFlashMixin",
+		"LivingEntityLookMixin",
+		"NametagMixin",
 		"LivingEntityRenderStateMixin",
 		"MinecraftMixin",
 		"MouseHandlerMixin",

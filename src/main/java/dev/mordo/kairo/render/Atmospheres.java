@@ -164,7 +164,7 @@ public final class Atmospheres {
 			if (level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ()) > y) {
 				continue;
 			}
-			level.addParticle(type, x, y, z, vx, vy, vz);
+			dev.mordo.kairo.render.LightParticles.add(level, type, x, y, z, vx, vy, vz);
 		}
 	}
 
@@ -177,7 +177,7 @@ public final class Atmospheres {
 			if (Math.abs(top - player.getY()) > 8) {
 				continue;
 			}
-			level.addParticle(type, x, top + 0.1, z, 0, up, 0);
+			dev.mordo.kairo.render.LightParticles.add(level, type, x, top + 0.1, z, 0, up, 0);
 		}
 	}
 
@@ -193,7 +193,7 @@ public final class Atmospheres {
 			BlockState above = level.getBlockState(BlockPos.containing(x, top, z));
 			boolean plants = !above.isAir() || ground.getBlock().getDescriptionId().contains("grass");
 			if (plants && RANDOM.nextFloat() < 0.6f) {
-				level.addParticle(ParticleTypes.FIREFLY, x, top + 0.4 + RANDOM.nextDouble() * 1.4, z, 0, 0, 0);
+				dev.mordo.kairo.render.LightParticles.add(level, ParticleTypes.FIREFLY, x, top + 0.4 + RANDOM.nextDouble() * 1.4, z, 0, 0, 0);
 			}
 		}
 	}
