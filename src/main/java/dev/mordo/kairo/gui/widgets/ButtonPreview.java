@@ -39,7 +39,7 @@ public final class ButtonPreview extends Widget {
 		float alpha = fade * intro;
 		VanillaStyle.button(g, Math.round(x), Math.round(y), Math.round(w), Math.round(h), activeButton,
 			activeButton && hover.value() > 0.5f, alpha, fx);
-		Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, label, cx, cy, 12, Colors.multiplyAlpha(activeButton ? Theme.TEXT : 0x80F4F8FB, alpha),
+		Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, label, cx, cy, 12, Colors.multiplyAlpha(activeButton ? Theme.text(1f) : Colors.withAlpha(Theme.text(1f), 0.5f), alpha),
 			Fonts.Align.CENTER, 0, false);
 		g.pose().popMatrix();
 	}

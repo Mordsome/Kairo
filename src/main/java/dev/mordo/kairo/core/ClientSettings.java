@@ -125,6 +125,16 @@ public final class ClientSettings extends SettingHolder {
 		}
 	}
 
+	// Sizes (see UiScaling).
+	public final SliderSetting menuScale = add(new SliderSetting("menu_scale", "Menu size", 0.85, 0.6, 1.3, 0.05).percent()
+		.description("How big the ring menu, its panels and the emote wheel are"));
+	public final BooleanSetting menusFollowGuiScale = add(new BooleanSetting("menus_follow_gui_scale", "Follow GUI Scale", true)
+		.description("Kairo's menus also get smaller when Minecraft's GUI Scale (Video Settings) is set below its biggest, like Minecraft's own menus. They never get too small to read"));
+	public final SliderSetting mainMenuScale = add(new SliderSetting("main_menu_scale", "Main menu size", 1.0, 0.6, 1.3, 0.05).percent()
+		.description("How big Kairo's main menu and the worlds and servers screens are"));
+	public final SliderSetting hudScale = add(new SliderSetting("hud_scale", "HUD size", 1.3, 0.5, 2.0, 0.05).percent()
+		.description("The whole HUD together: every mod and the space between them grow evenly, so nothing runs into anything. Also in the layout editor"));
+
 	public final SliderSetting buttonRadius = add(new SliderSetting("button_radius", "Corner radius", 5, 0, 10, 0.5).unit("px")
 		.description("0 = square corners; also used by text fields and sliders"));
 	public final BooleanSetting buttonAnimations = add(new BooleanSetting("button_animations", "Animated buttons", true)
@@ -144,6 +154,20 @@ public final class ClientSettings extends SettingHolder {
 	/** Looks seen before, so a newly installed one can be picked once. */
 	public final dev.mordo.kairo.core.settings.TextSetting knownMenuLooks = add(new dev.mordo.kairo.core.settings.TextSetting("known_menu_looks",
 		"Known menu looks", "", 1000).hidden());
+	public final dev.mordo.kairo.core.settings.ChoiceSetting hudLook = add(new dev.mordo.kairo.core.settings.ChoiceSetting("hud_look", "HUD look",
+		dev.mordo.kairo.api.Addons.DEFAULT_LOOK, dev.mordo.kairo.api.Addons::hudLookChoices)
+		.<dev.mordo.kairo.core.settings.ChoiceSetting>description("Set by the theme picked in Visuals → Theme")
+		.hidden());
+	public final dev.mordo.kairo.core.settings.ChoiceSetting homeMenu = add(new dev.mordo.kairo.core.settings.ChoiceSetting("home_menu", "Right Shift opens",
+		dev.mordo.kairo.api.Addons.RING, dev.mordo.kairo.api.Addons::homeMenuChoices)
+		.<dev.mordo.kairo.core.settings.ChoiceSetting>description("The ring, or a different menu from an addon. Back in every page leads there too")
+		.visibleWhen(dev.mordo.kairo.api.Addons::hasHomeMenus));
+	/** Home menus seen before, so a newly installed one can be picked once. */
+	public final dev.mordo.kairo.core.settings.TextSetting knownHomeMenus = add(new dev.mordo.kairo.core.settings.TextSetting("known_home_menus",
+		"Known home menus", "", 1000).hidden());
+	/** HUD looks seen before, so a newly installed one can be picked once. */
+	public final dev.mordo.kairo.core.settings.TextSetting knownHudLooks = add(new dev.mordo.kairo.core.settings.TextSetting("known_hud_looks",
+		"Known HUD looks", "", 1000).hidden());
 
 	/** The ring menu breathes, lights orbit it and the centre pulses (in Kairo Void it's also just the ring). */
 	public final BooleanSetting livingRing = add(new BooleanSetting("living_ring", "Living ring", !Edition.isVoid())
@@ -157,6 +181,17 @@ public final class ClientSettings extends SettingHolder {
 	public final BooleanSetting checkUpdates = add(new BooleanSetting("check_updates", "Check for updates on GitHub", false)
 		.description("Once per launch, asks GitHub for the latest version. Sends nothing about you; installs only when you click Update"));
 
+	/** Starred screenshots (file names, "|" between them), for the Screenshots page's Favourites. */
+	public final dev.mordo.kairo.core.settings.TextSetting favouriteScreenshots = add(new dev.mordo.kairo.core.settings.TextSetting(
+		"favourite_screenshots", "Favourite screenshots", "", 20000).hidden());
+	public final BooleanSetting addonsNoticeShown = add(new BooleanSetting("addons_notice_shown", "Addons notice shown", false).hidden());
+	// Shortcut buttons into Kairo's menus (see MenuShortcuts), each one switchable.
+	public final BooleanSetting pauseKairoButton = add(new BooleanSetting("pause_kairo_button", "Pause menu: Kairo button", true)
+		.description("Opens the ring"));
+	public final BooleanSetting pauseModsButton = add(new BooleanSetting("pause_mods_button", "Pause menu: Mods button", true));
+	public final BooleanSetting pauseVisualsButton = add(new BooleanSetting("pause_visuals_button", "Pause menu: Visuals button", true));
+	public final BooleanSetting pauseCosmeticsButton = add(new BooleanSetting("pause_cosmetics_button", "Pause menu: Cosmetics button", true));
+	public final BooleanSetting inventoryCosmeticsButton = add(new BooleanSetting("inventory_cosmetics_button", "Inventory: Cosmetics button", true));
 	public final BooleanSetting hidePauseExtras = add(new BooleanSetting("hide_pause_extras", "Hide extra pause buttons", false)
 		.description("The small icon row (bug report, feedback, friends, player reporting) in the pause menu"));
 

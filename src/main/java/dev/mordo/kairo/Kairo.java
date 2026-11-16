@@ -33,13 +33,16 @@ public final class Kairo implements ClientModInitializer {
 		}
 		Modules.registerAll();
 		// Addons plug in here: after Kairo's own mods, before the settings are loaded.
+		dev.mordo.kairo.api.Features.lockSettings();
 		dev.mordo.kairo.api.Addons.load();
 
 		KeybindManager.collect();
 		HudManager.init();
 		Toasts.register();
+		dev.mordo.kairo.gui.MenuShortcuts.register();
 		ConfigManager.init();
 		dev.mordo.kairo.api.Addons.afterSettingsLoaded();
+		dev.mordo.kairo.gui.LookPack.prepare();
 		for (var module : ModuleManager.modules()) {
 			module.init();
 		}
@@ -60,6 +63,11 @@ public final class Kairo implements ClientModInitializer {
 				pipelinesWarm = true;
 				warmUpRendering();
 			}
+			// Once, on a main menu after the first-run setup: animations and kill effects are addons now (plain Kairo).
+			if (pipelinesWarm && ClientSettings.INSTANCE.onboarded.isOn() && (client.gui.screen() instanceof net.minecraft.client.gui.screens.TitleScreen
+				|| client.gui.screen() instanceof dev.mordo.kairo.gui.main.MainMenuBase)) {
+				dev.mordo.kairo.api.Features.noticeOnce();
+			}
 			ModuleManager.tick();
 			dev.mordo.kairo.render.HitFx.tick(client);
 			dev.mordo.kairo.render.WorldFx.tick(client);
@@ -69,6 +77,7 @@ public final class Kairo implements ClientModInitializer {
 			dev.mordo.kairo.render.GlintTint.tick(client);
 			ModuleManager.get(dev.mordo.kairo.mods.TotemChanger.class).tickRebuild();
 			ModuleManager.get(dev.mordo.kairo.mods.InventoryGlass.class).tickRebuild();
+			dev.mordo.kairo.gui.LookPack.tick();
 			dev.mordo.kairo.render.background.WallpaperColors.tick();
 			dev.mordo.kairo.gui.Theme.refresh();
 			dev.mordo.kairo.core.update.UpdateChecker.tick(client);

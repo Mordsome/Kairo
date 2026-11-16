@@ -61,7 +61,7 @@ public final class PickTile extends Widget {
 		int accent = Theme.accent();
 		int fill = Colors.lerp(Colors.argb(0.05f + 0.04f * hv, 0xFFFFFF), Colors.withAlpha(accent, 0.16f), p);
 		int stroke = Colors.lerp(Colors.argb(0.10f + 0.15f * hv, 0xFFFFFF), Colors.withAlpha(accent, 0.85f), p);
-		Shapes.rect(g, x, y, w, h, 12, Colors.multiplyAlpha(fill, fade), Colors.multiplyAlpha(stroke, fade), 1 + p * 0.75f);
+		Shapes.surface(g, x, y, w, h, 12, fill, stroke, 1 + p * 0.75f, fade);
 		float size = h - 14;
 		float ax = x + 7;
 		float ay = y + 7;

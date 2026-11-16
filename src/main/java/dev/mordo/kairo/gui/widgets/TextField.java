@@ -106,7 +106,7 @@ public final class TextField extends Widget {
 		float f = focus.value();
 		int fill = Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, Math.max(hover.value() * 0.6f, f));
 		int stroke = Colors.lerp(Colors.lerp(Theme.BORDER, Theme.BORDER_HOVER, hover.value()), Colors.withAlpha(Theme.accent(), 0.7f), f);
-		Shapes.rect(g, x, y, w, h, 10, Colors.multiplyAlpha(fill, fade), Colors.multiplyAlpha(stroke, fade), 1);
+		Shapes.surface(g, x, y, w, h, 10, fill, stroke, 1, fade);
 
 		float cy = y + h / 2;
 		float tx = x + 12;

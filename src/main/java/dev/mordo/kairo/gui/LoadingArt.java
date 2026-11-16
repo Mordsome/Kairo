@@ -17,12 +17,31 @@ import net.minecraft.util.Mth;
 import java.io.InputStream;
 
 /**
- * The client's loading screen (in place of Mojang's): deep navy, the Kairo wordmark, and a slim accent progress
- * line. It shows before the game's resources (and the client's own fonts and shaders) exist, so it only uses
+ * The client's loading screen (in place of Mojang's): a deep shade of your accent colour, the Kairo wordmark in the
+ * accent colour, and a slim accent progress line. It shows before the game's resources (and the client's own fonts and shaders) exist, so it only uses
  * plain fills and an image read straight from the mod jar.
  */
 public final class LoadingArt {
+	/** The old fixed navy, used if the accent can't be read. */
 	public static final int BACKGROUND = 0xFF0B1019;
+
+	/** The player's accent colour (opaque), as saved in their settings. */
+	private static int accent() {
+		try {
+			return 0xFF000000 | ClientSettings.INSTANCE.accent.argb();
+		} catch (RuntimeException e) {
+			return 0xFF7FD8FF;
+		}
+	}
+
+	/** The screen behind everything: a deep shade of the accent, dark enough for the wordmark to stand out. */
+	public static int background() {
+		int a = accent();
+		int r = a >> 16 & 255;
+		int gr = a >> 8 & 255;
+		int b = a & 255;
+		return 0xFF000000 | Math.round(r * 0.26f + 4) << 16 | Math.round(gr * 0.26f + 4) << 8 | Math.round(b * 0.26f + 6);
+	}
 	private static final Identifier WORDMARK = ClientInfo.id("loading_wordmark");
 	private static boolean ready;
 	private static boolean failed;
@@ -63,8 +82,13 @@ public final class LoadingArt {
 		float breathe = 0.92f + 0.08f * (float) Math.sin(System.currentTimeMillis() / 700.0);
 		int h = Math.max(8, Math.round(height * 0.8f));
 		int w = h * 4;
+		// The wordmark (white in the image) takes the accent colour, a touch lighter so it reads on the dark shade.
+		int a = accent();
+		int r = (a >> 16 & 255) + ((255 - (a >> 16 & 255)) / 5);
+		int gr = (a >> 8 & 255) + ((255 - (a >> 8 & 255)) / 5);
+		int b = (a & 255) + ((255 - (a & 255)) / 5);
 		g.blit(RenderPipelines.GUI_TEXTURED, WORDMARK, cx - w / 2, cy - h / 2, 0, 0, w, h, 1024, 256, 1024, 256,
-			ARGB.white(Mth.clamp(alpha * breathe, 0, 1)));
+			ARGB.color(Math.round(Mth.clamp(alpha * breathe, 0, 1) * 255), r, gr, b));
 	}
 
 	/** Slim progress line: dim track, accent fill with a soft bright head. */

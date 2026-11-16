@@ -1,5 +1,63 @@
 # Changelog
 
+## 0.4.0
+
+A lighter plain Kairo, new mods and fixes. Kairo Void keeps everything built in.
+
+- **Animations and Combat Effects are addons (plain Kairo):** attack, mining and inspect animations, the swing trail
+  and held item looks are now the **Animations** addon; hit particles, kill effects, damage numbers, the edge flash and
+  the sound packs are the **Combat Effects** addon. Get them in the Kairo Launcher (Addons) or from
+  Mordsome/KairoAddons. Without them those parts are gone from Visuals and Keybinds, but your choices are kept and
+  come back with the addon. A one-time pop-up says where they went. Kairo Void has all of it built in.
+- **Screenshots page:** every screenshot in a grid, newest first, with a Favourites tab. Click one to see it big with
+  Copy, Open, Delete and a heart; arrows or the mouse wheel step through them, right-click a picture to favourite it.
+  The ring's Screenshots segment opens it.
+- **Reconnect (Mods):** a Reconnect button on Minecraft's "Disconnected" screen that joins the same server again, and
+  an optional countdown that presses it for you (off by default; some servers don't allow rejoining automatically).
+- **Drop Warning (Mods):** dropping netherite, diamonds, golden apples, totems, elytra, shulker boxes or anything
+  enchanted asks first: drop it again within a few seconds to really drop it. Each kind can be switched off.
+- **Ore Outline (Mods):** a thin outline in each ore's colour round ores you can see (no glow, nothing through walls),
+  all ores or only diamonds, emeralds, gold and debris. Some servers have rules even about this: check them.
+- **Menu and HUD size (Visuals → Size):** sizes for the ring and its menus, the main menu and the HUD. The menus also
+  follow Minecraft's GUI Scale (and never get too small to read); the ring now starts a little smaller. The HUD starts
+  at 130%, and its size scales the whole layout evenly (the gaps grow too, nothing runs into anything, nothing leaves
+  the screen); the layout editor has − / + buttons for it.
+- **Restart the game (Settings → About):** with the Kairo Launcher the game starts again by itself; started any other
+  way the button closes it.
+- **More ways into the menus:** Kairo, Mods, Visuals and Cosmetics buttons in the pause menu's corner and a Cosmetics
+  button in the inventory (each with its own switch in Visuals → Menus), and a key for each page (Mods, Visuals,
+  Cosmetics, Settings, Screenshots, HUD layout; unbound by default).
+- **Mods search:** matching mods glide into place and new matches fade in, instead of every card popping in again.
+- **Inventory fixes:** no more stray dots by the player preview, the furnace's (and blast furnace's and smoker's)
+  flame and arrow no longer sit on grey boxes, and the recipe book button is glass like the slots.
+- **Animated capes:** no more flicker with colours that change by themselves (Chroma, Gradient), and smoother movement.
+- **Themes:** an addon's look now reaches every control (buttons, cards, fields, tabs, popups, toasts), not only the big
+  panels, and themes are picked from pictures at the top of Visuals → Theme (Kairo Void: Interface → Themes). Each
+  picture is drawn live by the theme. With the new **Themes** addon: Glass, Minimal, Retro and Neon.
+- **A different menu than the ring (addons):** Right Shift can open an addon's menu instead of the ring (Visuals →
+  Ring → Right Shift opens; Kairo Void: Interface → Menu style), and Back in every page leads there. The new
+  **Command Bar** addon is a search bar with your ring sections as tiles: type to find any page, mod or setting.
+- **Kairo 98 (addon):** all of Kairo as a late-90s desktop, Minecraft's inventories, hotbar, hearts and experience bar
+  included, with a taskbar and Start menu in place of the ring. To make it possible a menu look can now set the text
+  colour, draw a desktop behind the main menu, and repaint Minecraft's own GUI images (Kairo does the repainting in
+  the game, so no Mojang image is shipped); Inventory glass and the Hotbar mod step aside while it does. Addons that
+  don't go together say so, and only one of them loads. A look can also have working window buttons (close,
+  minimise, maximise) and its own loading screen, and changing its colours repaints Minecraft's menus instantly, with
+  no reload. Addons can add a tab of their own to Visuals.
+- **Command Bar:** its tiles and results can be clicked as well as picked with the keys.
+- **Loading screen in your colour:** a deep shade of your accent colour behind the wordmark, and the wordmark itself in
+  the accent colour (both editions).
+- **Kairo Void:** the "Kairo Void" start-up intro is gone; the game goes straight from the loading screen to the menu.
+- **Addon sockets:** `unlock` for parts of plain Kairo that come with an addon, `hudLook` for HUD looks (the box
+  behind every HUD mod and key; a menu look and a HUD look with the same id are one theme), and `homeMenu` for what
+  Right Shift opens. Still sockets version 1.
+- **Size sliders:** dragging Menu size no longer makes the menu jump between two sizes; it takes the new size when you
+  let go.
+
+- **Also in this release:** the parts of 0.3.0 that were finished after the 0.3.0 jars went out: Now Playing, Music
+  Visualiser, Time Changer, Weather Changer, addon sockets, the real held item outline, and Kairo Void's starfall, sky
+  crystals, world effects and new combat effects (listed under 0.3.0 below).
+
 ## 0.3.0
 
 Mostly Kairo Void: new visuals that look nothing like vanilla (custom geometry and shaders, no particles), every one

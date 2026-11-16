@@ -75,21 +75,21 @@ public final class Button extends Widget {
 			case DANGER -> {
 				fill = Colors.lerp(0x26FF5A5A, 0x40FF5A5A, hv);
 				stroke = 0x40FF7A7A;
-				fg = 0xFFFFB3B3;
+				fg = Theme.lookText() != 0 ? 0xFF9A1010 : 0xFFFFB3B3; // dark red on a light look
 			}
 			case GHOST -> {
 				fill = Colors.lerp(0x00FFFFFF, Theme.SURFACE_HOVER, hv);
 				stroke = 0;
-				fg = Colors.lerp(Theme.text(0.65f), Theme.TEXT, hv);
+				fg = Colors.lerp(Theme.text(0.65f), Theme.text(1f), hv);
 			}
 			default -> {
 				fill = Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, hv);
 				stroke = Colors.lerp(Theme.BORDER, Theme.BORDER_HOVER, hv);
-				fg = Theme.TEXT;
+				fg = Theme.text(1f);
 			}
 		}
 		float radius = Math.min(10, h / 2);
-		Shapes.rect(g, x, y, w, h, radius, Colors.multiplyAlpha(fill, alpha), Colors.multiplyAlpha(stroke, alpha), stroke == 0 ? 0 : 1);
+		Shapes.surface(g, x, y, w, h, radius, fill, stroke, stroke == 0 ? 0 : 1, alpha);
 		float contentW = (icon != null ? 16 : 0) + (icon != null && !label.isEmpty() ? 8 : 0)
 			+ (label.isEmpty() ? 0 : Fonts.width(Typeface.OUTFIT_SEMIBOLD, label, textSize));
 		float cx = x + (w - contentW) / 2;

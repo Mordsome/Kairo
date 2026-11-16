@@ -78,7 +78,7 @@ public final class ModsPage extends PanelPage {
 
 	ModsPage(MenuScreen menu) {
 		super(menu);
-		search = new TextField("Search mods", Icon.SEARCH).maxLength(32).onChange(text -> refresh());
+		search = new TextField("Search mods", Icon.SEARCH).maxLength(32).onChange(text -> refresh(false));
 		nav.add(new NavItem("All", Icon.GRID, () -> Integer.toString(ModuleManager.modules().size()),
 			() -> category == null, () -> selectCategory(null)));
 		Icon[] icons = {Icon.LAYOUT, Icon.SWORD, Icon.SPARKLE, Icon.SLIDERS};
@@ -95,7 +95,7 @@ public final class ModsPage extends PanelPage {
 				if (ClientSettings.INSTANCE.modsLayout.get() != layout) {
 					ClientSettings.INSTANCE.modsLayout.set(layout);
 					dev.mordo.kairo.sound.UiSounds.click();
-					refresh();
+					refresh(true);
 				}
 			});
 		}
@@ -121,17 +121,26 @@ public final class ModsPage extends PanelPage {
 	@Override
 	public void show() {
 		super.show();
-		refresh();
+		refresh(true);
 	}
 
 	private void selectCategory(@Nullable Category c) {
 		category = c;
 		closeSettings();
-		refresh();
+		refresh(true);
 	}
 
-	/** Re-filters the grid and replays the staggered card intro. */
-	private void refresh() {
+	/** Where each card is drawn right now: cards glide here towards their place in the grid while searching. */
+	private final Map<ModCard, float[]> drawnAt = new IdentityHashMap<>();
+	private long lastFrame = System.nanoTime();
+
+	/**
+	 * Re-filters the grid. {@code replay}: the staggered intro (a new category, the page opening). Otherwise (typing
+	 * in the search) cards that still match stay and glide to their new places, and newly matching ones fade in.
+	 */
+	private void refresh(boolean replay) {
+		java.util.Set<ModCard> before = java.util.Collections.newSetFromMap(new IdentityHashMap<>());
+		before.addAll(shown);
 		shown.clear();
 		String query = search.text().trim().toLowerCase(Locale.ROOT);
 		for (Module module : ModuleManager.modules()) {
@@ -144,9 +153,22 @@ public final class ModsPage extends PanelPage {
 			}
 			shown.add(cards.get(module));
 		}
-		for (int i = 0; i < shown.size(); i++) {
-			shown.get(i).appear.set(0).animateTo(1, 320, Easing.UI, i * 30);
+		if (replay) {
+			drawnAt.clear();
+			for (int i = 0; i < shown.size(); i++) {
+				shown.get(i).appear.set(0).animateTo(1, 320, Easing.UI, i * 30);
+			}
+			gridScroll.reset();
+			return;
 		}
+		int fresh = 0;
+		for (ModCard card : shown) {
+			if (!before.contains(card)) {
+				drawnAt.remove(card);
+				card.appear.set(0).animateTo(1, 260, Easing.UI, fresh++ * 18);
+			}
+		}
+		drawnAt.keySet().retainAll(shown);
 		gridScroll.reset();
 	}
 
@@ -253,10 +275,18 @@ public final class ModsPage extends PanelPage {
 		g.enableScissor((int) Math.floor(contentX - 10), (int) Math.floor(gridTop - 6), (int) Math.ceil(contentX + contentW + 10), (int) Math.ceil(gridBottom));
 		try {
 			float offset = gridScroll.value();
+			long now = System.nanoTime();
+			float glide = Animation.reduceMotion() ? 1 : 1 - (float) Math.exp(-Math.min(0.1f, (now - lastFrame) / 1e9f) * 16);
+			lastFrame = now;
 			for (int i = 0; i < shown.size(); i++) {
 				ModCard card = shown.get(i);
-				float cx = contentX + (i % columns) * (cardW + gap);
-				float cy = gridTop + 4 + (i / columns) * (cardH + gap) - offset;
+				float targetX = contentX + (i % columns) * (cardW + gap);
+				float targetY = gridTop + 4 + (i / columns) * (cardH + gap);
+				float[] at = drawnAt.computeIfAbsent(card, c -> new float[]{targetX, targetY});
+				at[0] += (targetX - at[0]) * glide;
+				at[1] += (targetY - at[1]) * glide;
+				float cx = at[0];
+				float cy = at[1] - offset;
 				card.bounds(cx, cy, cardW, cardH);
 				boolean visible = cy + cardH > gridTop && cy < gridBottom;
 				if (visible) {

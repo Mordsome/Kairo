@@ -149,7 +149,7 @@ final class ColorPicker extends Popup {
 		g.pose().pushMatrix();
 		g.pose().translate(0, lift);
 		Shapes.shadow(g, x, y + 8, w, h, 14, 20, Colors.argb(0.5f * a, 0));
-		Shapes.rect(g, x, y, w, h, 14, Colors.multiplyAlpha(Theme.POPUP, a), Colors.argb(0.14f * a, 0xFFFFFF), 1);
+		Shapes.surface(g, x, y, w, h, 14, Theme.POPUP, 0x24FFFFFF, 1, a);
 
 		float sx = x + PAD;
 		float sw = innerW();

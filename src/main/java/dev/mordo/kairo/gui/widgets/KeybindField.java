@@ -49,7 +49,7 @@ public final class KeybindField extends Widget {
 		float pulse = listening ? 0.55f + 0.45f * (float) Math.sin(System.nanoTime() / 1.6e8) : 0;
 		int fill = listening ? Colors.withAlpha(Theme.accent(), 0.14f) : Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, hover.value());
 		int stroke = listening ? Colors.withAlpha(Theme.accent(), 0.5f + 0.5f * pulse) : Colors.lerp(Theme.BORDER, Theme.BORDER_HOVER, hover.value());
-		Shapes.rect(g, x, y, w, h, 8, Colors.multiplyAlpha(fill, fade), Colors.multiplyAlpha(stroke, fade), 1);
+		Shapes.surface(g, x, y, w, h, 8, fill, stroke, 1, fade);
 		String label;
 		int color;
 		if (listening) {

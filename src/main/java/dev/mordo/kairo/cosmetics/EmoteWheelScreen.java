@@ -28,6 +28,11 @@ import java.util.List;
  * the key and click one (tap again to close). Right-click an emote to add it to or remove it from your favourites.
  */
 public final class EmoteWheelScreen extends KairoScreen {
+	@Override
+	protected float sizeFactor() {
+		return dev.mordo.kairo.core.UiScaling.menus();
+	}
+
 	private static final float OUTER = 270;
 	private static final float INNER = 128;
 	private static final int MAX_SEGMENTS = 16;

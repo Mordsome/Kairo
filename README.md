@@ -96,7 +96,10 @@ Keystrokes, CPS, FPS, ping, coordinates, a compass and armor status. Keystrokes 
 | Hurt Camera | Damage tilt, explosion particles and the fire overlay |
 | Hit Sounds | Built-in sounds, sound packs or your own files |
 | Totem Changer | Any image or a recolour as your totem, plus your own pop sound |
-| Screenshots | Copy, open or delete right after F2 |
+| Screenshots | Copy, open or delete right after F2, and a Screenshots page with favourites |
+| Reconnect | A Reconnect button when you get disconnected (optional countdown) |
+| Drop Warning | Asks before you drop netherite, diamonds, golden apples and other valuables |
+| Ore Outline | A thin outline round ores you can see (no glow, nothing through walls) |
 
 Every mod has its own settings and an **In PvP mode** section. The [feature guide](docs/FEATURES.md) explains all of it.
 
@@ -104,13 +107,13 @@ Every mod has its own settings and an **In PvP mode** section. The [feature guid
 
 ## ✦ Kairo Void
 
-<a href="https://github.com/Mordsome/KairoVoid"><b>Kairo Void</b></a> is the second edition, built from this same code: flat dark menus, and over-the-top combat and sky visuals (energy blades, impact shockwaves, nine atmospheres, crystal styles, a cosmic night sky). Since 0.3.0 it also has a start-up intro, your own picture as the sky, a living aurora, auras and line glyphs around you, light trails, an outline / glow / hologram look for yourself, custom hit impacts, animated damage markers, a cinematic kill effect, an animated block overlay and styled nametags. All of it is drawn with its own geometry and shaders, not vanilla particles. Install **one** of the two, not both.
+<a href="https://github.com/Mordsome/KairoVoid"><b>Kairo Void</b></a> is the second edition, built from this same code: flat dark menus, and over-the-top combat and sky visuals (energy blades, impact shockwaves, nine atmospheres, crystal styles, a cosmic night sky). Since 0.3.0 it also has your own picture as the sky, a living aurora, auras and line glyphs around you, light trails, an outline / glow / hologram look for yourself, custom hit impacts, animated damage markers, a cinematic kill effect, an animated block overlay and styled nametags. All of it is drawn with its own geometry and shaders, not vanilla particles. Install **one** of the two, not both.
 
 Both editions also have **music emotes**: bring your own song, set its BPM, and dance on the beat (only you hear it).
 
 ## ✦ Addons
 
-Want more? [Kairo Addons](https://github.com/Mordsome/KairoAddons) are small extras that plug into Kairo and Kairo Void, like a solid plastic look for the menus. Install them from the [Kairo Launcher](https://github.com/Mordsome/KairoLauncher) or drop the jar into `mods`.
+Want more? [Kairo Addons](https://github.com/Mordsome/KairoAddons) are small extras that plug into Kairo and Kairo Void, like a solid plastic look for the menus. Since 0.4.0 plain Kairo's animations and combat effects are addons too (**Animations** and **Combat Effects**), so Kairo stays light if you don't use them; Kairo Void has them built in. Install them from the [Kairo Launcher](https://github.com/Mordsome/KairoLauncher) or drop the jar into `mods`.
 
 ## 📦 Install
 
@@ -118,7 +121,7 @@ Want more? [Kairo Addons](https://github.com/Mordsome/KairoAddons) are small ext
 2. Put these in your `mods` folder:
    - [Fabric API](https://modrinth.com/mod/fabric-api) for 26.3
    - [Sodium](https://modrinth.com/mod/sodium) 0.9.x for 26.3 (required)
-   - `kairo-0.3.0.jar` from [Releases](https://github.com/Mordsome/Kairo/releases/latest)
+   - `kairo-0.4.0.jar` from [Releases](https://github.com/Mordsome/Kairo/releases/latest)
 3. Start the game. A short setup runs the first time. In game, press **Right Shift**.
 
 Tested on Windows.

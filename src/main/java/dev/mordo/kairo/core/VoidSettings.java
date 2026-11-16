@@ -193,8 +193,6 @@ public final class VoidSettings extends SettingHolder {
 		"Light ribbons", "Floating motes", "Aurora", "Cosmic sky", "Block overlay", "Light particles", "Hit impact", "Damage markers",
 		"Cinematic kill", "Player trail", "Starfall", "Sky crystals", "Footstep ripples", "Pulse grid", "Block shatter", "Weapon aura"), 2000).hidden());
 
-	public final BooleanSetting intro = add(new BooleanSetting("intro", "Start-up intro", true)
-		.description("When the game opens: Kairo appears, then Void pops in. Once per launch, never when you leave a world. Click to skip"));
 
 	public enum AuroraStyle implements EnumSetting.Labeled {
 		CURTAINS("Curtains"),

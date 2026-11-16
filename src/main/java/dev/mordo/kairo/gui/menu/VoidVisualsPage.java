@@ -314,28 +314,62 @@ public final class VoidVisualsPage extends PanelPage {
 		}
 		add("Living ring", "Just the ring: it breathes, lights orbit it, the centre pulses. Pick its segments here", Icon.GRID, Group.INTERFACE,
 			bool(cs.livingRing), List.of(), grid("SEGMENTS (3 TO 8)", ringTiles));
-		add("Keystroke ripples", "Keys pop and send out a ripple when you press them", Icon.KEYBOARD, Group.INTERFACE, bool(vs.keyRipples), List.of(), null);
-		add("Living menus", "Drifting light and motes behind the menus", Icon.GRID, Group.INTERFACE, bool(cs.menuFx),
-			List.of(cs.backgroundDim), null);
-		if (dev.mordo.kairo.api.Addons.hasMenuLooks()) {
-			// Only with an addon that adds a look: Kairo Void's own flat look, or the addon's.
-			Binding<Boolean> custom = new Binding<>() {
+		if (dev.mordo.kairo.api.Addons.hasHomeMenus()) {
+			// Only with an addon that adds a home menu: what Right Shift opens instead of the ring.
+			Binding<Boolean> other = new Binding<>() {
 				@Override
 				public Boolean get() {
-					return !cs.menuLook.get().equals(dev.mordo.kairo.api.Addons.DEFAULT_LOOK);
+					return dev.mordo.kairo.api.Addons.activeHomeMenu() != null;
 				}
 
 				@Override
 				public void set(Boolean value) {
-					var choices = dev.mordo.kairo.api.Addons.menuLookChoices();
-					cs.menuLook.set(value && choices.size() > 1 ? choices.get(1).id() : dev.mordo.kairo.api.Addons.DEFAULT_LOOK);
+					var choices = dev.mordo.kairo.api.Addons.homeMenuChoices();
+					cs.homeMenu.set(value && choices.size() > 1 ? choices.get(1).id() : dev.mordo.kairo.api.Addons.RING);
 				}
 			};
-			List<Setting<?>> lookSettings = new ArrayList<>();
-			lookSettings.add(cs.menuLook);
-			lookSettings.addAll(dev.mordo.kairo.api.Addons.menuLookSettings());
-			add("Menu look", "How panels, the ring and the menu background are drawn: Kairo Void's own, or a look from an addon", Icon.LAYOUT,
-				Group.INTERFACE, custom, lookSettings, null);
+			List<Setting<?>> homeSettings = new ArrayList<>();
+			homeSettings.add(cs.homeMenu);
+			homeSettings.addAll(dev.mordo.kairo.api.Addons.homeMenuSettings());
+			add("Menu style", "What Right Shift opens: the ring, or a different menu from an addon", Icon.GRID, Group.INTERFACE, other,
+				homeSettings, null);
+		}
+		for (dev.mordo.kairo.api.Addons.Tab tab : dev.mordo.kairo.api.Addons.visualsTabs()) {
+			// An addon's own tab: a card that is always on, with the addon's options.
+			Binding<Boolean> always = new Binding<>() {
+				@Override
+				public Boolean get() {
+					return true;
+				}
+
+				@Override
+				public void set(Boolean value) {
+				}
+			};
+			add(tab.name(), "Options from the " + tab.name() + " addon", tab.icon(), Group.INTERFACE, always, tab.settings(), null);
+		}
+		add("Keystroke ripples", "Keys pop and send out a ripple when you press them", Icon.KEYBOARD, Group.INTERFACE, bool(vs.keyRipples), List.of(), null);
+		add("Living menus", "Drifting light and motes behind the menus", Icon.GRID, Group.INTERFACE, bool(cs.menuFx),
+			List.of(cs.backgroundDim), null);
+		if (dev.mordo.kairo.gui.widgets.ThemePicker.available()) {
+			// Only with an addon that adds a theme: Kairo Void's own look, or one from an addon, picked from pictures.
+			Binding<Boolean> themed = new Binding<>() {
+				@Override
+				public Boolean get() {
+					return dev.mordo.kairo.api.Addons.activeLook() != null || dev.mordo.kairo.api.Addons.activeHudLook() != null;
+				}
+
+				@Override
+				public void set(Boolean value) {
+					var themes = dev.mordo.kairo.gui.widgets.ThemePicker.entries();
+					themes.get(value && themes.size() > 1 ? 1 : 0).apply();
+				}
+			};
+			List<Setting<?>> looks = new ArrayList<>();
+			looks.addAll(dev.mordo.kairo.api.Addons.menuLookSettings());
+			looks.addAll(dev.mordo.kairo.api.Addons.hudLookSettings());
+			add("Themes", "How every menu, the ring and the HUD are drawn: Kairo Void's own, or a theme from an addon", Icon.SPARKLE,
+				Group.INTERFACE, themed, looks, dev.mordo.kairo.gui.widgets.ThemePicker.section());
 		}
 		add("Panel edge light", "A short light runs along the top edge of big panels", Icon.SUN, Group.INTERFACE, bool(cs.panelEdgeLight),
 			List.of(), null);
@@ -344,10 +378,20 @@ public final class VoidVisualsPage extends PanelPage {
 			new dev.mordo.kairo.gui.widgets.WallpaperSwatches(true).section());
 		add("Accent on all", "Every mod colour (crosshair, outlines, keys...) uses your accent", Icon.SPARKLE, Group.INTERFACE,
 			bool(cs.accentEverywhere), List.of(cs.accent), null);
+		add("Size and shortcuts", "How big the ring, the menus, the main menu and the HUD are, and the shortcut buttons", Icon.LAYOUT, Group.INTERFACE,
+			new Binding<>() {
+				@Override
+				public Boolean get() {
+					return true;
+				}
+
+				@Override
+				public void set(Boolean value) {
+				}
+			}, List.of(cs.menuScale, cs.menusFollowGuiScale, cs.mainMenuScale, cs.hudScale, cs.pauseKairoButton, cs.pauseModsButton, cs.pauseVisualsButton,
+				cs.pauseCosmeticsButton, cs.inventoryCosmeticsButton), null);
 		add("Smooth motion", "How fast menus animate, or fades only", Icon.GAUGE, Group.INTERFACE, invert(cs.reduceMotion),
 			List.of(cs.animationSpeed), null);
-		add("Start-up intro", "When the game opens, Kairo appears and Void pops in next to it (click to skip)", Icon.SPARKLE, Group.INTERFACE,
-			bool(vs.intro), List.of(), null);
 		add("Nametags", "Players' names with a style: glass, neon, hologram or a shimmer. They show only when Minecraft would show them",
 			Icon.USER, Group.INTERFACE, choice(vs.nametags, VoidSettings.NametagStyle.VANILLA, VoidSettings.NametagStyle.GLASS), List.of(vs.ownNametag),
 			grid("STYLE", tiles(vs.nametags, VoidSettings.NametagStyle.VANILLA, Icon.USER)));

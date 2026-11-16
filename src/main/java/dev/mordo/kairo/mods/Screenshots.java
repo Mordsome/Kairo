@@ -171,7 +171,7 @@ public final class Screenshots extends Module {
 	}
 
 	/** Puts the image (not the path) on the clipboard, through Windows' own clipboard API. */
-	private static void copy(File file) {
+	public static void copy(File file) {
 		if (!windows()) {
 			Toasts.show("Copying images works on Windows only", 0xFFFF7A7A);
 			return;
@@ -182,7 +182,7 @@ public final class Screenshots extends Module {
 		runPowerShell(script, "Copied to clipboard", "Couldn't copy the screenshot");
 	}
 
-	private static void delete(File file) {
+	public static void delete(File file) {
 		if (!windows()) {
 			Toasts.show("Deleting to the bin works on Windows only", 0xFFFF7A7A);
 			return;
@@ -192,7 +192,7 @@ public final class Screenshots extends Module {
 		runPowerShell(script, "Moved to the Recycle Bin", "Couldn't delete the screenshot");
 	}
 
-	private static void openFile(File file) {
+	public static void openFile(File file) {
 		try {
 			if (!SDLMisc.SDL_OpenURL(file.toURI().toString())) {
 				Toasts.show("Couldn't open the screenshot", 0xFFFF7A7A);

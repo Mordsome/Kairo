@@ -22,7 +22,7 @@ public enum RingSection {
 	WAYPOINTS("Waypoints", Icon.PIN, "OPEN", "Your saved places, with beams and distance"),
 	EMOTES("Emotes", Icon.USER, "PICK ONE", "Backflips, sitting, dancing and more"),
 	PVP_OPTIONS("PvP options", Icon.SHIELD, "OPEN", "What changes when PvP mode is on"),
-	SCREENSHOTS("Screenshots", Icon.CAMERA, "OPEN FOLDER", "Your screenshots folder"),
+	SCREENSHOTS("Screenshots", Icon.CAMERA, "OPEN", "Your screenshots, with favourites"),
 	/** Kairo Void only: every visual on or off at once. */
 	EFFECTS("Effects", Icon.EYE, "CLICK TO TOGGLE", null);
 
@@ -51,7 +51,7 @@ public enum RingSection {
 		this.description = description;
 	}
 
-	String description() {
+	public String description() {
 		if (this == EFFECTS) {
 			return dev.mordo.kairo.core.VoidSettings.INSTANCE.master.isOn()
 				? "Every visual is on. Click for plain Minecraft."
@@ -130,5 +130,51 @@ public enum RingSection {
 		}
 		ClientSettings.INSTANCE.ringSegments.set(sb.toString());
 		return true;
+	}
+
+	/** True for the sections that switch something instead of opening a page (PvP mode, Kairo Void's Effects). */
+	public boolean isAction() {
+		return this == PVP || this == EFFECTS;
+	}
+
+	/** For an action: whether it is on now. */
+	public boolean isOn() {
+		return this == PVP ? PvpMode.isActive() : this == EFFECTS && dev.mordo.kairo.core.VoidSettings.INSTANCE.master.isOn();
+	}
+
+	/** Does what the section does, from {@code menu}: opens its page, switches its action, or leaves for its screen. */
+	public void open(MenuScreen menu) {
+		net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+		switch (this) {
+			case PVP -> PvpMode.toggle();
+			case EFFECTS -> dev.mordo.kairo.render.Visuals.toggle();
+			case MODS -> menu.navigate(menu.mods());
+			case SETTINGS -> menu.navigate(menu.settings());
+			case VISUALS -> menu.navigate(menu.visualsPage());
+			case COSMETICS -> menu.navigate(menu.cosmetics());
+			case PVP_OPTIONS -> menu.navigate(menu.pvp());
+			case SCREENSHOTS -> menu.navigate(menu.screenshots());
+			case LAYOUT -> {
+				if (mc.player == null) {
+					dev.mordo.kairo.gui.Toasts.show("Join a world to edit the HUD layout", dev.mordo.kairo.gui.Theme.accent());
+				} else {
+					menu.close(new dev.mordo.kairo.gui.layout.LayoutScreen());
+				}
+			}
+			case WAYPOINTS -> {
+				if (mc.player == null) {
+					dev.mordo.kairo.gui.Toasts.show("Join a world to see your waypoints", dev.mordo.kairo.gui.Theme.accent());
+				} else {
+					menu.close(new dev.mordo.kairo.mods.waypoints.WaypointsScreen(null));
+				}
+			}
+			case EMOTES -> {
+				if (mc.player == null) {
+					dev.mordo.kairo.gui.Toasts.show("Join a world to emote", dev.mordo.kairo.gui.Theme.accent());
+				} else {
+					menu.close(new dev.mordo.kairo.cosmetics.EmoteWheelScreen());
+				}
+			}
+		}
 	}
 }

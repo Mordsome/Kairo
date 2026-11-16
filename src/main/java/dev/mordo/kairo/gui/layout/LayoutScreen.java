@@ -68,6 +68,9 @@ public final class LayoutScreen extends KairoScreen {
 	private float marqueeY0;
 	private final Set<HudElement> marqueeBase = Collections.newSetFromMap(new IdentityHashMap<>());
 	private final Button attachCps;
+	private final Button hudSmaller;
+	private final Button hudSize;
+	private final Button hudBigger;
 	private final Button undoButton;
 	private final Button redoButton;
 	/** Kept across editor sessions (right-click settings reopens a new editor). */
@@ -136,8 +139,24 @@ public final class LayoutScreen extends KairoScreen {
 			cps().attachToKeystrokes.resetEffective();
 		}).textSize(11.5f);
 		done = new Button("Done", null, Button.Style.PRIMARY, this::onClose).textSize(11.5f);
+		// The whole HUD's size, in steps of 5%; the middle button shows it and puts it back to 130%.
+		hudSmaller = new Button("-", null, Button.Style.SUBTLE, () -> stepHudSize(-0.05)).textSize(13);
+		hudSize = new Button("HUD 130%", null, Button.Style.GHOST, () -> setHudSize(dev.mordo.kairo.core.ClientSettings.INSTANCE.hudScale.getDefault()))
+			.textSize(11.5f);
+		hudBigger = new Button("+", null, Button.Style.SUBTLE, () -> stepHudSize(0.05)).textSize(13);
 		undoButton = new Button("", Icon.UNDO, Button.Style.SUBTLE, this::undo);
 		redoButton = new Button("", Icon.REDO, Button.Style.SUBTLE, this::redo);
+	}
+
+	private void stepHudSize(double by) {
+		var setting = dev.mordo.kairo.core.ClientSettings.INSTANCE.hudScale;
+		setHudSize(Math.round((setting.value() + by) / 0.05) * 0.05);
+	}
+
+	private void setHudSize(double value) {
+		var setting = dev.mordo.kairo.core.ClientSettings.INSTANCE.hudScale;
+		setting.set(Math.clamp(value, setting.min(), setting.max()));
+		dev.mordo.kairo.sound.UiSounds.click();
 	}
 
 	private static CpsHud cps() {
@@ -401,6 +420,13 @@ public final class LayoutScreen extends KairoScreen {
 			actions.add(attachCps);
 		}
 		actions.add(resetAll);
+		var hudScale = dev.mordo.kairo.core.ClientSettings.INSTANCE.hudScale;
+		hudSize.setLabel("HUD " + Math.round(hudScale.value() * 100) + "%");
+		hudSmaller.setEnabled(hudScale.value() > hudScale.min() + 1e-6);
+		hudBigger.setEnabled(hudScale.value() < hudScale.max() - 1e-6);
+		actions.add(hudSmaller);
+		actions.add(hudSize);
+		actions.add(hudBigger);
 		undoButton.setEnabled(HISTORY.canUndo());
 		redoButton.setEnabled(HISTORY.canRedo());
 		actions.add(undoButton);
@@ -710,9 +736,11 @@ public final class LayoutScreen extends KairoScreen {
 		float h = Math.max(1, b[3]);
 		// Project the cursor onto the box's diagonal so both directions feel the same.
 		float ratio = ((gx - b[0]) * w + (gy - b[1]) * h) / (w * w + h * h);
-		double scale = Math.round(resizeStartScale * ratio / 0.05) * 0.05;
-		scale = Math.clamp(scale, target.scale.min(), target.scale.max());
-		if (Math.abs(scale - target.scale.value()) < 1e-6) {
+		// Sizes here are what's on screen (the HUD size included); settings store the element's own part.
+		double hudSize = dev.mordo.kairo.core.UiScaling.hud();
+		double scale = Math.round(resizeStartScale * ratio / hudSize / 0.05) * 0.05 * hudSize;
+		scale = Math.clamp(scale, target.scale.min() * hudSize, target.scale.max() * hudSize);
+		if (Math.abs(scale - target.scaleValue()) < 1e-6) {
 			return;
 		}
 		// Every selected element grows by the same factor, each from its own top-left corner.
@@ -720,15 +748,15 @@ public final class LayoutScreen extends KairoScreen {
 		for (Map.Entry<HudElement, Float> entry : resizeScales.entrySet()) {
 			HudElement member = entry.getKey();
 			float[] mb = boxes.get(member);
-			double s = member == target ? scale
-				: Math.clamp(Math.round(entry.getValue() * factor / 0.05) * 0.05, member.scale.min(), member.scale.max());
+			double s = member == target ? scale / hudSize
+				: Math.clamp(Math.round(entry.getValue() * factor / hudSize / 0.05) * 0.05, member.scale.min(), member.scale.max());
 			member.scale.setEffective(s);
 			if (mb != null && member != target) {
 				member.moveTo(mb[0], mb[1], guiW, guiH);
 			}
 		}
 		if (!resizeScales.containsKey(target)) {
-			target.scale.setEffective(scale);
+			target.scale.setEffective(scale / hudSize);
 		}
 		if (!attached) {
 			element.moveTo(b[0], b[1], guiW, guiH);

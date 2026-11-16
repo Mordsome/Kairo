@@ -25,6 +25,11 @@ import org.jspecify.annotations.Nullable;
  * through a {@link WidgetHost}.
  */
 public abstract class MainMenuBase extends KairoScreen {
+	@Override
+	protected float sizeFactor() {
+		return dev.mordo.kairo.core.UiScaling.mainMenu();
+	}
+
 	protected final WidgetHost host = new WidgetHost();
 	protected final Animation intro = new Animation(0);
 	protected final @Nullable Screen parent;

@@ -37,15 +37,18 @@ public final class VisualsPage extends PanelPage {
 		List<PickTile> shine = VisualsArt.shineTiles();
 		List<PickTile> inspect = VisualsArt.inspectTiles();
 		List<PickTile> glint = VisualsArt.glintTiles();
-		section("Animations", Icon.SWORD, "How your weapon and tools move and look. Hover a tile to see its path.",
-			List.of(v.swingDuration, v.swingTrail, v.swingTrailRainbow, v.miningDuration, v.inspectKey, v.glintCustom),
-			List.of(v.swingStyle, v.miningStyle, v.inspectStyle, v.heldShine, v.glintColor)).list().header((g, x, y, w, mx, my, fade, put) -> {
-			float h = PickTile.grid(g, "ATTACK", swing, x, y, w, fade, put);
-			h += PickTile.grid(g, "MINING", mining, x, y + h, w, fade, put);
-			h += PickTile.grid(g, "INSPECT (" + v.inspectKey.get().displayName().getString().toUpperCase(java.util.Locale.ROOT) + ")", inspect, x, y + h, w, fade, put);
-			h += PickTile.grid(g, "HELD ITEM", shine, x, y + h, w, fade, put);
-			return h + PickTile.grid(g, "SHIMMER COLOUR (ALSO ENCHANTED ITEMS)", glint, x, y + h, w, fade, put);
-		});
+		// Plain Kairo: only with its addon (api.Features); Kairo Void always has it.
+		if (dev.mordo.kairo.api.Features.ANIMATIONS.has()) {
+			section("Animations", Icon.SWORD, "How your weapon and tools move and look. Hover a tile to see its path.",
+				List.of(v.swingDuration, v.swingTrail, v.swingTrailRainbow, v.miningDuration, v.inspectKey, v.glintCustom),
+				List.of(v.swingStyle, v.miningStyle, v.inspectStyle, v.heldShine, v.glintColor)).list().header((g, x, y, w, mx, my, fade, put) -> {
+				float h = PickTile.grid(g, "ATTACK", swing, x, y, w, fade, put);
+				h += PickTile.grid(g, "MINING", mining, x, y + h, w, fade, put);
+				h += PickTile.grid(g, "INSPECT (" + v.inspectKey.get().displayName().getString().toUpperCase(java.util.Locale.ROOT) + ")", inspect, x, y + h, w, fade, put);
+				h += PickTile.grid(g, "HELD ITEM", shine, x, y + h, w, fade, put);
+				return h + PickTile.grid(g, "SHIMMER COLOUR (ALSO ENCHANTED ITEMS)", glint, x, y + h, w, fade, put);
+			});
+		}
 		List<PickTile> filters = VisualsArt.filterTiles();
 		section("Screen effects", Icon.EYE, "Colour filters and camera effects on the world (not on menus or the HUD).",
 			List.of(v.filterStrength, v.saturation, v.contrast, v.glow, v.vignette, v.accentVignette, v.chromatic, v.grain, v.letterbox,
@@ -55,13 +58,16 @@ public final class VisualsPage extends PanelPage {
 		List<PickTile> kills = VisualsArt.killTiles();
 		List<PickTile> packs = VisualsArt.soundPackTiles();
 		var hitSounds = dev.mordo.kairo.core.ModuleManager.get(dev.mordo.kairo.mods.HitSounds.class);
-		section("Hit effects", Icon.FLAME, "Particles on what you hit, an effect where it dies, and a sound pack. Only on your screen.",
-			List.of(v.hitAmount, v.killSound, v.hitFlash, v.damageNumbers, hitSounds.packVolume),
-			List.of(v.hitBurst, v.killEffect, hitSounds.pack)).list().header((g, x, y, w, mx, my, fade, put) -> {
-			float h = PickTile.grid(g, "HIT PARTICLES", hits, x, y, w, fade, put);
-			h += PickTile.grid(g, "KILL EFFECT", kills, x, y + h, w, fade, put);
-			return h + PickTile.grid(g, "SOUND PACK (HITS, CRITS AND KILLS)", packs, x, y + h, w, fade, put);
-		});
+		// Plain Kairo: only with its addon (api.Features); Kairo Void always has it.
+		if (dev.mordo.kairo.api.Features.COMBAT_EFFECTS.has()) {
+			section("Hit effects", Icon.FLAME, "Particles on what you hit, an effect where it dies, and a sound pack. Only on your screen.",
+				List.of(v.hitAmount, v.killSound, v.hitFlash, v.damageNumbers, hitSounds.packVolume),
+				List.of(v.hitBurst, v.killEffect, hitSounds.pack)).list().header((g, x, y, w, mx, my, fade, put) -> {
+				float h = PickTile.grid(g, "HIT PARTICLES", hits, x, y, w, fade, put);
+				h += PickTile.grid(g, "KILL EFFECT", kills, x, y + h, w, fade, put);
+				return h + PickTile.grid(g, "SOUND PACK (HITS, CRITS AND KILLS)", packs, x, y + h, w, fade, put);
+			});
+		}
 
 		List<PickTile> jumps = VisualsArt.jumpTiles();
 		List<PickTile> booms = VisualsArt.explosionTiles();
@@ -86,25 +92,52 @@ public final class VisualsPage extends PanelPage {
 				}
 			}));
 		}
+		// With an addon that adds a home menu: what Right Shift opens (and its options) comes first.
+		List<Setting<?>> ringSettings = new ArrayList<>();
+		if (dev.mordo.kairo.api.Addons.hasHomeMenus()) {
+			ringSettings.add(s.homeMenu);
+			ringSettings.addAll(dev.mordo.kairo.api.Addons.homeMenuSettings());
+		}
+		ringSettings.add(s.livingRing);
 		section("Ring", Icon.GRID, "Pick what the Right Shift ring shows (3 to 8). Number keys follow this order.",
-			List.of(s.livingRing), List.of(s.ringSegments)).list().header((g, x, y, w, mx, my, fade, put) -> {
+			ringSettings, List.of(s.ringSegments)).list().header((g, x, y, w, mx, my, fade, put) -> {
 			float h = drawRingPreview(g, x, y, w, fade);
 			return h + PickTile.grid(g, "SEGMENTS", ringTiles, x, y + h, w, fade, put);
 		});
 		// Theme: your colour (picked, or taken from your wallpaper) and how much of it panels and text take.
-		List<Setting<?>> theme = new ArrayList<>(List.of(s.accent, s.wallpaperColors, s.tintBackgrounds, s.backgroundTint, s.tintText, s.textTint,
+		List<Setting<?>> theme = new ArrayList<>();
+		// With an addon that adds themes: pictures of every theme on top, then the theme's options.
+		boolean themes = dev.mordo.kairo.gui.widgets.ThemePicker.available();
+		if (themes) {
+			theme.addAll(dev.mordo.kairo.api.Addons.menuLookSettings());
+			theme.addAll(dev.mordo.kairo.api.Addons.hudLookSettings());
+		}
+		theme.addAll(List.of(s.accent, s.wallpaperColors, s.tintBackgrounds, s.backgroundTint, s.tintText, s.textTint,
 			s.accentEverywhere, s.pvpAccent, s.customFonts, s.hudFont));
+		SettingsList.Section swatches = new dev.mordo.kairo.gui.widgets.WallpaperSwatches(true).section();
+		SettingsList.Section picker = dev.mordo.kairo.gui.widgets.ThemePicker.section();
+		SettingsList.Section themeHeader = !themes ? swatches : (g, x, y, w, mx, my, fade, put) -> {
+			float h = picker.render(g, x, y, w, mx, my, fade, put);
+			return h + swatches.render(g, x, y + h, w, mx, my, fade, put);
+		};
+		List<Setting<?>> themeExtra = themes ? List.of(s.wallpaperSwatch, s.menuLook, s.hudLook) : List.of(s.wallpaperSwatch);
 		if (dev.mordo.kairo.core.Edition.isVoid()) {
 			// Void has flat panels and fewer sections: colours, fonts, panels and motion together.
 			theme.addAll(List.of(s.backgroundDim, s.animationSpeed, s.reduceMotion, s.reduceFlashing));
-			section("Theme", Icon.SPARKLE, null, theme, List.of(s.wallpaperSwatch)).list().header(new dev.mordo.kairo.gui.widgets.WallpaperSwatches(true).section());
+			section("Theme", Icon.SPARKLE, null, theme, themeExtra).list().header(themeHeader);
 		} else {
-			section("Theme", Icon.SPARKLE, null, theme, List.of(s.wallpaperSwatch)).list().header(new dev.mordo.kairo.gui.widgets.WallpaperSwatches(true).section());
+			section("Theme", Icon.SPARKLE, null, theme, themeExtra).list().header(themeHeader);
 			section("Glass", Icon.LAYOUT, null, List.of(s.glassTint, s.blurStrength, s.backgroundDim), List.of());
 			section("Motion", Icon.GAUGE, null, List.of(s.animationSpeed, s.reduceMotion, s.reduceFlashing), List.of());
+			section("Size", Icon.LAYOUT, null, List.of(s.menuScale, s.menusFollowGuiScale, s.mainMenuScale, s.hudScale), List.of());
 		}
-		section("Menus", Icon.WORLD, null, java.util.stream.Stream.concat(java.util.stream.Stream.<dev.mordo.kairo.core.settings.Setting<?>>of(s.menuLook, s.customMainMenu,
-			s.restyleMenus, s.menuFx, s.panelEdgeLight, s.hidePauseExtras, s.menuSounds), dev.mordo.kairo.api.Addons.menuLookSettings().stream()).toList(),
+		// Tabs addons added (Kairo 98's, say).
+		for (dev.mordo.kairo.api.Addons.Tab tab : dev.mordo.kairo.api.Addons.visualsTabs()) {
+			section(tab.name(), tab.icon(), null, tab.settings(), List.of());
+		}
+		section("Menus", Icon.WORLD, null, java.util.stream.Stream.concat(java.util.stream.Stream.<dev.mordo.kairo.core.settings.Setting<?>>of(s.pauseKairoButton, s.pauseModsButton, s.pauseVisualsButton,
+			s.pauseCosmeticsButton, s.inventoryCosmeticsButton, s.customMainMenu,
+			s.restyleMenus, s.menuFx, s.panelEdgeLight, s.hidePauseExtras, s.menuSounds), java.util.stream.Stream.<dev.mordo.kairo.core.settings.Setting<?>>of()).toList(),
 			List.of());
 		Section buttons = section("Buttons", Icon.POWER, null,
 			List.of(s.buttonRadius, s.buttonAnimations, s.buttonGlow, s.buttonOutline, s.buttonColor, s.buttonClick), List.of());
@@ -232,4 +265,5 @@ public final class VisualsPage extends PanelPage {
 	public boolean onScroll(float mx, float my, float amount) {
 		return sections.get(selected).list().mouseScrolled(mx, my, amount);
 	}
+
 }

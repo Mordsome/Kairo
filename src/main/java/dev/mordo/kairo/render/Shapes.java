@@ -201,6 +201,73 @@ public final class Shapes {
 
 	// ---- glass ----
 
+	/**
+	 * A control's surface: a button, card, field, tab, popup or toast. Kairo draws it as a plain box in {@code fill}
+	 * with an edge in {@code stroke}; a menu look from an addon draws it its own way (as one of its panels), so a theme
+	 * reaches every control and not only the big panels. {@code opacity} fades the whole thing.
+	 */
+	public static void surface(GuiGraphicsExtractor g, float x, float y, float w, float h, float radius, int fill, int stroke,
+							   float strokeWidth, float opacity) {
+		if (w <= 0 || h <= 0) {
+			return;
+		}
+		dev.mordo.kairo.api.MenuLook look = dev.mordo.kairo.api.Addons.activeLook();
+		if (look != null) {
+			try {
+				look.panel(g, x, y, w, h, radius, fill, stroke, strokeWidth, opacity);
+				return;
+			} catch (Throwable t) {
+				dev.mordo.kairo.api.Addons.lookFailed(look, t);
+			}
+		}
+		rect(g, x, y, w, h, radius, Colors.multiplyAlpha(fill, opacity), Colors.multiplyAlpha(stroke, opacity), strokeWidth);
+	}
+
+	/**
+	 * Kairo's own glass panel, whatever look is in use: for a menu look that builds on Kairo's frosted glass (blurred
+	 * where blur is available, a tinted box where it isn't). Arguments as for {@link MenuLook#panel}.
+	 */
+	public static void kairoGlass(GuiGraphicsExtractor g, float x, float y, float w, float h, float radius, int tint, int stroke,
+								  float strokeWidth, float opacity) {
+		if (w <= 0 || h <= 0) {
+			return;
+		}
+		if (!Blur.isAvailable()) {
+			rect(g, x, y, w, h, radius, Colors.multiplyAlpha(Colors.opaqueTint(tint), opacity), Colors.multiplyAlpha(stroke, opacity), strokeWidth);
+			return;
+		}
+		float hw = w / 2;
+		float hh = h / 2;
+		float m = margin();
+		submit(g, KairoPipelines.GLASS, Blur.glassTexture(), x + hw, y + hh, 1, 0,
+			-hw - m, -hh - m, hw + m, hh + m,
+			tint, tint, stroke, strokeWidth, ShapeElement.RECT, hw, hh, radius, 0, 0, opacity, 1.4f);
+	}
+
+	/** Kairo's own glass ring segment, whatever look is in use (see {@link #kairoGlass}). */
+	public static void kairoGlassSector(GuiGraphicsExtractor g, float cx, float cy, float innerR, float outerR, float midAngle, float halfAngle,
+										float gap, float cornerRadius, int tint, int stroke, float strokeWidth, float opacity) {
+		if (!Blur.isAvailable()) {
+			sector(g, cx, cy, innerR, outerR, midAngle, halfAngle, gap, cornerRadius, Colors.multiplyAlpha(Colors.opaqueTint(tint), opacity), Colors.multiplyAlpha(stroke, opacity), strokeWidth);
+			return;
+		}
+		sector(g, KairoPipelines.GLASS, Blur.glassTexture(), cx, cy, innerR, outerR, midAngle, halfAngle,
+			gap, cornerRadius, tint, stroke, strokeWidth, opacity, 1);
+	}
+
+	/** Kairo's own blurred menu background, whatever look is in use (see {@link #kairoGlass}). */
+	public static void kairoBackdrop(GuiGraphicsExtractor g, float opacity, float dim, float vignette) {
+		if (!Blur.isAvailable()) {
+			g.fill(0, 0, g.guiWidth(), g.guiHeight(), Colors.argb(Math.clamp(opacity * (0.35f + dim), 0f, 1f), dev.mordo.kairo.gui.Theme.voidPanel(0x06080C)));
+			return;
+		}
+		float hw = g.guiWidth() / 2f;
+		float hh = g.guiHeight() / 2f;
+		g.guiRenderState.addGuiElement(new ShapeElement(KairoPipelines.GLASS, Blur.backgroundTexture(), IDENTITY, null,
+			hw, hh, 1, 0, -hw, -hh, hw, hh,
+			0xFFFFFFFF, 0xFFFFFFFF, 0, 0, ShapeElement.BACKDROP, vignette, dim, hw, hh, 0, opacity, 1));
+	}
+
 	public static void glassRect(GuiGraphicsExtractor g, float x, float y, float w, float h, float radius, int tint,
 								 int stroke, float strokeWidth, float opacity) {
 		if (w <= 0 || h <= 0) {

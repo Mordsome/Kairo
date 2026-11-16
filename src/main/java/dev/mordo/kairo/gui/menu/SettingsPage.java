@@ -60,6 +60,7 @@ public final class SettingsPage extends PanelPage {
 	// About
 	private final Button renderTest;
 	private final Button setupAgain;
+	private final Button restartGame;
 
 	// About → Updates (opt-in)
 	private final dev.mordo.kairo.gui.widgets.ToggleSwitch checkUpdates =
@@ -87,7 +88,7 @@ public final class SettingsPage extends PanelPage {
 		for (SettingHolder holder : ModuleManager.allHolders()) {
 			String owner = holder instanceof Module module ? module.name() : "Client";
 			for (Setting<?> setting : holder.settings()) {
-				if (setting instanceof KeybindSetting bind) {
+				if (setting instanceof KeybindSetting bind && !bind.isLocked()) {
 					binds.add(new SettingsList.Entry(bind, bind.name(), owner));
 				}
 			}
@@ -101,6 +102,8 @@ public final class SettingsPage extends PanelPage {
 		renderTest = new Button("Open render test", Icon.SPARKLE, Button.Style.SUBTLE, ClientScreens::openRenderTest).textSize(11.5f);
 		setupAgain = new Button("Run the welcome setup again", Icon.REFRESH, Button.Style.SUBTLE,
 			() -> menu.close(new dev.mordo.kairo.gui.welcome.WelcomeScreen(null))).textSize(11.5f);
+		restartGame = new Button(dev.mordo.kairo.core.Restart.byLauncher() ? "Restart the game" : "Close the game", Icon.REFRESH, Button.Style.SUBTLE,
+			dev.mordo.kairo.core.Restart::restart).textSize(11.5f);
 		updateNow = new Button("Update", Icon.ARROW_RIGHT, Button.Style.PRIMARY, () -> {
 			var release = dev.mordo.kairo.core.update.UpdateChecker.latest();
 			if (release != null) {
@@ -327,10 +330,17 @@ public final class SettingsPage extends PanelPage {
 		float sw = setupAgain.preferredWidth();
 		setupAgain.bounds(contentX + bw + 10, y + 64, sw, 34);
 		put(setupAgain, g, mx, my, fade, live);
+		// Restart: the Kairo Launcher starts the game again; started any other way, it closes.
+		restartGame.bounds(contentX, y + 108, restartGame.preferredWidth(), 34);
+		put(restartGame, g, mx, my, fade, live);
+		if (!dev.mordo.kairo.core.Restart.byLauncher()) {
+			Fonts.draw(g, Typeface.OUTFIT_REGULAR, "Restarting needs the Kairo Launcher", contentX + restartGame.preferredWidth() + 12, y + 128, 10.5f,
+				Theme.text(0.45f, fade));
+		}
 
 		// Unlocked by the easter egg.
 		if (dev.mordo.kairo.core.ClientSettings.INSTANCE.ringSpinUnlocked.isOn()) {
-			float ry = y + 118;
+			float ry = y + 156;
 			Shapes.rect(g, contentX, ry, leftW, 58, 14, Colors.multiplyAlpha(Colors.withAlpha(Theme.pvpAccent(), 0.08f), fade),
 				Colors.multiplyAlpha(Colors.withAlpha(Theme.pvpAccent(), 0.3f), fade), 1);
 			IconRenderer.draw(g, Icon.REFRESH, contentX + 26, ry + 29, 18, Colors.multiplyAlpha(Theme.pvpAccent(), fade), 2f);

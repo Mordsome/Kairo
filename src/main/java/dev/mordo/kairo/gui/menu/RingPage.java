@@ -8,7 +8,6 @@ import dev.mordo.kairo.core.PvpMode;
 import dev.mordo.kairo.core.keybinds.ClientKeybinds;
 import dev.mordo.kairo.core.keybinds.Keybind;
 import dev.mordo.kairo.gui.IconRenderer;
-import dev.mordo.kairo.gui.layout.LayoutScreen;
 import dev.mordo.kairo.render.Animation;
 import dev.mordo.kairo.render.Colors;
 import dev.mordo.kairo.render.Easing;
@@ -719,34 +718,7 @@ public final class RingPage extends Page {
 				fx.animateTo(dev.mordo.kairo.core.VoidSettings.INSTANCE.master.isOn() ? 1 : 0, 320);
 				fxPop.set(0).animateTo(1, 480, Easing.OUT_BACK);
 			}
-			case MODS -> menu.navigate(menu.mods());
-			case SETTINGS -> menu.navigate(menu.settings());
-			case VISUALS -> menu.navigate(menu.visualsPage());
-			case COSMETICS -> menu.navigate(menu.cosmetics());
-			case LAYOUT -> {
-				if (net.minecraft.client.Minecraft.getInstance().player == null) {
-					dev.mordo.kairo.gui.Toasts.show("Join a world to edit the HUD layout", dev.mordo.kairo.gui.Theme.accent());
-				} else {
-					menu.close(new LayoutScreen());
-				}
-			}
-			case PVP_OPTIONS -> menu.navigate(menu.pvp());
-			case WAYPOINTS -> {
-				if (net.minecraft.client.Minecraft.getInstance().player == null) {
-					dev.mordo.kairo.gui.Toasts.show("Join a world to see your waypoints", dev.mordo.kairo.gui.Theme.accent());
-				} else {
-					menu.close(new dev.mordo.kairo.mods.waypoints.WaypointsScreen(null));
-				}
-			}
-			case EMOTES -> {
-				if (net.minecraft.client.Minecraft.getInstance().player == null) {
-					dev.mordo.kairo.gui.Toasts.show("Join a world to emote", dev.mordo.kairo.gui.Theme.accent());
-				} else {
-					menu.close(new dev.mordo.kairo.cosmetics.EmoteWheelScreen());
-				}
-			}
-			case SCREENSHOTS -> dev.mordo.kairo.gui.FilePicker.openFolder(
-				net.minecraft.client.Minecraft.getInstance().gameDirectory.toPath().resolve("screenshots"));
+			default -> section.open(menu);
 		}
 	}
 

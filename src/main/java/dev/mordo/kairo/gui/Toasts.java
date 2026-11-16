@@ -79,7 +79,7 @@ public final class Toasts {
 			float x = (viewWidth - w) / 2;
 			float y = 28 + slide;
 			Shapes.shadow(g, x, y + 4, w, h, h / 2, 12, Colors.argb(0.35f * alpha, 0));
-			Shapes.rect(g, x, y, w, h, h / 2, Colors.argb(0.78f * alpha, Theme.tintBackground(0xFF0C1018)), Colors.argb(0.18f * alpha, 0xFFFFFF), 1.25f);
+			Shapes.surface(g, x, y, w, h, h / 2, Colors.argb(0.78f, Theme.tintBackground(0xFF0C1018)), 0x2EFFFFFF, 1.25f, alpha);
 			float dotX = x + 18;
 			float cy = y + h / 2;
 			Shapes.shadow(g, dotX - 4, cy - 4, 8, 8, 4, 5, Colors.multiplyAlpha(toast.dotColor(), 0.6f * alpha));

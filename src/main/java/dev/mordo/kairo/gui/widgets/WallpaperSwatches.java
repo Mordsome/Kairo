@@ -77,7 +77,12 @@ public final class WallpaperSwatches {
 			float sy = y + pad + 16;
 			float sh = h - pad * 2 - 16;
 			int panel = Theme.panelColor();
-			Shapes.rect(g, sx, sy, sw, sh, 10, Colors.multiplyAlpha(panel, fade), Colors.argb(0.14f * fade, 0xFFFFFF), 1);
+			if (Theme.lookText() != 0) {
+				// A menu look with its own text colour (Kairo 98): show the sample on the look's own surface.
+				Shapes.surface(g, sx, sy, sw, sh, 10, Theme.SURFACE, Theme.BORDER, 1, fade);
+			} else {
+				Shapes.rect(g, sx, sy, sw, sh, 10, Colors.multiplyAlpha(panel, fade), Colors.argb(0.14f * fade, 0xFFFFFF), 1);
+			}
 			Shapes.circle(g, sx + 16, sy + sh / 2, 5, Colors.multiplyAlpha(Theme.accent(), fade));
 			Fonts.draw(g, Typeface.OUTFIT_SEMIBOLD, "Panel text", sx + 28, sy + sh / 2 - 7, 12, Theme.text(1, fade));
 			Fonts.draw(g, Typeface.OUTFIT_REGULAR, "Secondary text", sx + 28, sy + sh / 2 + 8, 10.5f, Theme.text(0.55f, fade));
@@ -109,7 +114,7 @@ public final class WallpaperSwatches {
 			Shapes.shadow(g, cx - r, cy - r, r * 2, r * 2, r, 8 + 6 * hv, Colors.multiplyAlpha(Colors.withAlpha(color, 0.3f + 0.3f * hv), fade));
 			Shapes.circle(g, cx, cy, r, Colors.multiplyAlpha(color, fade));
 			if (picked) {
-				Shapes.ring(g, cx, cy, r + 4, 1.8f, Colors.multiplyAlpha(Theme.TEXT, fade));
+				Shapes.ring(g, cx, cy, r + 4, 1.8f, Colors.multiplyAlpha(Theme.text(1f), fade));
 				IconRenderer.draw(g, Icon.CHECK, cx, cy, r * 1.1f, Colors.multiplyAlpha(Theme.DARK_TEXT, fade), 2.6f);
 			}
 		}

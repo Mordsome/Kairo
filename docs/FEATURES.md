@@ -46,9 +46,6 @@ What it adds is in the game itself, every part of it switchable in Visuals:
 
 New in 0.3.0, all drawn with Kairo's own geometry and shaders (no vanilla particles), all only on your screen:
 
-- **Start-up intro** (Interface): when the game opens, "Kairo" rises into place over black and "Void" pops in next to it
-  with a ring of light, then the first menu fades in. Once per launch, never when you leave a world; click to skip.
-  Reduce motion: fades only. Fewer flashes: no ring, a soft glow.
 - **Custom sky** (World & sky): your own picture as the sky. A wide 2:1 panorama wraps all the way round (any picture
   works). Show it day and night or only one of them, set its brightness (it always darkens at night), let it turn
   slowly, and keep the sun, moon, cosmic sky and aurora on top of it. **+** adds a picture; they live in
@@ -368,18 +365,44 @@ The switcher next to the search box in the Mods panel shows mods as Cards, Large
 | Hurt Camera | Damage tilt, explosion particles / flash / per-second limit, lower and see-through fire overlay |
 | Hit Sounds | Replace the hurt and hit sounds with a built-in sound or your own file, or pick a sound pack (hits, crits and kills) |
 | Totem Changer | Any image (or a recolour) as the totem, and your own pop sound |
+| Reconnect | A **Reconnect** button on Minecraft's "Disconnected" screen that joins the same server again, as the server list would. Optional countdown that presses it for you (off by default: some servers don't allow rejoining automatically) |
+| Drop Warning | Dropping something valuable asks first: drop it again within a few seconds (adjustable) to really drop it. Netherite and diamonds, golden apples and totems, rare items (elytra, shulker boxes, beacons, tridents, maces...) and anything enchanted, each switchable. The drop key, Q over a slot and throwing out of the inventory |
+| Ore Outline | A thin outline in each ore's colour round ores you can see: only ores with a face open to air, drawn like Minecraft's own block outline so blocks in front hide it. All ores, or only diamonds, emeralds, gold and ancient debris; range and line thickness. No glow, nothing through walls. Check a server's rules first |
 | Screenshots | After F2: a preview card and [Copy] [Open] [Folder] [Delete] on the chat message (Copy puts the image on the clipboard, Delete uses the Recycle Bin) |
 
 ## Addons
+
+Since 0.4.0, plain Kairo's **animations** (attack, mining and inspect animations, swing trail, held item looks) and
+**combat effects** (hit particles, kill effects, damage numbers, edge flash, sound packs) come with the **Animations**
+and **Combat Effects** addons. Without them those parts are simply not there (no Visuals sections, no keys); your
+choices are kept and come back as they were with the addon. Kairo Void has all of it built in.
 
 Addons are small separate mods that add things to Kairo and Kairo Void: a different look for the menus, extra mods.
 The official ones live in [Mordsome/KairoAddons](https://github.com/Mordsome/KairoAddons). Install them from the
 [Kairo Launcher](https://github.com/Mordsome/KairoLauncher) (choose for each whether it is for Kairo, Kairo Void or
 both), or by hand: put the addon's jar in `mods` next to Kairo.
 
-- **Menu look** (Visuals → Menus; Kairo Void: Visuals → Interface): with an addon that adds a look, choose between
-  Kairo's own (glass, or Kairo Void's flat grey) and the addon's. A look you have just installed is switched on once;
-  after that the choice is yours. A look's own options sit under the chooser.
+- **Themes** (Visuals → Theme; Kairo Void: Visuals → Interface → Themes): with an addon that adds themes, every theme
+  is shown as a picture drawn by the theme itself (a menu panel with a button, part of the ring, a HUD box); click one
+  and the main menu, the pause menu, the ring, every Kairo menu and control, and the HUD all take it on. Kairo's own
+  (glass, or Kairo Void's flat grey) is always the first picture. A theme you have just installed is switched on once;
+  after that the choice is yours. The theme's own options follow the pictures. The official **Themes** addon has
+  Glass, Minimal, Retro and Neon; Plastic Menus is a theme for the menus only.
+- **Right Shift opens** (Visuals → Ring; Kairo Void: Visuals → Interface → Menu style; since 0.4.0): with an addon
+  that adds a home menu, Right Shift opens it instead of the ring, and Back in every page leads there. The official
+  **Command Bar** is a search bar: your ring sections sit under it as big numbered tiles (1-8 open them), and typing
+  finds pages, mods and their settings as you type. Arrows and Enter open a result, Tab (or a right-click) switches a
+  mod on or off, Esc clears the search and then closes. It follows your theme.
+- **Kairo 98** (an addon, since 0.4.0): picked like any theme, it turns everything into a late-90s desktop: grey
+  bevelled windows with blue title bars and black text, a flat desktop behind the main menu, Minecraft's buttons,
+  inventories, chests, hotbar, experience bar and HUD icons repainted to match (in the game, from Minecraft's own
+  images), and Right Shift opens a taskbar with a Start menu. Colour schemes: Classic, Sand, Plum, Ocean, Slate, Spruce
+  and High contrast, switched instantly. Its own Visuals tab (Kairo 98) also has two styles for HUD boxes (Title bar or
+  Simple frame), retro animations (hitting, mining and switching items in a few hard steps) and its start-up screen.
+  The window buttons on its title bars work: close and minimise close the menu, maximise makes it fill the screen.
+  While it repaints Minecraft's menus, Inventory glass and the Hotbar mod step aside.
+- Some addons don't go together (Kairo 98 with Themes, Plastic Menus and Command Bar): the launcher keeps only one
+  on, and if both end up in the game the one that names the clash wins.
 - Addons can only add things through the sockets Kairo provides (`dev.mordo.kairo.api`), so any set of them works
   together. An addon made for a newer Kairo, or not made for your edition, is skipped; one that breaks is switched off
   and Kairo carries on with its own look. Removing an addon never breaks your settings.

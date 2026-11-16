@@ -26,7 +26,7 @@ public final class ModeCard extends Widget {
 		int dot = Colors.lerp(Theme.accent(), Theme.pvpAccent(), on);
 		int fill = Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, hover.value());
 		int stroke = Colors.lerp(Theme.BORDER, Colors.withAlpha(dot, 0.35f), hover.value());
-		Shapes.rect(g, x, y, w, h, 14, Colors.multiplyAlpha(fill, fade), Colors.multiplyAlpha(stroke, fade), 1);
+		Shapes.surface(g, x, y, w, h, 14, fill, stroke, 1, fade);
 		float dotX = x + 18;
 		float top = y + 22;
 		Shapes.shadow(g, dotX - 3.5f, top - 3.5f, 7, 7, 3.5f, 5, Colors.multiplyAlpha(dot, 0.7f * fade));

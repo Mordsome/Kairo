@@ -139,6 +139,9 @@ public final class HudManager {
 		float x = x(element, guiWidth);
 		float y = y(element, guiHeight);
 		float s = scale(element);
+		// Never off screen, whatever the sizes multiply out to.
+		x = Math.clamp(x, 0, Math.max(0, guiWidth - element.width() * s));
+		y = Math.clamp(y, 0, Math.max(0, guiHeight - element.height() * s));
 		// Step out of the way of vanilla's potion effect icons (top-right corner).
 		float effectsBottom = effectIconsBottom();
 		if (effectsBottom > 0 && y < effectsBottom && x + element.width() * s > guiWidth - effectIconsWidth) {

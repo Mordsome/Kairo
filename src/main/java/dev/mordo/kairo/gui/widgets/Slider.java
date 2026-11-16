@@ -22,6 +22,17 @@ public final class Slider extends Widget {
 	private final Animation shown;
 	private final Animation grab = new Animation(0);
 	private boolean dragging;
+	/** The slider being dragged right now (UiScaling holds the menu sizes still meanwhile), and when it was last drawn. */
+	private static Slider active;
+	private static long activeDrawnAt;
+
+	/**
+	 * True while a slider is being dragged. A slider that stopped being drawn (its menu closed mid-drag, so the release
+	 * never reached it) no longer counts.
+	 */
+	public static boolean anyDragging() {
+		return active != null && active.dragging && net.minecraft.util.Util.getMillis() - activeDrawnAt < 250;
+	}
 	private IntSupplier accent = Theme::accent;
 
 	public Slider(SliderSetting meta, Binding<Double> value) {
@@ -48,6 +59,9 @@ public final class Slider extends Widget {
 	@Override
 	protected void draw(GuiGraphicsExtractor g, float mx, float my, float fade) {
 		float target = (float) meta.toProgress(value.get());
+		if (this == active) {
+			activeDrawnAt = net.minecraft.util.Util.getMillis();
+		}
 		if (dragging) {
 			shown.set(target);
 		} else {
@@ -74,6 +88,8 @@ public final class Slider extends Widget {
 			return false;
 		}
 		dragging = true;
+		active = this;
+		activeDrawnAt = net.minecraft.util.Util.getMillis();
 		setFrom(mx);
 		return true;
 	}
@@ -91,6 +107,9 @@ public final class Slider extends Widget {
 	public boolean mouseReleased(float mx, float my, int button) {
 		boolean was = dragging;
 		dragging = false;
+		if (active == this) {
+			active = null;
+		}
 		return was;
 	}
 

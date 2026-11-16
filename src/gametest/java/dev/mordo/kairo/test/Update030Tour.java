@@ -7,7 +7,6 @@ import dev.mordo.kairo.core.VoidSettings;
 import dev.mordo.kairo.cosmetics.Cosmetics;
 import dev.mordo.kairo.cosmetics.Emotes;
 import dev.mordo.kairo.gui.menu.MenuScreen;
-import dev.mordo.kairo.render.VoidIntro;
 import dev.mordo.kairo.render.VoidNoir;
 import dev.mordo.kairo.render.VoidSky;
 import dev.mordo.kairo.render.VoidWorldFx;
@@ -47,7 +46,6 @@ final class Update030Tour {
 			Kairo.LOGGER.info("CHECK edition void: {}", Edition.isVoid());
 		});
 		writeFiles();
-		intro(ctx);
 		try (TestSingleplayerContext world = ctx.worldBuilder().create()) {
 			ctx.runOnClient(mc -> mc.options.pauseOnLostFocus = false);
 			var server = world.getServer();
@@ -150,23 +148,6 @@ final class Update030Tour {
 		}
 	}
 
-	// ---- intro ----
-
-	private void intro(ClientGameTestContext ctx) {
-		ctx.runOnClient(mc -> {
-			mc.gui.setScreen(new TitleScreen());
-			VoidIntro.replay();
-		});
-		ctx.waitTicks(14);
-		shot(ctx, "00_intro_kairo");
-		ctx.waitTicks(10);
-		shot(ctx, "01_intro_void_pop");
-		ctx.waitTicks(12);
-		shot(ctx, "02_intro_hold");
-		ctx.waitTicks(30);
-		ctx.runOnClient(mc -> Kairo.LOGGER.info("CHECK intro finished: {}", !VoidIntro.playing()));
-		shot(ctx, "03_intro_done");
-	}
 
 	// ---- sky ----
 

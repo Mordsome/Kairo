@@ -7,7 +7,6 @@ import dev.mordo.kairo.core.settings.ColorSetting;
 import dev.mordo.kairo.core.settings.EnumSetting;
 import dev.mordo.kairo.core.settings.SliderSetting;
 import dev.mordo.kairo.gui.Icon;
-import dev.mordo.kairo.render.Shapes;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /**
@@ -67,19 +66,21 @@ public abstract class HudElement extends Module {
 		return height;
 	}
 
+	/** The size it's drawn at: its own size times the HUD size (Visuals → Size). */
 	public float scaleValue() {
-		return scale.floatValue();
+		return scale.floatValue() * dev.mordo.kairo.core.UiScaling.hud();
 	}
 
 	/** Top-left x on a screen {@code guiWidth} GUI pixels wide. */
 	public float screenX(float guiWidth) {
 		Anchor a = anchor.get();
-		return a.fx * guiWidth + offsetX.floatValue() * guiWidth - a.fx * width * scaleValue();
+		// The distance from the anchor grows with the HUD size too, so the whole layout scales evenly.
+		return a.fx * guiWidth + offsetX.floatValue() * guiWidth * dev.mordo.kairo.core.UiScaling.hud() - a.fx * width * scaleValue();
 	}
 
 	public float screenY(float guiHeight) {
 		Anchor a = anchor.get();
-		return a.fy * guiHeight + offsetY.floatValue() * guiHeight - a.fy * height * scaleValue();
+		return a.fy * guiHeight + offsetY.floatValue() * guiHeight * dev.mordo.kairo.core.UiScaling.hud() - a.fy * height * scaleValue();
 	}
 
 	/**
@@ -97,8 +98,9 @@ public abstract class HudElement extends Module {
 		Anchor a = Anchor.values()[row * 3 + col];
 		// All three together, so a PvP position never mixes with parts of the normal one.
 		anchor.setEffective(a);
-		offsetX.setEffective((double) ((x + a.fx * w - a.fx * guiWidth) / guiWidth));
-		offsetY.setEffective((double) ((y + a.fy * h - a.fy * guiHeight) / guiHeight));
+		float hud = dev.mordo.kairo.core.UiScaling.hud();
+		offsetX.setEffective((double) ((x + a.fx * w - a.fx * guiWidth) / guiWidth / hud));
+		offsetY.setEffective((double) ((y + a.fy * h - a.fy * guiHeight) / guiHeight / hud));
 	}
 
 	/** Position and size back to default for the current mode (in PvP mode: back to "same as normal"). */
@@ -145,9 +147,7 @@ public abstract class HudElement extends Module {
 	protected void drawBox(GuiGraphicsExtractor g, float x, float y, float w, float h, int color) {
 		if (background.isOn()) {
 			float seed = id().hashCode() % 97 + x * 0.13f + y * 0.07f;
-			HudFx.under(g, x, y, w, h, cornerRadius.floatValue(), seed, 0);
-			Shapes.rect(g, x, y, w, h, cornerRadius.floatValue(), color);
-			HudFx.over(g, x, y, w, h, cornerRadius.floatValue(), seed, 0);
+			HudFx.box(g, x, y, w, h, cornerRadius.floatValue(), color, seed, 0);
 		}
 	}
 

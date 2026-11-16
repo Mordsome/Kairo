@@ -58,10 +58,10 @@ public final class NavItem extends Widget {
 		float on = active.value();
 		int fill = Colors.lerp(Colors.lerp(0x00FFFFFF, Theme.SURFACE, hover.value()), Colors.withAlpha(Theme.accent(), 0.15f), on);
 		int stroke = Colors.lerp(0x00FFFFFF, Colors.withAlpha(Theme.accent(), 0.28f), on);
-		Shapes.rect(g, x, y, w, h, 10, Colors.multiplyAlpha(fill, fade), Colors.multiplyAlpha(stroke, fade), stroke == 0 ? 0 : 1);
+		Shapes.surface(g, x, y, w, h, 10, fill, stroke, stroke == 0 ? 0 : 1, fade);
 		float cy = y + h / 2;
 		float tx = x + 14;
-		int textColor = Colors.lerp(Theme.text(0.72f), Theme.TEXT, Math.max(on, hover.value() * 0.6f));
+		int textColor = Colors.lerp(Theme.text(0.72f), Theme.text(1f), Math.max(on, hover.value() * 0.6f));
 		if (icon != null) {
 			int iconColor = Colors.lerp(textColor, Theme.accent(), on);
 			IconRenderer.draw(g, icon, tx + 8, cy, 16, Colors.multiplyAlpha(iconColor, fade), 2f);

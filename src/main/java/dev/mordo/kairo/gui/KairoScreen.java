@@ -60,8 +60,13 @@ public abstract class KairoScreen extends Screen {
 		return unit;
 	}
 
+	/** How much bigger or smaller than the design this screen is drawn (see UiScaling). */
+	protected float sizeFactor() {
+		return 1;
+	}
+
 	private void updateUnit() {
-		unit = RefSpace.unit(width, height);
+		unit = RefSpace.unit(width, height) * sizeFactor();
 		viewWidth = width / unit;
 		viewHeight = height / unit;
 	}
@@ -78,7 +83,7 @@ public abstract class KairoScreen extends Screen {
 			extractPanorama(g, partialTick);
 		}
 		drawBackground(g, partialTick);
-		RefSpace.push(g);
+		RefSpace.push(g, unit);
 		try {
 			draw(g, mx, my, partialTick);
 		} finally {

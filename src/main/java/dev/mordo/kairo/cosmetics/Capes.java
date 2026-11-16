@@ -89,10 +89,31 @@ public final class Capes {
 		state.showCape = true;
 	}
 
-	/** The texture for a choice ("design:galaxy" or "file:my.png"), painted on first use. */
+	/** Frames per second for moving designs and for colours that change by themselves (Chroma, Gradient). */
+	private static final long FRAME = 33_000_000L;
+
+	/**
+	 * The texture for a choice ("design:galaxy" or "file:my.png"), painted on first use. One texture per choice: new
+	 * colours (also colours that keep changing, like Chroma) are painted into it in place, never by making a new
+	 * texture, which used to make the cape flicker.
+	 */
 	public static @Nullable Identifier texture(String choice, int color1, int color2) {
-		String key = choice + "|" + Integer.toHexString(color1) + "|" + Integer.toHexString(color2);
+		String key = choice;
 		if (key.equals(currentKey)) {
+			if (current != null && (color1 != currentC1 || color2 != currentC2) && currentDesign != null && !currentDesign.animated()) {
+				// A still design in new colours: repaint it, at most once a frame-time.
+				long now = System.nanoTime();
+				if (now - lastFrame >= FRAME && currentTexture != null && currentTexture.getPixels() != null) {
+					lastFrame = now;
+					currentC1 = color1;
+					currentC2 = color2;
+					paintDesign(currentTexture.getPixels(), currentDesign, color1, color2, 0);
+					currentTexture.upload();
+				}
+				return current;
+			}
+			currentC1 = color1;
+			currentC2 = color2;
 			animate();
 			return current;
 		}
@@ -124,7 +145,7 @@ public final class Capes {
 			return;
 		}
 		long now = System.nanoTime();
-		if (now - lastFrame < 50_000_000L) {
+		if (now - lastFrame < FRAME) {
 			return;
 		}
 		lastFrame = now;
@@ -151,20 +172,25 @@ public final class Capes {
 	private static final java.util.Map<String, DynamicTexture> PREVIEW_TEXTURES = new java.util.HashMap<>();
 	private static final java.util.Map<String, Long> PREVIEW_FRAMES = new java.util.HashMap<>();
 
-	/** A separate texture per choice for the wardrobe tiles (kept while the colours stay the same). */
+	private static final java.util.Map<String, Integer> PREVIEW_COLORS = new java.util.HashMap<>();
+
+	/** A separate texture per choice for the wardrobe tiles; new colours are painted into it in place. */
 	public static @Nullable Identifier preview(String choice, int color1, int color2) {
-		String key = choice + "|" + Integer.toHexString(color1) + "|" + Integer.toHexString(color2);
+		String key = choice;
 		if (PREVIEWS.containsKey(key)) {
 			Identifier cached = PREVIEWS.get(key);
 			DynamicTexture live = PREVIEW_TEXTURES.get(key);
 			Design design = design(choice);
-			if (live != null && design != null && design.animated()) {
+			int colors = color1 * 31 + color2;
+			boolean recolor = !Integer.valueOf(colors).equals(PREVIEW_COLORS.get(key));
+			if (live != null && design != null && (design.animated() || recolor)) {
 				long now = System.nanoTime();
 				Long last = PREVIEW_FRAMES.get(key);
-				if (last == null || now - last > 80_000_000L) {
+				if (last == null || now - last > 50_000_000L) {
 					PREVIEW_FRAMES.put(key, now);
+					PREVIEW_COLORS.put(key, colors);
 					if (live.getPixels() != null) {
-						paintDesign(live.getPixels(), design, color1, color2, (now - START) / 1e9f);
+						paintDesign(live.getPixels(), design, color1, color2, design.animated() ? (now - START) / 1e9f : 0);
 						live.upload();
 					}
 				}
@@ -180,6 +206,7 @@ public final class Capes {
 			PREVIEWS.clear();
 			PREVIEW_TEXTURES.clear();
 			PREVIEW_FRAMES.clear();
+			PREVIEW_COLORS.clear();
 		}
 		NativeImage image = paint(choice, color1, color2, 0);
 		Identifier id = null;
@@ -188,6 +215,7 @@ public final class Capes {
 			DynamicTexture texture = new DynamicTexture(() -> "kairo cape preview", image);
 			Minecraft.getInstance().getTextureManager().register(id, texture);
 			PREVIEW_TEXTURES.put(key, texture);
+			PREVIEW_COLORS.put(key, color1 * 31 + color2);
 		}
 		PREVIEWS.put(key, id);
 		return id;

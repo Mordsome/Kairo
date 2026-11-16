@@ -24,6 +24,35 @@ public final class HudFx {
 		return style() != HudStyle.CLASSIC;
 	}
 
+	/**
+	 * One HUD box: the HUD look an addon added if the player picked one, otherwise Kairo's own (the style's glow, the
+	 * box in {@code fill}, the style's edge). {@code pressed} is how far a key of Keystrokes is down (0 for the rest).
+	 */
+	public static void box(GuiGraphicsExtractor g, float x, float y, float w, float h, float radius, int fill, float seed, float pressed) {
+		dev.mordo.kairo.api.HudLook look = dev.mordo.kairo.api.Addons.activeHudLook();
+		if (look != null) {
+			g.pose().pushMatrix();
+			try {
+				look.box(g, x, y, w, h, radius, fill, Theme.accent(), seed, pressed);
+				return;
+			} catch (Throwable t) {
+				dev.mordo.kairo.api.Addons.hudLookFailed(look, t);
+			} finally {
+				g.pose().popMatrix();
+			}
+		}
+		kairoBox(g, x, y, w, h, radius, fill, seed, pressed);
+	}
+
+	/** Kairo's own HUD box (with Kairo Void's HUD style), whatever HUD look is in use. */
+	public static void kairoBox(GuiGraphicsExtractor g, float x, float y, float w, float h, float radius, int fill, float seed, float pressed) {
+		under(g, x, y, w, h, radius, seed, pressed);
+		if (Colors.alpha(fill) > 0) {
+			Shapes.rect(g, x, y, w, h, radius, fill);
+		}
+		over(g, x, y, w, h, radius, seed, pressed);
+	}
+
 	private static double time() {
 		return System.nanoTime() / 1e9;
 	}

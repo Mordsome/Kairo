@@ -35,6 +35,9 @@ public abstract class Setting<T> {
 
 	private boolean hidden;
 	private BooleanSupplier visibility = () -> true;
+	/** While this says false, get() answers {@link #lockedValue} and the setting is hidden (see api.Features). */
+	private BooleanSupplier unlocked = () -> true;
+	private T lockedValue;
 	private final List<Consumer<T>> listeners = new ArrayList<>(1);
 	private Runnable dirtyHook = () -> {
 	};
@@ -91,6 +94,20 @@ public abstract class Setting<T> {
 		return self();
 	}
 
+	/**
+	 * Locks the setting to {@code value} (and hides it) until {@code unlockedWhen} says otherwise. The player's own
+	 * value is kept and saved as it is, so it is back once the setting is unlocked.
+	 */
+	public <S extends Setting<T>> S lockedUnless(BooleanSupplier unlockedWhen, T value) {
+		this.unlocked = unlockedWhen;
+		this.lockedValue = value;
+		return self();
+	}
+
+	public boolean isLocked() {
+		return !unlocked.getAsBoolean();
+	}
+
 	public <S extends Setting<T>> S onChange(Consumer<T> listener) {
 		listeners.add(listener);
 		return self();
@@ -105,6 +122,9 @@ public abstract class Setting<T> {
 
 	/** The effective value: the PvP override while PvP mode is on (if there is one), otherwise the normal value. */
 	public T get() {
+		if (lockedValue != null && !unlocked.getAsBoolean()) {
+			return lockedValue;
+		}
 		T override = pvpValue;
 		if (override != null && PvpMode.isActive()) {
 			return override;
@@ -236,7 +256,7 @@ public abstract class Setting<T> {
 	}
 
 	public boolean isVisible() {
-		return !hidden && visibility.getAsBoolean();
+		return !hidden && !isLocked() && visibility.getAsBoolean();
 	}
 
 	public boolean supportsPvpOverride() {

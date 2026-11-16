@@ -53,10 +53,13 @@ final class Modules {
 		ModuleManager.register(new Fullbright());
 		ModuleManager.register(new dev.mordo.kairo.mods.TimeChanger());
 		ModuleManager.register(new dev.mordo.kairo.mods.WeatherChanger());
+		ModuleManager.register(new dev.mordo.kairo.mods.OreOutline());
 		ModuleManager.register(new Waypoints());
 		ModuleManager.register(new ChatTweaks());
 		ModuleManager.register(new ScrollableTooltips());
 		ModuleManager.register(new ShulkerPreview());
 		ModuleManager.register(new dev.mordo.kairo.mods.Screenshots());
+		ModuleManager.register(new dev.mordo.kairo.mods.Reconnect());
+		ModuleManager.register(new dev.mordo.kairo.mods.DropWarning());
 	}
 }
