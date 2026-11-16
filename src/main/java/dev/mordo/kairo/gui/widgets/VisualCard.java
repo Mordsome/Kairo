@@ -142,7 +142,7 @@ public final class VisualCard extends Widget {
 		}
 		int fill = Colors.lerp(Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, hv), Colors.withAlpha(accent, 0.07f + 0.04f * hv), t);
 		int stroke = Colors.lerp(Colors.lerp(Theme.BORDER, Theme.BORDER_HOVER, hv), Colors.withAlpha(accent, 0.45f + 0.3f * hv), t);
-		Shapes.rect(g, x, cy, w, h, RADIUS, Colors.multiplyAlpha(fill, a), Colors.multiplyAlpha(stroke, a), 1);
+		Shapes.surface(g, x, cy, w, h, RADIUS, fill, stroke, 1, a);
 
 		// The picture.
 		float ax = x + 7;

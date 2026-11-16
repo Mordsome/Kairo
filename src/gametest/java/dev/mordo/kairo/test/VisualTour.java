@@ -21,6 +21,30 @@ public class VisualTour implements FabricClientGameTest {
 	@Override
 	public void runTest(ClientGameTestContext ctx) {
 		TestInput input = ctx.getInput();
+		if (ShowcaseTour.flag("tour-hudprobe")) {
+			new HudFlickerProbe().run(ctx);
+			return;
+		}
+		if (ShowcaseTour.flag("tour-loading")) {
+			new LoadingTour().run(ctx);
+			return;
+		}
+		if (ShowcaseTour.flag("tour-kairo98")) {
+			new Kairo98Tour().run(ctx);
+			return;
+		}
+		if (ShowcaseTour.flag("tour-commandbar")) {
+			new CommandBarTour().run(ctx);
+			return;
+		}
+		if (ShowcaseTour.flag("tour-hudthemes")) {
+			new HudThemesTour().run(ctx);
+			return;
+		}
+		if (ShowcaseTour.flag("tour-040")) {
+			new Update040Tour().run(ctx);
+			return;
+		}
 		if (ShowcaseTour.flag("tour-030")) {
 			new Update030Tour().run(ctx);
 			return;
@@ -30,6 +54,11 @@ public class VisualTour implements FabricClientGameTest {
 			return;
 		}
 		input.resizeWindow(width, height);
+		// The clicks below are positions on screen, made for the menus at full size (0.4.0 starts them at 85%).
+		ctx.runOnClient(mc -> {
+			dev.mordo.kairo.core.ClientSettings.INSTANCE.menuScale.set(1.0);
+			dev.mordo.kairo.core.ClientSettings.INSTANCE.hudScale.set(1.0);
+		});
 		if (ShowcaseTour.flag("tour-020")) {
 			new Update020Tour().run(ctx);
 			return;

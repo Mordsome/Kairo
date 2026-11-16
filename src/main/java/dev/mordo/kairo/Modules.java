@@ -35,6 +35,8 @@ final class Modules {
 		ModuleManager.register(new FpsHud());
 		ModuleManager.register(new ArmorStatusHud());
 		ModuleManager.register(new dev.mordo.kairo.hud.DirectionHud());
+		ModuleManager.register(new dev.mordo.kairo.hud.NowPlayingHud());
+		ModuleManager.register(new dev.mordo.kairo.hud.VisualizerHud());
 		ModuleManager.register(new TotemPops());
 		ModuleManager.register(new HurtEffects());
 		ModuleManager.register(new HitSounds());
@@ -49,10 +51,15 @@ final class Modules {
 		ModuleManager.register(new dev.mordo.kairo.mods.ItemScale());
 		ModuleManager.register(new Zoom());
 		ModuleManager.register(new Fullbright());
+		ModuleManager.register(new dev.mordo.kairo.mods.TimeChanger());
+		ModuleManager.register(new dev.mordo.kairo.mods.WeatherChanger());
+		ModuleManager.register(new dev.mordo.kairo.mods.OreOutline());
 		ModuleManager.register(new Waypoints());
 		ModuleManager.register(new ChatTweaks());
 		ModuleManager.register(new ScrollableTooltips());
 		ModuleManager.register(new ShulkerPreview());
 		ModuleManager.register(new dev.mordo.kairo.mods.Screenshots());
+		ModuleManager.register(new dev.mordo.kairo.mods.Reconnect());
+		ModuleManager.register(new dev.mordo.kairo.mods.DropWarning());
 	}
 }

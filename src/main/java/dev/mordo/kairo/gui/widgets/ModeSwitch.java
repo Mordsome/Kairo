@@ -48,8 +48,7 @@ public final class ModeSwitch extends Widget {
 		thumb.animateTo(pvp.get() ? 1 : 0, 260, Easing.UI);
 		float t = thumb.value();
 		float radius = Math.min(10, h / 2);
-		Shapes.rect(g, x, y, w, h, radius, Colors.multiplyAlpha(Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, hover.value()), fade),
-			Colors.multiplyAlpha(Theme.BORDER, fade), 1);
+		Shapes.surface(g, x, y, w, h, radius, Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, hover.value()), Theme.BORDER, 1, fade);
 
 		float seg = (w - 6) / 2;
 		float thumbX = Animation.lerp(x + 3, x + 3 + seg, t);

@@ -20,14 +20,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Held item outline: a slightly bigger copy of the item, in one flat colour (the shimmer colour, or rainbow), drawn
- * just behind the real one, so only its rim shows around the item's shape. The game's own entity outline isn't
+ * Held item outline: the item's silhouette in one flat colour (the shimmer colour, or rainbow), drawn just behind the
+ * real one a dozen times, each shifted a little sideways on screen in a different direction. Together they make a rim
+ * of the same width all the way round that follows the item's real shape, inner corners and gaps included (a
+ * scaled-up copy would be thick at the tips and missing in the notches). The game's own entity outline isn't
  * processed for the hand, so this draws it directly.
  */
 public final class HeldOutline {
-	private static final float GROW = 1.04f;
+	/** Rim width, as a fraction of the distance to the item (so it's the same on screen near or far). */
+	private static final float WIDTH = 0.0085f;
+	/** How many shifted copies make the rim (enough for it to read as one smooth line). */
+	private static final int STEPS = 12;
 	private static final float BEHIND = 0.035f;
-	private static final float GROW_SOLID = 1.07f;
 	private static final float BEHIND_SOLID = 0.07f;
 	private static final Map<Identifier, RenderType> TYPES = new HashMap<>();
 
@@ -68,44 +72,47 @@ public final class HeldOutline {
 			}
 			// Flat items (swords, tools) are thin; blocks and 3D models are about as deep as they are wide.
 			boolean solid = (max.z - min.z) > 0.25f * Math.max(max.x - min.x, max.y - min.y);
-			float grow = solid ? GROW_SOLID : GROW;
-			float growDepth = solid ? GROW_SOLID : 1.6f;
 			float behind = solid ? BEHIND_SOLID : BEHIND;
 			Vector3f centre = min.add(max).mul(0.5f);
 			poseStack.pushPose();
 			layer.kairo$itemTransform().apply(access.kairo$displayContext().leftHand(), poseStack.last());
 			poseStack.last().mulPose(layer.kairo$localTransform());
-			// Push it straight back from the camera (which sits at the origin of this space), further than it grows,
-			// so the copy is always behind the real item and only its rim shows...
+			// The copies sit straight back from the camera (which is at the origin of this space, looking down -z), so
+			// they are always behind the real item; pushed back they would look smaller, so they grow by as much.
 			Vector3f world = poseStack.last().pose().transformPosition(new Vector3f(centre));
 			float distance = world.length();
+			float compensate = 1;
+			Vector3f back = new Vector3f();
 			if (distance > 1e-3f) {
-				// Further away looks smaller: grow it that much more, so the rim keeps its width.
-				float compensate = (distance + behind) / distance;
-				grow *= compensate;
-				growDepth *= solid ? compensate : 1;
-				world.normalize().mul(behind);
-				poseStack.last().pose().translateLocal(world.x, world.y, world.z);
+				compensate = (distance + behind) / distance;
+				back.set(world).normalize().mul(behind);
 			}
-			// ...and grow it around its centre.
-			poseStack.translate(centre.x, centre.y, centre.z);
-			poseStack.scale(grow, grow, growDepth);
-			poseStack.translate(-centre.x, -centre.y, -centre.z);
+			// How far each copy is shifted sideways: the same width on screen however near the item is.
+			float rim = WIDTH * (distance + behind);
 			Map<Identifier, List<BakedQuad>> byAtlas = new HashMap<>();
 			for (BakedQuad quad : quads) {
 				byAtlas.computeIfAbsent(quad.materialInfo().sprite().atlasLocation(), k -> new java.util.ArrayList<>()).add(quad);
 			}
-			for (var entry : byAtlas.entrySet()) {
-				List<BakedQuad> list = entry.getValue();
-				collector.submitCustomGeometry(poseStack, type(entry.getKey()), (pose, buffer) -> {
-					QuadInstance instance = new QuadInstance();
-					instance.setColor(color);
-					instance.setLightCoords(0xF000F0);
-					instance.setOverlayCoords(OverlayTexture.NO_OVERLAY);
-					for (BakedQuad quad : list) {
-						buffer.putBakedQuad(pose, quad, instance);
-					}
-				});
+			for (int step = 0; step < STEPS; step++) {
+				double angle = step * Math.PI * 2 / STEPS;
+				poseStack.pushPose();
+				poseStack.last().pose().translateLocal(back.x + (float) Math.cos(angle) * rim, back.y + (float) Math.sin(angle) * rim, back.z);
+				poseStack.translate(centre.x, centre.y, centre.z);
+				poseStack.scale(compensate, compensate, compensate);
+				poseStack.translate(-centre.x, -centre.y, -centre.z);
+				for (var entry : byAtlas.entrySet()) {
+					List<BakedQuad> list = entry.getValue();
+					collector.submitCustomGeometry(poseStack, type(entry.getKey()), (pose, buffer) -> {
+						QuadInstance instance = new QuadInstance();
+						instance.setColor(color);
+						instance.setLightCoords(0xF000F0);
+						instance.setOverlayCoords(OverlayTexture.NO_OVERLAY);
+						for (BakedQuad quad : list) {
+							buffer.putBakedQuad(pose, quad, instance);
+						}
+					});
+				}
+				poseStack.popPose();
 			}
 			poseStack.popPose();
 		}

@@ -185,13 +185,9 @@ public final class KeystrokesHud extends HudElement {
 			g.pose().translate(-(x + w / 2), -(y + h / 2));
 		}
 		if (background.isOn()) {
-			HudFx.under(g, x, y, w, h, radius, index * 1.7f, t);
-		}
-		if (Colors.alpha(fill) > 0) {
+			HudFx.box(g, x, y, w, h, radius, fill, index * 1.7f, t);
+		} else if (Colors.alpha(fill) > 0) {
 			Shapes.rect(g, x, y, w, h, radius, fill);
-		}
-		if (background.isOn()) {
-			HudFx.over(g, x, y, w, h, radius, index * 1.7f, t);
 		}
 		g.pose().popMatrix();
 		if (fx && age < 0.45f) {

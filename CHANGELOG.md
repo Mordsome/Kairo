@@ -1,5 +1,63 @@
 # Changelog
 
+## 0.4.0
+
+A lighter plain Kairo, new mods and fixes. Kairo Void keeps everything built in.
+
+- **Animations and Combat Effects are addons (plain Kairo):** attack, mining and inspect animations, the swing trail
+  and held item looks are now the **Animations** addon; hit particles, kill effects, damage numbers, the edge flash and
+  the sound packs are the **Combat Effects** addon. Get them in the Kairo Launcher (Addons) or from
+  Mordsome/KairoAddons. Without them those parts are gone from Visuals and Keybinds, but your choices are kept and
+  come back with the addon. A one-time pop-up says where they went. Kairo Void has all of it built in.
+- **Screenshots page:** every screenshot in a grid, newest first, with a Favourites tab. Click one to see it big with
+  Copy, Open, Delete and a heart; arrows or the mouse wheel step through them, right-click a picture to favourite it.
+  The ring's Screenshots segment opens it.
+- **Reconnect (Mods):** a Reconnect button on Minecraft's "Disconnected" screen that joins the same server again, and
+  an optional countdown that presses it for you (off by default; some servers don't allow rejoining automatically).
+- **Drop Warning (Mods):** dropping netherite, diamonds, golden apples, totems, elytra, shulker boxes or anything
+  enchanted asks first: drop it again within a few seconds to really drop it. Each kind can be switched off.
+- **Ore Outline (Mods):** a thin outline in each ore's colour round ores you can see (no glow, nothing through walls),
+  all ores or only diamonds, emeralds, gold and debris. Some servers have rules even about this: check them.
+- **Menu and HUD size (Visuals → Size):** sizes for the ring and its menus, the main menu and the HUD. The menus also
+  follow Minecraft's GUI Scale (and never get too small to read); the ring now starts a little smaller. The HUD starts
+  at 130%, and its size scales the whole layout evenly (the gaps grow too, nothing runs into anything, nothing leaves
+  the screen); the layout editor has − / + buttons for it.
+- **Restart the game (Settings → About):** with the Kairo Launcher the game starts again by itself; started any other
+  way the button closes it.
+- **More ways into the menus:** Kairo, Mods, Visuals and Cosmetics buttons in the pause menu's corner and a Cosmetics
+  button in the inventory (each with its own switch in Visuals → Menus), and a key for each page (Mods, Visuals,
+  Cosmetics, Settings, Screenshots, HUD layout; unbound by default).
+- **Mods search:** matching mods glide into place and new matches fade in, instead of every card popping in again.
+- **Inventory fixes:** no more stray dots by the player preview, the furnace's (and blast furnace's and smoker's)
+  flame and arrow no longer sit on grey boxes, and the recipe book button is glass like the slots.
+- **Animated capes:** no more flicker with colours that change by themselves (Chroma, Gradient), and smoother movement.
+- **Themes:** an addon's look now reaches every control (buttons, cards, fields, tabs, popups, toasts), not only the big
+  panels, and themes are picked from pictures at the top of Visuals → Theme (Kairo Void: Interface → Themes). Each
+  picture is drawn live by the theme. With the new **Themes** addon: Glass, Minimal, Retro and Neon.
+- **A different menu than the ring (addons):** Right Shift can open an addon's menu instead of the ring (Visuals →
+  Ring → Right Shift opens; Kairo Void: Interface → Menu style), and Back in every page leads there. The new
+  **Command Bar** addon is a search bar with your ring sections as tiles: type to find any page, mod or setting.
+- **Kairo 98 (addon):** all of Kairo as a late-90s desktop, Minecraft's inventories, hotbar, hearts and experience bar
+  included, with a taskbar and Start menu in place of the ring. To make it possible a menu look can now set the text
+  colour, draw a desktop behind the main menu, and repaint Minecraft's own GUI images (Kairo does the repainting in
+  the game, so no Mojang image is shipped); Inventory glass and the Hotbar mod step aside while it does. Addons that
+  don't go together say so, and only one of them loads. A look can also have working window buttons (close,
+  minimise, maximise) and its own loading screen, and changing its colours repaints Minecraft's menus instantly, with
+  no reload. Addons can add a tab of their own to Visuals.
+- **Command Bar:** its tiles and results can be clicked as well as picked with the keys.
+- **Loading screen in your colour:** a deep shade of your accent colour behind the wordmark, and the wordmark itself in
+  the accent colour (both editions).
+- **Kairo Void:** the "Kairo Void" start-up intro is gone; the game goes straight from the loading screen to the menu.
+- **Addon sockets:** `unlock` for parts of plain Kairo that come with an addon, `hudLook` for HUD looks (the box
+  behind every HUD mod and key; a menu look and a HUD look with the same id are one theme), and `homeMenu` for what
+  Right Shift opens. Still sockets version 1.
+- **Size sliders:** dragging Menu size no longer makes the menu jump between two sizes; it takes the new size when you
+  let go.
+
+- **Also in this release:** the parts of 0.3.0 that were finished after the 0.3.0 jars went out: Now Playing, Music
+  Visualiser, Time Changer, Weather Changer, addon sockets, the real held item outline, and Kairo Void's starfall, sky
+  crystals, world effects and new combat effects (listed under 0.3.0 below).
+
 ## 0.3.0
 
 Mostly Kairo Void: new visuals that look nothing like vanilla (custom geometry and shaders, no particles), every one
@@ -19,9 +77,32 @@ switchable in Visuals and respecting Fewer flashes and Reduce motion.
 - **Light ribbons (Void):** long ribbons of light hanging and twisting in the air around you, like an aurora you walk
   through. They belong to places in the world, so you pass them as you travel; brightest at night, fainter by day.
 - **Floating motes (Void):** small lights hanging in the air close around you that drift and slowly breathe.
+- **Starfall (Void):** comets of light streak down from the sky all around you and land in rings of light that ripple
+  out over the ground.
+- **Sky crystals (Void):** huge crystals of light hover over the land here and there, slowly turning, with rings
+  orbiting them, a beam down to the ground and a circle of light turning underneath.
 - **Light particles (Void):** Kairo's effects (hits, kills, jumps, explosions, crystals, atmospheres, trails, emotes)
   and Minecraft's combat, death, potion and explosion particles are drawn as sparks, shards, orbs, rings, petals and
   flakes of light instead of pixel sprites. Ambient ones (torches, smoke, rain) stay as they are.
+- **Pulse grid (Void):** waves of light sweep out from you over the land like a sonar scan, lighting the shape of the
+  ground up as a mesh.
+- **Light rivers (Void):** streams of light flow over the ground along winding paths and bend aside round your feet.
+- **Sky shapes (Void):** vast shapes of light far up in the sky: tumbling wire polyhedra, gyroscopes of rings, gates.
+- **Rift (Void):** a tear in the sky at a few places in the world: a crack of light with a dark gap opening and
+  closing, rings leaning in round it and shards circling.
+- **Footstep ripples (Void):** every step sends a ring of light over the ground; landing from a fall makes a big one.
+- **Rush streaks (Void):** lines of light stream past when you sprint-jump or fall fast, and a ring bursts out when you
+  break into a sprint.
+- **Block shatter and place pulse (Void):** broken blocks burst into shards of light in their own colour (in place of
+  Minecraft's crumbs); a block you place lights up along its edges and sends a frame of light outwards.
+- **Weapon aura (Void):** rings of light and runes turn round your sword, axe or mace, drawing closed and warming to
+  your colour as your attack charges (the same thing the crosshair indicator shows).
+- **Kill streak crown (Void):** kills in a row build a crown of light over your head, one spike per kill.
+- **Hit echo (Void):** a ghost of what you hit, drawn in rings of light, slides back the way it was knocked.
+- **Everything starts off (Void):** on a new install every Void visual is off and Quality is Custom, so you switch on
+  what you want (Favourites lists the main ones). Existing settings are kept.
+- **Held item outline (both editions):** now a real outline of the same width all the way round, following the item's
+  shape into its notches and gaps (it used to be a scaled-up copy, thick at the tips and missing in the corners).
 - **Player trail (Void):** a fading ribbon, comet, twin streaks or prism trail behind you.
 - **Your look (Void):** an outline, a glow or a hologram (see-through light with scan lines) on your own player only.
 - **Hit impact (Void):** shards, a sigil, a cross slash, a star or rings of light where your hit lands; bigger on crits.
@@ -37,6 +118,19 @@ switchable in Visuals and respecting Fewer flashes and Reduce motion.
 - **Music emotes (both editions):** two emotes that play your own song (OGG or WAV, up to 5 minutes, only you hear it)
   while you dance to it. Set the song's BPM and a beat offset so the dance lands on the beat; pick the dance, including
   two new ones made for it (Beat bounce and Beat step, also on the Dances page). A new Music page on the wheel.
+- **Now Playing (both editions, Windows):** a HUD mod showing the song your PC is playing (Spotify, YouTube or anything
+  in a browser, any player Windows' media controls know): album cover, title, artist, app, a progress bar and the time,
+  each with its own switch; card or one-line layout; long titles scroll. Display only.
+- **Music Visualiser (both editions, Windows):** a HUD mod with bars, mirrored bars, a wave, dots or a ring moving to
+  the sound your PC plays (all sound, or only while music plays), with options for count, size, round edges, colours,
+  animation, sensitivity, caps and glow.
+- Both music mods are off by default. While one is on (and only then) Kairo runs a small bundled PowerShell helper that
+  reads Windows' media controls and the level of the PC's sound output; nothing is recorded or sent anywhere.
+- **Time Changer and Weather Changer (both editions):** the time of day (a fixed hour or a fast day and night) and the
+  weather (clear, rain, thunderstorm) you see, whatever the world really has. Only your own picture changes.
+- **Addons (both editions):** Kairo can now be extended by small separate addon mods (from Mordsome/KairoAddons, by
+  hand or through the Kairo Launcher). First socket: menu looks, chosen in Visuals (Menu look), plus extra mods.
+  Addons only add things, so they work together; an addon that doesn't fit or breaks is skipped and Kairo carries on.
 - New "You" group in Void's Visuals; every new effect has its own card with its options.
 - **Favourites (Void):** Visuals opens on a Favourites tab with the most important effects already in it (hand
   animations, held item glow, blades, aura, glyphs, ribbons, motes, aurora, cosmic sky, block overlay, light

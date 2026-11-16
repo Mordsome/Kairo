@@ -30,7 +30,7 @@ public final class ColorButton extends Widget {
 		float a = fade * (enabled ? 1 : 0.4f);
 		int fill = Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, hover.value());
 		int stroke = Colors.lerp(Theme.BORDER, Theme.BORDER_HOVER, hover.value());
-		Shapes.rect(g, x, y, w, h, 8, Colors.multiplyAlpha(fill, a), Colors.multiplyAlpha(stroke, a), 1);
+		Shapes.surface(g, x, y, w, h, 8, fill, stroke, 1, a);
 		float s = h - 10;
 		boolean accent = meta.usesAccent();
 		boolean moving = accent || meta.mode() != ColorSetting.Mode.STATIC;

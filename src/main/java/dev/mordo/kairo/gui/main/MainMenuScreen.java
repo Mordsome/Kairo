@@ -270,6 +270,17 @@ public final class MainMenuScreen extends MainMenuBase {
 		float a = intro.value();
 		int w = g.guiWidth();
 		int h = g.guiHeight();
+		// A menu look with a desktop of its own (Kairo 98's) replaces every main menu style's background.
+		dev.mordo.kairo.api.MenuLook look = dev.mordo.kairo.api.Addons.activeLook();
+		if (look != null) {
+			try {
+				if (look.desktop(g, w, h)) {
+					return;
+				}
+			} catch (Throwable t) {
+				dev.mordo.kairo.api.Addons.lookFailed(look, t);
+			}
+		}
 		drawBackgroundAdjustments(g);
 		switch (layout()) {
 			case DOCK -> {

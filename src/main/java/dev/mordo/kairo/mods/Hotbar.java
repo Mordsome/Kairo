@@ -165,12 +165,17 @@ public final class Hotbar extends Module {
 		return mc.player != null && mc.gameMode != null && mc.gameMode.getPlayerMode() != GameType.SPECTATOR;
 	}
 
+	/** A menu look that repaints Minecraft's images (Kairo 98's) brings its own hotbar, hearts and bar: this steps aside. */
+	private static boolean lookRepaints() {
+		return dev.mordo.kairo.gui.LookPack.active();
+	}
+
 	public boolean styledHotbar() {
-		return isEnabled() && style.get() != HotbarStyle.MINECRAFT && inGame();
+		return isEnabled() && !lookRepaints() && style.get() != HotbarStyle.MINECRAFT && inGame();
 	}
 
 	public boolean styledHealth() {
-		return isEnabled() && healthStyle.get() != HealthStyle.HEARTS && inGame();
+		return isEnabled() && !lookRepaints() && healthStyle.get() != HealthStyle.HEARTS && inGame();
 	}
 
 	public boolean styledOthers() {
@@ -179,7 +184,7 @@ public final class Hotbar extends Module {
 
 	/** Used by the experience bar mixin too. */
 	public boolean styledXp() {
-		return isEnabled() && xpStyle.get() != XpStyle.MINECRAFT && inGame();
+		return isEnabled() && !lookRepaints() && xpStyle.get() != XpStyle.MINECRAFT && inGame();
 	}
 
 	public HotbarRenderer renderer() {

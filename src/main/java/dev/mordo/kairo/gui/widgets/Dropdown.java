@@ -36,7 +36,7 @@ public final class Dropdown<E extends Enum<E>> extends Widget {
 		float alpha = fade * (enabled ? 1 : 0.4f);
 		int fill = Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, Math.max(hover.value(), open ? 1 : 0));
 		int stroke = Colors.lerp(Theme.BORDER, Theme.BORDER_HOVER, hover.value());
-		Shapes.rect(g, x, y, w, h, 8, Colors.multiplyAlpha(fill, alpha), Colors.multiplyAlpha(stroke, alpha), 1);
+		Shapes.surface(g, x, y, w, h, 8, fill, stroke, 1, alpha);
 		String label = Fonts.ellipsize(Typeface.OUTFIT_MEDIUM, EnumSetting.label(value.get()), 11.5f, w - 40);
 		Fonts.draw(g, Typeface.OUTFIT_MEDIUM, label, x + 12, y + h / 2, 11.5f, Theme.text(1, alpha));
 		// Chevron that flips when open.
@@ -88,7 +88,7 @@ public final class Dropdown<E extends Enum<E>> extends Widget {
 			float a = open.value();
 			float drop = Animation.motion((1 - a) * -6, 0);
 			Shapes.shadow(g, x, y + 6 + drop, w, h, 10, 16, Colors.argb(0.45f * a, 0));
-			Shapes.rect(g, x, y + drop, w, h, 10, Colors.multiplyAlpha(Theme.POPUP, a), Colors.argb(0.14f * a, 0xFFFFFF), 1);
+			Shapes.surface(g, x, y + drop, w, h, 10, Theme.POPUP, 0x24FFFFFF, 1, a);
 			for (int i = 0; i < values.length; i++) {
 				float ry = y + 4 + i * ROW + drop;
 				boolean over = mx >= x && mx <= x + w && my >= ry && my < ry + ROW;

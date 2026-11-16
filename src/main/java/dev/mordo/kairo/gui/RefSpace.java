@@ -23,7 +23,11 @@ public final class RefSpace {
 
 	/** Enters reference space; returns the unit (GUI pixels per reference unit). Pair with {@link #pop}. */
 	public static float push(GuiGraphicsExtractor g) {
-		float unit = unit(g.guiWidth(), g.guiHeight());
+		return push(g, unit(g.guiWidth(), g.guiHeight()));
+	}
+
+	/** The same with a unit of the caller's own (a screen drawn bigger or smaller, see UiScaling). */
+	public static float push(GuiGraphicsExtractor g, float unit) {
 		g.pose().pushMatrix();
 		g.pose().scale(unit, unit);
 		UiScale.push(unit * Minecraft.getInstance().getWindow().getGuiScale());

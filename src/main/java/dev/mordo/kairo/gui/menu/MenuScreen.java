@@ -23,6 +23,11 @@ import java.util.function.Function;
  * Switching pages overlaps the old page's exit with the new page's intro.
  */
 public final class MenuScreen extends KairoScreen {
+	@Override
+	protected float sizeFactor() {
+		return dev.mordo.kairo.core.UiScaling.menus();
+	}
+
 	private final WidgetHost host = new WidgetHost();
 	private final Animation backdrop = new Animation(0);
 	private final RingPage ring;
@@ -36,9 +41,9 @@ public final class MenuScreen extends KairoScreen {
 	private boolean started;
 	private @Nullable Screen returnTo;
 
-	/** Opens the menu on the ring. */
+	/** Opens the menu on its home: the ring, or the menu an addon added if the player chose it. */
 	public MenuScreen() {
-		this(MenuScreen::ring);
+		this(MenuScreen::home);
 	}
 
 	/** Opens the menu on any page (e.g. {@code MenuScreen::mods}). */
@@ -82,6 +87,25 @@ public final class MenuScreen extends KairoScreen {
 		return ring;
 	}
 
+	/** The page showing now. */
+	public Page currentPage() {
+		return current;
+	}
+
+	private @Nullable HomePage homePage;
+
+	/** Where the menu opens and where Back leads: the ring, or an addon's home menu if the player chose one. */
+	public Page home() {
+		dev.mordo.kairo.api.HomeMenu chosen = dev.mordo.kairo.api.Addons.activeHomeMenu();
+		if (chosen == null) {
+			return ring;
+		}
+		if (homePage == null || homePage.home() != chosen) {
+			homePage = new HomePage(this, chosen);
+		}
+		return homePage;
+	}
+
 	public ModsPage mods() {
 		if (mods == null) {
 			mods = new ModsPage(this);
@@ -123,6 +147,15 @@ public final class MenuScreen extends KairoScreen {
 			cosmetics = new CosmeticsPage(this);
 		}
 		return cosmetics;
+	}
+
+	private @Nullable ScreenshotsPage screenshots;
+
+	public ScreenshotsPage screenshots() {
+		if (screenshots == null) {
+			screenshots = new ScreenshotsPage(this);
+		}
+		return screenshots;
 	}
 
 	public PvpPage pvp() {
@@ -198,6 +231,25 @@ public final class MenuScreen extends KairoScreen {
 
 	@Override
 	protected boolean onClick(float x, float y, int button) {
+		dev.mordo.kairo.api.MenuLook look = dev.mordo.kairo.api.Addons.activeLook();
+		if (look != null && button == com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT) {
+			String hit = null;
+			try {
+				hit = look.windowButton(x, y);
+			} catch (Throwable t) {
+				dev.mordo.kairo.api.Addons.lookFailed(look, t);
+			}
+			if (hit != null) {
+				dev.mordo.kairo.sound.UiSounds.click();
+				switch (hit) {
+					case "close", "minimize" -> onClose();
+					case "maximize" -> PanelPage.maximized = !PanelPage.maximized;
+					default -> {
+					}
+				}
+				return true;
+			}
+		}
 		return host.mouseClicked(x, y, button) || current.onClick(x, y, button);
 	}
 

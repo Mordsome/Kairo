@@ -72,6 +72,19 @@ abstract class AbstractButtonMixin {
 		}
 	}
 
+	/** A menu look with light buttons (Kairo 98, say) asks for dark labels: the button's text takes that colour. */
+	@org.spongepowered.asm.mixin.injection.Redirect(method = "extractDefaultLabel", at = @At(value = "INVOKE",
+		target = "Lnet/minecraft/client/gui/components/AbstractButton;getMessage()Lnet/minecraft/network/chat/Component;"))
+	private net.minecraft.network.chat.Component kairo$labelColour(AbstractButton button) {
+		net.minecraft.network.chat.Component message = button.getMessage();
+		int colour = dev.mordo.kairo.gui.Theme.lookText();
+		if (colour == 0 || !VanillaStyle.enabled()) {
+			return message;
+		}
+		int shown = button.active ? colour : dev.mordo.kairo.render.Colors.lerp(colour | 0xFF000000, 0xFF808080, 0.7f);
+		return message.copy().withStyle(style -> style.withColor(shown & 0xFFFFFF).withShadowColor(0));
+	}
+
 	@Inject(method = "onClick", at = @At("HEAD"))
 	private void kairo$clickEffect(MouseButtonEvent event, boolean doubleClick, CallbackInfo ci) {
 		if (VanillaStyle.enabled() && ((AbstractWidget) (Object) this).active) {

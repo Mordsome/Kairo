@@ -38,9 +38,17 @@ public abstract class PanelPage extends Page {
 	protected float contentX;
 	protected float contentW;
 
+	/** The menus fill the screen (a menu look's "maximize" window button). */
+	public static boolean maximized;
+
 	protected PanelPage(MenuScreen menu) {
 		super(menu);
-		back = new Button("Back to ring", Icon.ARROW_LEFT, Button.Style.SUBTLE, () -> menu.navigate(menu.ring()));
+		back = new Button(backLabel(), Icon.ARROW_LEFT, Button.Style.SUBTLE, () -> menu.navigate(menu.home()));
+	}
+
+	/** "Back to ring", or just "Back" when Right Shift opens an addon's menu instead. */
+	private static String backLabel() {
+		return dev.mordo.kairo.api.Addons.activeHomeMenu() == null ? "Back to ring" : "Back";
 	}
 
 	/** The small label above the sidebar nav (e.g. "CATEGORIES"). */
@@ -87,9 +95,10 @@ public abstract class PanelPage extends Page {
 		if (a <= 0.002f) {
 			return;
 		}
+		back.setLabel(backLabel());
 		boolean live = canInteract(interactive);
-		pw = Math.clamp(viewWidth * 0.8f, 820, 1500);
-		ph = Math.clamp(viewHeight * 0.8f, 500, 780);
+		pw = maximized ? viewWidth - 40 : Math.clamp(viewWidth * 0.8f, 820, 1500);
+		ph = maximized ? viewHeight - 90 : Math.clamp(viewHeight * 0.8f, 500, 780);
 		px = (viewWidth - pw) / 2;
 		py = (viewHeight - ph) / 2;
 		contentX = px + SIDEBAR_W + CONTENT_PAD;

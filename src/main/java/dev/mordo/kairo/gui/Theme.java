@@ -80,13 +80,29 @@ public final class Theme {
 
 	public static int text(float alpha) {
 		refresh();
-		return Colors.withAlpha(alpha >= 0.8f ? TEXT : TEXT_SOFT, alpha);
+		int look = lookText();
+		return Colors.withAlpha(look != 0 ? look : alpha >= 0.8f ? TEXT : TEXT_SOFT, alpha);
 	}
 
 	/** Text colour at a fraction of full opacity, also multiplied by an outer fade. */
 	public static int text(float opacity, float fade) {
 		refresh();
-		return Colors.withAlpha(opacity >= 0.8f ? TEXT : TEXT_SOFT, opacity * fade);
+		int look = lookText();
+		return Colors.withAlpha(look != 0 ? look : opacity >= 0.8f ? TEXT : TEXT_SOFT, opacity * fade);
+	}
+
+	/** The text colour an addon's menu look asks for (dark text on light surfaces), or 0 for Kairo's own. */
+	public static int lookText() {
+		dev.mordo.kairo.api.MenuLook look = dev.mordo.kairo.api.Addons.activeLook();
+		if (look == null) {
+			return 0;
+		}
+		try {
+			return look.textColor();
+		} catch (Throwable t) {
+			dev.mordo.kairo.api.Addons.lookFailed(look, t);
+			return 0;
+		}
 	}
 
 	public static int fade(int argb, float fade) {

@@ -15,8 +15,9 @@ abstract class MinecraftMixin {
 	@ModifyArg(method = "<init>", at = @At(value = "INVOKE",
 		target = "Lnet/minecraft/server/packs/repository/PackRepository;<init>([Lnet/minecraft/server/packs/repository/RepositorySource;)V"))
 	private RepositorySource[] kairo$addClientPack(RepositorySource[] sources) {
-		RepositorySource[] all = Arrays.copyOf(sources, sources.length + 1);
+		RepositorySource[] all = Arrays.copyOf(sources, sources.length + 2);
 		all[sources.length] = TotemPack.SOURCE;
+		all[sources.length + 1] = dev.mordo.kairo.gui.LookPack.SOURCE;
 		return all;
 	}
 

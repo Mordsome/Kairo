@@ -55,6 +55,10 @@ public final class InventoryGlass extends Module {
 	private static final Path PACK_ROOT = TotemPack.root();
 	private static final String CONTAINER_DIR = "assets/minecraft/textures/gui/container";
 	private static final String TABS_DIR = "assets/minecraft/textures/gui/sprites/container/creative_inventory";
+	/** The furnaces' flame and arrow: sprites drawn over the panel, with the panel's grey around them. */
+	private static final String[] FURNACE_DIRS = {"assets/minecraft/textures/gui/sprites/container/furnace",
+		"assets/minecraft/textures/gui/sprites/container/blast_furnace", "assets/minecraft/textures/gui/sprites/container/smoker"};
+	private static final String RECIPE_BOOK_DIR = "assets/minecraft/textures/gui/sprites/recipe_book";
 	private long rebuildAt;
 	/** What the textures on disk were built for, so a reload only happens when something really changed. */
 	private volatile String writtenFor = "";
@@ -76,7 +80,7 @@ public final class InventoryGlass extends Module {
 
 	/** True while a container screen is open and the glass look is on. */
 	public boolean activeFor(Object screen) {
-		return isEnabled() && screen instanceof AbstractContainerScreen<?>;
+		return isEnabled() && !dev.mordo.kairo.gui.LookPack.active() && screen instanceof AbstractContainerScreen<?>;
 	}
 
 	public boolean active() {
@@ -154,15 +158,29 @@ public final class InventoryGlass extends Module {
 	}
 
 	private String key() {
-		return isEnabled() ? "on:v3" : "off";
+		return isEnabled() && !dev.mordo.kairo.gui.LookPack.active() ? "on:v4" : "off";
+	}
+
+	/** Rewrites (or clears) the glass textures now, for a reload someone else is about to do. */
+	public void refreshFiles() {
+		try {
+			writeTextures();
+		} catch (IOException | RuntimeException e) {
+			Kairo.LOGGER.warn("Couldn't build the glass inventory textures", e);
+		}
 	}
 
 	private synchronized void writeTextures() throws IOException {
 		writtenFor = key();
 		deleteTree(PACK_ROOT.resolve(CONTAINER_DIR));
 		deleteTree(PACK_ROOT.resolve(TABS_DIR));
-		if (!isEnabled()) {
-			return;
+		for (String dir : FURNACE_DIRS) {
+			deleteTree(PACK_ROOT.resolve(dir));
+		}
+		Files.deleteIfExists(PACK_ROOT.resolve(RECIPE_BOOK_DIR).resolve("button.png"));
+		Files.deleteIfExists(PACK_ROOT.resolve(RECIPE_BOOK_DIR).resolve("button_highlighted.png"));
+		if (!key().startsWith("on")) {
+			return; // off, or a menu look repaints Minecraft's menus instead
 		}
 		// Exact vanilla GUI greys -> glass. Anything else (arrows, icons, flames) stays as it is.
 		// The panel's own bevel (white top-left, grey bottom-right, black rim) goes completely: the glass panel
@@ -190,6 +208,19 @@ public final class InventoryGlass extends Module {
 				recolor(file, PACK_ROOT.resolve(CONTAINER_DIR).resolve(rel), panel, true);
 			}
 		});
+		// The flame and the arrow: the grey around them goes, the grey of the empty part matches the panel's soft
+		// white shapes, the arrow's shading goes; the fire keeps its colours.
+		Map<Integer, Integer> furnace = Map.of(
+			0xFFC6C6C6, 0x00000000,
+			0xFF8B8B8B, 0x38FFFFFF,
+			0xFF686868, 0x00000000,
+			0xFFFFFFFF, 0xF0FFFFFF);
+		for (String dir : FURNACE_DIRS) {
+			withVanillaFolder(dir, "lit_progress.png", (rel, file) -> recolor(file, PACK_ROOT.resolve(dir).resolve(rel), furnace, false));
+		}
+		// The recipe book button: a glass cell like the slots, with the book in white.
+		recipeBookButton(PACK_ROOT.resolve(RECIPE_BOOK_DIR).resolve("button.png"), false);
+		recipeBookButton(PACK_ROOT.resolve(RECIPE_BOOK_DIR).resolve("button_highlighted.png"), true);
 		// Tabs themselves are drawn as glass by CreativeTabsMixin; only the scroll handle needs a new colour.
 		withVanillaFolder(TABS_DIR, "tab_top_selected_1.png", (rel, file) -> {
 			if (rel.startsWith("scroller")) {
@@ -277,9 +308,50 @@ public final class InventoryGlass extends Module {
 			for (int x = 0; x < w; x++) {
 				int argb = px[y][x];
 				Integer mapped = map.get(argb);
-				out.setRGB(x, y, cleared[y][x] ? 0 : mapped != null ? mapped : argb);
+				// A lone grey pixel is a bevel corner (the player preview box has them), not a shape: it would show as a dot.
+				boolean lone = clearSlots && argb == SLOT_FILL && !greyNeighbour(px, cleared, x, y, w, h);
+				out.setRGB(x, y, cleared[y][x] || lone ? 0 : mapped != null ? mapped : argb);
 			}
 		}
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		ImageIO.write(out, "png", bytes);
+		Files.createDirectories(target.getParent());
+		Files.write(target, bytes.toByteArray());
+	}
+
+	private static boolean greyNeighbour(int[][] px, boolean[][] cleared, int x, int y, int w, int h) {
+		for (int dy = -1; dy <= 1; dy++) {
+			for (int dx = -1; dx <= 1; dx++) {
+				int nx = x + dx;
+				int ny = y + dy;
+				if ((dx != 0 || dy != 0) && nx >= 0 && ny >= 0 && nx < w && ny < h && !cleared[ny][nx] && px[ny][nx] == SLOT_FILL) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/** Draws the 20 x 18 recipe book button: a rounded dark glass cell with a small open book in white. */
+	private static void recipeBookButton(Path target, boolean highlighted) throws IOException {
+		BufferedImage out = new BufferedImage(20, 18, BufferedImage.TYPE_INT_ARGB);
+		java.awt.Graphics2D g = out.createGraphics();
+		g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setColor(highlighted ? new java.awt.Color(0x28, 0x32, 0x3C, 0xC0) : new java.awt.Color(0x05, 0x08, 0x0D, 0x99));
+		g.fillRoundRect(0, 0, 20, 18, 7, 7);
+		g.setColor(new java.awt.Color(255, 255, 255, highlighted ? 0x90 : 0x30));
+		g.drawRoundRect(0, 0, 19, 17, 7, 7);
+		// The book: two pages opening from a spine, with a line of text on each.
+		java.awt.Color page = new java.awt.Color(255, 255, 255, highlighted ? 0xFF : 0xE0);
+		g.setColor(page);
+		g.fillPolygon(new int[]{3, 9, 9, 3}, new int[]{5, 6, 14, 13}, 4);
+		g.fillPolygon(new int[]{11, 17, 17, 11}, new int[]{6, 5, 13, 14}, 4);
+		g.setColor(new java.awt.Color(0x05, 0x08, 0x0D, 0xB0));
+		g.drawLine(4, 8, 8, 9);
+		g.drawLine(4, 10, 8, 11);
+		g.drawLine(12, 9, 16, 8);
+		g.drawLine(12, 11, 16, 10);
+		g.dispose();
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		ImageIO.write(out, "png", bytes);
 		Files.createDirectories(target.getParent());

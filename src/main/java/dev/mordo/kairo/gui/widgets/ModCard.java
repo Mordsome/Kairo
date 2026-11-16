@@ -89,7 +89,7 @@ public final class ModCard extends Widget {
 		if (hv > 0.01f) {
 			Shapes.shadow(g, x, cy + 6, w, h, radius, 14, Colors.argb(0.22f * hv * a, 0));
 		}
-		Shapes.rect(g, x, cy, w, h, radius, Colors.multiplyAlpha(fill, a), Colors.multiplyAlpha(stroke, a), 1);
+		Shapes.surface(g, x, cy, w, h, radius, fill, stroke, 1, a);
 
 		switch (drawnLayout) {
 			case CARDS -> drawCard(g, cy, a);

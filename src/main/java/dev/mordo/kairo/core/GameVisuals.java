@@ -320,7 +320,7 @@ public final class GameVisuals extends SettingHolder {
 	// ---- movement and world ----
 
 	public final EnumSetting<JumpEffect> jumpEffect = add(new EnumSetting<>("jump_effect", "Jump effect", JumpEffect.NONE));
-	public final BooleanSetting landingEffect = add(new BooleanSetting("landing_effect", "Landing effect", true)
+	public final BooleanSetting landingEffect = add(new BooleanSetting("landing_effect", "Landing effect", !dev.mordo.kairo.core.Edition.isVoid())
 		.description("The jump effect again, bigger, when you land from a height"));
 	public final SliderSetting speedLines = add(new SliderSetting("speed_lines", "Speed lines", 0.0, 0.0, 1.0, 0.05).percent()
 		.description("Streaks at the screen edges while sprinting, flying or falling fast"));
@@ -335,7 +335,7 @@ public final class GameVisuals extends SettingHolder {
 	public final EnumSetting<ProjectileTrail> projectileTrail = add(new EnumSetting<>("projectile_trail", "Projectile trails", ProjectileTrail.NONE)
 		.description("A trail behind arrows, tridents, ender pearls, snowballs and potions"));
 	public final BooleanSetting trailOnlyMine = add(new BooleanSetting("trail_only_mine", "Only my projectiles", false));
-	public final BooleanSetting pearlRipple = add(new BooleanSetting("pearl_ripple", "Pearl landing ring", true)
+	public final BooleanSetting pearlRipple = add(new BooleanSetting("pearl_ripple", "Pearl landing ring", !dev.mordo.kairo.core.Edition.isVoid())
 		.description("A ring of light where an ender pearl lands"));
 	public final BooleanSetting itemPhysics = add(new BooleanSetting("item_physics", "Item physics", false)
 		.description("Dropped items lie flat on the ground and tumble as they fall, instead of floating and spinning"));

@@ -68,7 +68,7 @@ public final class ChoicePicker extends Widget {
 		float fx = fieldX();
 		boolean overField = mx >= fx && mx <= fx + FIELD_W && my >= y && my <= y + h && hover.target() > 0;
 		int fill = Colors.lerp(Theme.SURFACE, Theme.SURFACE_HOVER, Math.max(overField ? hover.value() : 0, open ? 1 : 0));
-		Shapes.rect(g, fx, y, FIELD_W, h, 8, Colors.multiplyAlpha(fill, alpha), Colors.multiplyAlpha(Theme.BORDER, alpha), 1);
+		Shapes.surface(g, fx, y, FIELD_W, h, 8, fill, Theme.BORDER, 1, alpha);
 		String label = Fonts.ellipsize(Typeface.OUTFIT_MEDIUM, setting.label(value.get()), 11.5f, FIELD_W - 40);
 		Fonts.draw(g, Typeface.OUTFIT_MEDIUM, label, fx + 12, y + h / 2, 11.5f, Theme.text(1, alpha));
 		float cx = fx + FIELD_W - 16;
@@ -90,7 +90,7 @@ public final class ChoicePicker extends Widget {
 		boolean over = hover.target() > 0 && mx >= bx && mx <= bx + BUTTON && my >= y && my <= y + h;
 		anim.animateTo(over ? 1 : 0, 140);
 		int fill = Colors.lerp(Theme.SURFACE, Colors.withAlpha(Theme.accent(), 0.22f), anim.value());
-		Shapes.rect(g, bx, y, BUTTON, h, 8, Colors.multiplyAlpha(fill, alpha), Colors.multiplyAlpha(Theme.BORDER, alpha), 1);
+		Shapes.surface(g, bx, y, BUTTON, h, 8, fill, Theme.BORDER, 1, alpha);
 		int color = Colors.lerp(Theme.text(0.75f), Theme.accent(), anim.value());
 		IconRenderer.draw(g, icon, bx + BUTTON / 2, y + h / 2, icon == Icon.PLAY ? 12 : 14, Colors.multiplyAlpha(color, alpha), 2.2f);
 	}
@@ -189,7 +189,7 @@ public final class ChoicePicker extends Widget {
 			float a = open.value();
 			float drop = Animation.motion((1 - a) * -6, 0);
 			Shapes.shadow(g, x, y + 6 + drop, w, h, 10, 16, Colors.argb(0.45f * a, 0));
-			Shapes.rect(g, x, y + drop, w, h, 10, Colors.multiplyAlpha(Theme.POPUP, a), Colors.argb(0.14f * a, 0xFFFFFF), 1);
+			Shapes.surface(g, x, y + drop, w, h, 10, Theme.POPUP, 0x24FFFFFF, 1, a);
 			g.enableScissor((int) Math.floor(x), (int) Math.floor(y + drop + 2), (int) Math.ceil(x + w), (int) Math.ceil(y + drop + h - 2));
 			try {
 				float off = scroll.value();

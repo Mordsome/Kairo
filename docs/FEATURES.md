@@ -46,9 +46,6 @@ What it adds is in the game itself, every part of it switchable in Visuals:
 
 New in 0.3.0, all drawn with Kairo's own geometry and shaders (no vanilla particles), all only on your screen:
 
-- **Start-up intro** (Interface): when the game opens, "Kairo" rises into place over black and "Void" pops in next to it
-  with a ring of light, then the first menu fades in. Once per launch, never when you leave a world; click to skip.
-  Reduce motion: fades only. Fewer flashes: no ring, a soft glow.
 - **Custom sky** (World & sky): your own picture as the sky. A wide 2:1 panorama wraps all the way round (any picture
   works). Show it day and night or only one of them, set its brightness (it always darkens at night), let it turn
   slowly, and keep the sun, moon, cosmic sky and aurora on top of it. **+** adds a picture; they live in
@@ -73,6 +70,33 @@ New in 0.3.0, all drawn with Kairo's own geometry and shaders (no vanilla partic
   slider, and "Also by day" (fainter in daylight).
 - **Floating motes** (World & sky): small lights hanging in the air close around you (never inside blocks or right in
   front of your eyes), drifting a little and slowly breathing.
+- **Starfall** (World & sky): comets of light streak down from the sky all around you at a slant, each with a bright
+  head and a long fading tail, and land in rings of light that ripple out over the ground while a spike of light sinks
+  back into it. An amount slider; colours as the ribbons. None land closer than a couple of blocks.
+- **Sky crystals** (World & sky): huge crystals of light hovering over the land here and there in the world, slowly
+  turning and bobbing, with two rings orbiting each, a beam running down to the ground and a broken circle of light
+  turning underneath. They belong to places, so you can walk up to one.
+- **Pulse grid** (World & sky): every few seconds a wave of light sweeps out from you over the land, and where it passes
+  the ground's own shape lights up as a mesh (hills, steps, treetops) before going dark again behind it.
+- **Light rivers** (World & sky): streams of light flowing over the ground along winding paths that follow the land,
+  with light running along them. They belong to places in the world and bend aside round your feet.
+- **Sky shapes** (World & sky): vast shapes of light far up in the sky, a few to every horizon: a tumbling wire
+  polyhedron with another turning inside it, a gyroscope of rings, or a great gate.
+- **Rift** (World & sky): a tear in the sky at a few fixed places: a jagged crack of light with a dark gap opening and
+  closing down its middle, rings of light leaning in round it and shards slowly circling.
+- **Block shatter** and **Place pulse** (World & sky): a broken block bursts into shards of light in its own colour
+  inside a frame of light flying apart (Minecraft's crumbs are skipped; sounds and drops are untouched). A block you
+  place lights up along its edges and sends a frame of light outwards.
+- **Footstep ripples** (You): every step sends a ring of light over the ground; sprinting leaves a line of them, and
+  landing from a fall makes a big one with spokes.
+- **Rush streaks** (You): lines of light stream past you along the way you move when you sprint-jump or fall fast, and
+  a ring bursts out when you break into a sprint.
+- **Weapon aura** (Combat): three rings of light with little runes turn round the blade of the sword, axe or mace in
+  your hand (first person). They draw themselves closed and warm from grey to your colour as your attack charges, and
+  lights run round them when it's ready. It shows only the attack cooldown, like the crosshair indicator.
+- **Kill streak crown** (Combat): kills in a row build a crown of light over your head, one spike per kill (up to ten).
+  It fades 12 seconds after the last kill. In first person it floats wide above you.
+- **Hit echo** (Combat): a ghost of what you hit, drawn in rings of light, slides back the way it was knocked and fades.
 - **Light particles** (Combat): Kairo's effects (hit and kill effects, jumps and landings, explosions, crystal pops,
   atmospheres, projectile and cosmetic trails, emote bursts) and Minecraft's combat, death, potion and explosion
   particles become sparks, shards, orbs, rings, petals and flakes of light instead of pixel sprites. Ambient particles
@@ -322,6 +346,10 @@ The switcher next to the search box in the Mods panel shows mods as Cards, Large
 | Keystrokes, CPS, FPS, Ping, Coordinates, Armor Status, Direction HUD | HUD elements, placed with the layout editor (ring → Layout). CPS has an editable **Label** (`CPS` by default; empty shows just `8 | 6`). Keystrokes → **Show CPS in Keystrokes**: the mouse buttons show Label, CPS (your live clicks per second for each button) or Both (a small label above the number); CPS then hides its own box unless you turn off "Hide when Keystrokes shows CPS" (the layout editor marks it "shown in Keystrokes", and the PvP layout can choose differently): drag to move, drag the corner grip (or scroll) to resize, × on the corner hides an element and + brings it back, right-click for its settings. Shift/Ctrl-click or drag a box over empty space to select several (Ctrl+A selects all): they move, resize, hide and reset together. Ctrl+Z undoes and Ctrl+Y (or Ctrl+Shift+Z) redoes, also with the arrow buttons in the toolbar. With CPS or Keystrokes selected, the toolbar has Attach / Detach CPS. Direction HUD is a compass bar (N, NE, E… with degree ticks, your heading and your waypoints on it) or just the direction you face |
 | Zoom | Hold **C**; scroll to zoom further; smooth, optional hand hiding and cinematic camera |
 | Fullbright | Raises the gamma value only (no Night Vision, no lighting changes); optional toggle key |
+| Time Changer | The time of day you see, whatever time the world has: one fixed hour (0 to 24) or a fast day and night (a whole day in 1 to 60 minutes). Only your picture changes (sky, light, sun and moon); the moon keeps its real phase |
+| Weather Changer | The weather you see: clear, rain or a thunderstorm, fading over a time you set. Only your picture and sound change; rain still falls as snow in cold biomes, and lightning only ever comes from the server |
+| Now Playing | (HUD, Windows) The song your PC is playing: Spotify, YouTube or anything else in a browser, any player Windows' media controls know. Card or one-line layout; switches for the album cover, title, artist, app name, progress bar and time (played / length, time left, or played); long titles scroll; dim or hide when paused. Display only: Kairo never controls the player |
+| Music Visualiser | (HUD, Windows) Bars, mirrored bars, a wave, dots or a ring moving to the sound your PC plays. Listens to all PC sound or only while music plays; how many bars, thickness, gap, height, round edges; one colour, two colours (across or along the bars), rainbow or by loudness; snappy, smooth or floaty animation; sensitivity, falling caps, low notes in the middle, glow, hide when silent |
 | Crosshair | Cross / dot / circle / T / custom pixel grid, outline, attack-cooldown style |
 | Inventory | Inventories and containers in the glass look: Minecraft's container textures are recoloured (panel see-through, slots dark glass) over a frosted panel with no square bevels (so any corner radius works), titles turn light, the creative menu gets glass tabs, and every slot (inventory, armour, crafting, results) is a rounded glass cell drawn by the client. Buttons inside inventories (recipe book) don't play the menu intro animation. Arrows, flames and icons stay. Tint, frost, corners and slot darkness are adjustable; switching it on or off reloads resources once |
 | Block Outline | Accent (or own) colour, thickness, rainbow, and a see-through fill that can pulse |
@@ -337,7 +365,51 @@ The switcher next to the search box in the Mods panel shows mods as Cards, Large
 | Hurt Camera | Damage tilt, explosion particles / flash / per-second limit, lower and see-through fire overlay |
 | Hit Sounds | Replace the hurt and hit sounds with a built-in sound or your own file, or pick a sound pack (hits, crits and kills) |
 | Totem Changer | Any image (or a recolour) as the totem, and your own pop sound |
+| Reconnect | A **Reconnect** button on Minecraft's "Disconnected" screen that joins the same server again, as the server list would. Optional countdown that presses it for you (off by default: some servers don't allow rejoining automatically) |
+| Drop Warning | Dropping something valuable asks first: drop it again within a few seconds (adjustable) to really drop it. Netherite and diamonds, golden apples and totems, rare items (elytra, shulker boxes, beacons, tridents, maces...) and anything enchanted, each switchable. The drop key, Q over a slot and throwing out of the inventory |
+| Ore Outline | A thin outline in each ore's colour round ores you can see: only ores with a face open to air, drawn like Minecraft's own block outline so blocks in front hide it. All ores, or only diamonds, emeralds, gold and ancient debris; range and line thickness. No glow, nothing through walls. Check a server's rules first |
 | Screenshots | After F2: a preview card and [Copy] [Open] [Folder] [Delete] on the chat message (Copy puts the image on the clipboard, Delete uses the Recycle Bin) |
+
+## Addons
+
+Since 0.4.0, plain Kairo's **animations** (attack, mining and inspect animations, swing trail, held item looks) and
+**combat effects** (hit particles, kill effects, damage numbers, edge flash, sound packs) come with the **Animations**
+and **Combat Effects** addons. Without them those parts are simply not there (no Visuals sections, no keys); your
+choices are kept and come back as they were with the addon. Kairo Void has all of it built in.
+
+Addons are small separate mods that add things to Kairo and Kairo Void: a different look for the menus, extra mods.
+The official ones live in [Mordsome/KairoAddons](https://github.com/Mordsome/KairoAddons). Install them from the
+[Kairo Launcher](https://github.com/Mordsome/KairoLauncher) (choose for each whether it is for Kairo, Kairo Void or
+both), or by hand: put the addon's jar in `mods` next to Kairo.
+
+- **Themes** (Visuals → Theme; Kairo Void: Visuals → Interface → Themes): with an addon that adds themes, every theme
+  is shown as a picture drawn by the theme itself (a menu panel with a button, part of the ring, a HUD box); click one
+  and the main menu, the pause menu, the ring, every Kairo menu and control, and the HUD all take it on. Kairo's own
+  (glass, or Kairo Void's flat grey) is always the first picture. A theme you have just installed is switched on once;
+  after that the choice is yours. The theme's own options follow the pictures. The official **Themes** addon has
+  Glass, Minimal, Retro and Neon; Plastic Menus is a theme for the menus only.
+- **Right Shift opens** (Visuals → Ring; Kairo Void: Visuals → Interface → Menu style; since 0.4.0): with an addon
+  that adds a home menu, Right Shift opens it instead of the ring, and Back in every page leads there. The official
+  **Command Bar** is a search bar: your ring sections sit under it as big numbered tiles (1-8 open them), and typing
+  finds pages, mods and their settings as you type. Arrows and Enter open a result, Tab (or a right-click) switches a
+  mod on or off, Esc clears the search and then closes. It follows your theme.
+- **Kairo 98** (an addon, since 0.4.0): picked like any theme, it turns everything into a late-90s desktop: grey
+  bevelled windows with blue title bars and black text, a flat desktop behind the main menu, Minecraft's buttons,
+  inventories, chests, hotbar, experience bar and HUD icons repainted to match (in the game, from Minecraft's own
+  images), and Right Shift opens a taskbar with a Start menu. Colour schemes: Classic, Sand, Plum, Ocean, Slate, Spruce
+  and High contrast, switched instantly. Its own Visuals tab (Kairo 98) also has two styles for HUD boxes (Title bar or
+  Simple frame), retro animations (hitting, mining and switching items in a few hard steps) and its start-up screen.
+  The window buttons on its title bars work: close and minimise close the menu, maximise makes it fill the screen.
+  While it repaints Minecraft's menus, Inventory glass and the Hotbar mod step aside.
+- Some addons don't go together (Kairo 98 with Themes, Plastic Menus and Command Bar): the launcher keeps only one
+  on, and if both end up in the game the one that names the clash wins.
+- Addons can only add things through the sockets Kairo provides (`dev.mordo.kairo.api`), so any set of them works
+  together. An addon made for a newer Kairo, or not made for your edition, is skipped; one that breaks is switched off
+  and Kairo carries on with its own look. Removing an addon never breaks your settings.
+- The same rules apply as for Kairo: visual and client-side only.
+
+For developers: the whole contract between Kairo, the addons and the launcher is `SPEC.md` in the addons repository.
+`./gradlew runClient -Paddons=<jar>` loads an addon into a development run the way the launcher does.
 
 ## Install
 
@@ -396,6 +468,14 @@ Kairo has no accounts, no telemetry and no analytics. Everything it saves (setti
 sounds) stays in your `config/kairo` (or `config/kairo-void`) folder. Cosmetics and emotes are drawn only on your own
 screen; nothing is sent to servers or other players. Your wallpaper's colours are worked out on your computer; the
 picture never leaves it.
+
+**Now Playing and Music Visualiser** (both off by default, Windows only) need to know what your PC is playing, which
+Minecraft can't see. While one of them is switched on, and only then, Kairo runs a small helper: a PowerShell script
+that ships inside the mod (`assets/kairo/helper/kairo-media.ps1`, copied to `config/kairo/helper`). It asks Windows'
+own media controls what is playing (title, artist, app, position, cover: the same thing the volume pop-up shows) and
+measures how loud each of 32 bands of the PC's sound output is. It prints both to Kairo and nowhere else: no sound is
+recorded or saved, nothing is sent online, and the only file it writes is the current cover picture in that folder.
+The helper stops when both mods are off or the game closes.
 
 It only goes online if you switch on **Check for updates on GitHub** (off by default; in the first-run setup or
 Settings → About). Then, once per launch, it asks GitHub's public API for the latest release of `Mordsome/Kairo`.

@@ -244,6 +244,32 @@ public final class VoidVisualsPage extends PanelPage {
 			Group.WORLD, bool(vs.worldRibbons), List.of(vs.ribbonColor, vs.ribbonAmount, vs.ribbonsByDay), null);
 		add("Floating motes", "Small lights hanging in the air around you that drift, glow and fade", Icon.SPARKLE, Group.WORLD,
 			bool(vs.motes), List.of(vs.moteAmount, vs.ribbonColor), null);
+		add("Starfall", "Comets of light streak down all around you and land in rings of light on the ground", Icon.SPARKLE, Group.WORLD,
+			bool(vs.starfall), List.of(vs.starfallAmount, vs.ribbonColor), null);
+		add("Sky crystals", "Huge turning crystals of light hovering over the land, with orbiting rings and a beam", Icon.CUBE, Group.WORLD,
+			bool(vs.skyCrystals), List.of(vs.ribbonColor), null);
+		add("Pulse grid", "Waves of light sweep out from you over the land, lighting its shape up as a mesh", Icon.GRID, Group.WORLD,
+			bool(vs.pulseGrid), List.of(vs.ribbonColor), null);
+		add("Light rivers", "Streams of light flowing over the ground that bend aside round your feet", Icon.ARROW_RIGHT, Group.WORLD,
+			bool(vs.lightRivers), List.of(vs.ribbonColor), null);
+		add("Sky shapes", "Vast wire shapes, gyroscopes and gates of light far up in the sky", Icon.GLOBE, Group.WORLD,
+			bool(vs.skyShapes), List.of(vs.ribbonColor), null);
+		add("Rift", "A tear in the sky: a crack of light with a dark gap, rings leaning in and shards circling", Icon.SIGNAL, Group.WORLD,
+			bool(vs.rift), List.of(vs.ribbonColor), null);
+		add("Block shatter", "Broken blocks burst into shards of light in their own colour", Icon.CUBE, Group.WORLD,
+			bool(vs.blockShatter), List.of(), null);
+		add("Place pulse", "A block you place lights up along its edges and sends a frame of light outwards", Icon.BOX, Group.WORLD,
+			bool(vs.placePulse), List.of(vs.actionColor, vs.fxCustomColor), null);
+		add("Footstep ripples", "Every step sends a ring of light over the ground; landing makes a big one", Icon.SIGNAL, Group.YOU,
+			bool(vs.footsteps), List.of(vs.actionColor, vs.fxCustomColor), null);
+		add("Rush streaks", "Lines of light stream past when you sprint-jump or fall fast, and a ring when you start sprinting", Icon.ARROW_RIGHT,
+			Group.YOU, bool(vs.rushStreaks), List.of(vs.actionColor, vs.fxCustomColor), null);
+		add("Weapon aura", "Rings of light and runes round your sword, axe or mace that fill as your attack charges", Icon.SWORD, Group.COMBAT,
+			bool(vs.weaponAura), List.of(vs.actionColor, vs.fxCustomColor), null);
+		add("Kill streak crown", "Kills in a row build a crown of light over your head, one spike per kill", Icon.TOTEM, Group.COMBAT,
+			bool(vs.killCrown), List.of(vs.actionColor, vs.youInFirstPerson, vs.fxCustomColor), null);
+		add("Hit echo", "A ghost of what you hit, in rings of light, slides back the way it was knocked", Icon.USER, Group.COMBAT,
+			bool(vs.hitEcho), List.of(vs.actionColor, vs.fxCustomColor), null);
 		add("Light particles", "Effects become sparks, shards and rings of light instead of Minecraft's pixel particles", Icon.SPARKLE,
 			Group.COMBAT, bool(vs.lightParticles), List.of(), null);
 		add("Rich sunsets", "Deeper, warmer colours at sunrise and sunset", Icon.SUN, Group.WORLD, bool(vs.sunsets), List.of(), null);
@@ -288,9 +314,63 @@ public final class VoidVisualsPage extends PanelPage {
 		}
 		add("Living ring", "Just the ring: it breathes, lights orbit it, the centre pulses. Pick its segments here", Icon.GRID, Group.INTERFACE,
 			bool(cs.livingRing), List.of(), grid("SEGMENTS (3 TO 8)", ringTiles));
+		if (dev.mordo.kairo.api.Addons.hasHomeMenus()) {
+			// Only with an addon that adds a home menu: what Right Shift opens instead of the ring.
+			Binding<Boolean> other = new Binding<>() {
+				@Override
+				public Boolean get() {
+					return dev.mordo.kairo.api.Addons.activeHomeMenu() != null;
+				}
+
+				@Override
+				public void set(Boolean value) {
+					var choices = dev.mordo.kairo.api.Addons.homeMenuChoices();
+					cs.homeMenu.set(value && choices.size() > 1 ? choices.get(1).id() : dev.mordo.kairo.api.Addons.RING);
+				}
+			};
+			List<Setting<?>> homeSettings = new ArrayList<>();
+			homeSettings.add(cs.homeMenu);
+			homeSettings.addAll(dev.mordo.kairo.api.Addons.homeMenuSettings());
+			add("Menu style", "What Right Shift opens: the ring, or a different menu from an addon", Icon.GRID, Group.INTERFACE, other,
+				homeSettings, null);
+		}
+		for (dev.mordo.kairo.api.Addons.Tab tab : dev.mordo.kairo.api.Addons.visualsTabs()) {
+			// An addon's own tab: a card that is always on, with the addon's options.
+			Binding<Boolean> always = new Binding<>() {
+				@Override
+				public Boolean get() {
+					return true;
+				}
+
+				@Override
+				public void set(Boolean value) {
+				}
+			};
+			add(tab.name(), "Options from the " + tab.name() + " addon", tab.icon(), Group.INTERFACE, always, tab.settings(), null);
+		}
 		add("Keystroke ripples", "Keys pop and send out a ripple when you press them", Icon.KEYBOARD, Group.INTERFACE, bool(vs.keyRipples), List.of(), null);
 		add("Living menus", "Drifting light and motes behind the menus", Icon.GRID, Group.INTERFACE, bool(cs.menuFx),
 			List.of(cs.backgroundDim), null);
+		if (dev.mordo.kairo.gui.widgets.ThemePicker.available()) {
+			// Only with an addon that adds a theme: Kairo Void's own look, or one from an addon, picked from pictures.
+			Binding<Boolean> themed = new Binding<>() {
+				@Override
+				public Boolean get() {
+					return dev.mordo.kairo.api.Addons.activeLook() != null || dev.mordo.kairo.api.Addons.activeHudLook() != null;
+				}
+
+				@Override
+				public void set(Boolean value) {
+					var themes = dev.mordo.kairo.gui.widgets.ThemePicker.entries();
+					themes.get(value && themes.size() > 1 ? 1 : 0).apply();
+				}
+			};
+			List<Setting<?>> looks = new ArrayList<>();
+			looks.addAll(dev.mordo.kairo.api.Addons.menuLookSettings());
+			looks.addAll(dev.mordo.kairo.api.Addons.hudLookSettings());
+			add("Themes", "How every menu, the ring and the HUD are drawn: Kairo Void's own, or a theme from an addon", Icon.SPARKLE,
+				Group.INTERFACE, themed, looks, dev.mordo.kairo.gui.widgets.ThemePicker.section());
+		}
 		add("Panel edge light", "A short light runs along the top edge of big panels", Icon.SUN, Group.INTERFACE, bool(cs.panelEdgeLight),
 			List.of(), null);
 		add("Wallpaper colours", "Your colour comes from your main menu background; panels and text take a tint of it", Icon.IMAGE,
@@ -298,10 +378,20 @@ public final class VoidVisualsPage extends PanelPage {
 			new dev.mordo.kairo.gui.widgets.WallpaperSwatches(true).section());
 		add("Accent on all", "Every mod colour (crosshair, outlines, keys...) uses your accent", Icon.SPARKLE, Group.INTERFACE,
 			bool(cs.accentEverywhere), List.of(cs.accent), null);
+		add("Size and shortcuts", "How big the ring, the menus, the main menu and the HUD are, and the shortcut buttons", Icon.LAYOUT, Group.INTERFACE,
+			new Binding<>() {
+				@Override
+				public Boolean get() {
+					return true;
+				}
+
+				@Override
+				public void set(Boolean value) {
+				}
+			}, List.of(cs.menuScale, cs.menusFollowGuiScale, cs.mainMenuScale, cs.hudScale, cs.pauseKairoButton, cs.pauseModsButton, cs.pauseVisualsButton,
+				cs.pauseCosmeticsButton, cs.inventoryCosmeticsButton), null);
 		add("Smooth motion", "How fast menus animate, or fades only", Icon.GAUGE, Group.INTERFACE, invert(cs.reduceMotion),
 			List.of(cs.animationSpeed), null);
-		add("Start-up intro", "When the game opens, Kairo appears and Void pops in next to it (click to skip)", Icon.SPARKLE, Group.INTERFACE,
-			bool(vs.intro), List.of(), null);
 		add("Nametags", "Players' names with a style: glass, neon, hologram or a shimmer. They show only when Minecraft would show them",
 			Icon.USER, Group.INTERFACE, choice(vs.nametags, VoidSettings.NametagStyle.VANILLA, VoidSettings.NametagStyle.GLASS), List.of(vs.ownNametag),
 			grid("STYLE", tiles(vs.nametags, VoidSettings.NametagStyle.VANILLA, Icon.USER)));
