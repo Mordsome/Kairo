@@ -34,34 +34,34 @@ public final class VoidSettings extends SettingHolder {
 		}
 	}
 
-	public final EnumSetting<Quality> quality = add(new EnumSetting<>("quality", "Quality", Quality.HIGH)
+	public final EnumSetting<Quality> quality = add(new EnumSetting<>("quality", "Quality", Quality.CUSTOM)
 		.description("Sets every effect below at once. Changing one yourself switches this to Custom"));
 
 	// ---- combat ----
-	public final BooleanSetting slashes = add(new BooleanSetting("energy_slashes", "Energy blades", true)
+	public final BooleanSetting slashes = add(new BooleanSetting("energy_slashes", "Energy blades", false)
 		.description("Your weapon leaves a blade of light when you swing; brighter and longer on critical hits"));
 	public final SliderSetting slashSize = add(new SliderSetting("slash_size", "Blade reach", 1.0, 0.5, 1.5, 0.05).multiplier());
 	public final SliderSetting slashGlow = add(new SliderSetting("slash_glow", "Blade brightness", 1.0, 0.2, 1.5, 0.05).percent());
-	public final BooleanSetting shockwaves = add(new BooleanSetting("impact_shockwaves", "Impact shockwaves", true)
+	public final BooleanSetting shockwaves = add(new BooleanSetting("impact_shockwaves", "Impact shockwaves", false)
 		.description("A ripple bends the screen where your hit lands"));
-	public final BooleanSetting targetFlash = add(new BooleanSetting("target_flash", "White flash on hit", true)
+	public final BooleanSetting targetFlash = add(new BooleanSetting("target_flash", "White flash on hit", false)
 		.description("What you hit flashes white for a moment"));
-	public final BooleanSetting hitStop = add(new BooleanSetting("hit_stop", "Hit-stop", true)
+	public final BooleanSetting hitStop = add(new BooleanSetting("hit_stop", "Hit-stop", false)
 		.description("The picture holds for a split second on strong hits (only the picture: the game keeps running)"));
 	public final SliderSetting hitStopLength = add(new SliderSetting("hit_stop_length", "Hit-stop length", 55, 20, 120, 5).unit("ms"));
-	public final BooleanSetting totemBlast = add(new BooleanSetting("totem_blast", "Totem pop blast", true)
+	public final BooleanSetting totemBlast = add(new BooleanSetting("totem_blast", "Totem pop blast", false)
 		.description("Golden rays and a slow ripple when a totem saves you"));
 
 	// ---- sky ----
-	public final BooleanSetting cosmicSky = add(new BooleanSetting("cosmic_sky", "Cosmic sky", true)
+	public final BooleanSetting cosmicSky = add(new BooleanSetting("cosmic_sky", "Cosmic sky", false)
 		.description("At night: nebula clouds, a turning galaxy, a ringed planet and shooting stars"));
 	public final BooleanSetting planet = add(new BooleanSetting("planet", "Ringed planet", true));
 	public final BooleanSetting shootingStars = add(new BooleanSetting("shooting_stars", "Shooting stars", true));
-	public final BooleanSetting aurora = add(new BooleanSetting("aurora", "Aurora", true)
+	public final BooleanSetting aurora = add(new BooleanSetting("aurora", "Aurora", false)
 		.description("Curtains of light over the night sky"));
-	public final BooleanSetting sunsets = add(new BooleanSetting("sunsets", "Rich sunsets", true)
+	public final BooleanSetting sunsets = add(new BooleanSetting("sunsets", "Rich sunsets", false)
 		.description("Deeper, warmer colours at sunrise and sunset"));
-	public final SliderSetting depthFog = add(new SliderSetting("depth_fog", "Depth fog", 0.5, 0.0, 1.0, 0.05).percent()
+	public final SliderSetting depthFog = add(new SliderSetting("depth_fog", "Depth fog", 0.0, 0.0, 1.0, 0.05).percent()
 		.description("Distant land fades into a soft, sky-coloured haze"));
 
 	// ---- atmospheres ----
@@ -130,10 +130,10 @@ public final class VoidSettings extends SettingHolder {
 		}
 	}
 
-	public final EnumSetting<CrystalStyle> crystalStyle = add(new EnumSetting<>("crystal_style", "Crystal style", CrystalStyle.PRISM)
+	public final EnumSetting<CrystalStyle> crystalStyle = add(new EnumSetting<>("crystal_style", "Crystal style", CrystalStyle.VANILLA)
 		.description("Prism: glowing glass and orbiting rings. Void core: a dark heart with a bright rim. Plasma: crackling energy. Hologram: flickering light"));
 	public final SliderSetting crystalGlow = add(new SliderSetting("crystal_glow", "Crystal glow", 1.0, 0.2, 1.5, 0.05).percent());
-	public final BooleanSetting crystalPop = add(new BooleanSetting("crystal_pop", "Crystal pop", true)
+	public final BooleanSetting crystalPop = add(new BooleanSetting("crystal_pop", "Crystal pop", false)
 		.description("A burst of light, a ring and a ripple when a crystal explodes"));
 
 	// ---- the master switch ----
@@ -161,9 +161,9 @@ public final class VoidSettings extends SettingHolder {
 		}
 	}
 
-	public final EnumSetting<HudStyle> hudStyle = add(new EnumSetting<>("hud_style", "HUD style", HudStyle.GLOW)
+	public final EnumSetting<HudStyle> hudStyle = add(new EnumSetting<>("hud_style", "HUD style", HudStyle.CLASSIC)
 		.description("Glow: a soft light in your colour. Neon: bright edges. Pulse: a light that runs round each box"));
-	public final BooleanSetting keyRipples = add(new BooleanSetting("key_ripples", "Keystroke ripples", true)
+	public final BooleanSetting keyRipples = add(new BooleanSetting("key_ripples", "Keystroke ripples", false)
 		.description("Keys pop and send out a ripple when you press them"));
 
 	// ---- 0.3.0: intro, sky, you, combat, world ----
@@ -191,7 +191,7 @@ public final class VoidSettings extends SettingHolder {
 	public final dev.mordo.kairo.core.settings.TextSetting favourites = add(new dev.mordo.kairo.core.settings.TextSetting("favourites",
 		"Favourites", String.join("|", "Attack animation", "Mining animation", "Held item glow", "Energy blades", "Aura", "Line glyphs",
 		"Light ribbons", "Floating motes", "Aurora", "Cosmic sky", "Block overlay", "Light particles", "Hit impact", "Damage markers",
-		"Cinematic kill", "Player trail"), 2000).hidden());
+		"Cinematic kill", "Player trail", "Starfall", "Sky crystals", "Footstep ripples", "Pulse grid", "Block shatter", "Weapon aura"), 2000).hidden());
 
 	public final BooleanSetting intro = add(new BooleanSetting("intro", "Start-up intro", true)
 		.description("When the game opens: Kairo appears, then Void pops in. Once per launch, never when you leave a world. Click to skip"));
@@ -290,23 +290,53 @@ public final class VoidSettings extends SettingHolder {
 	public final EnumSetting<FxColor> auraColor = add(new EnumSetting<>("aura_color", "Aura colour", FxColor.ACCENT));
 	public final SliderSetting auraSize = add(new SliderSetting("aura_size", "Aura size", 1.0, 0.6, 1.6, 0.05).multiplier());
 	public final SliderSetting auraSpeed = add(new SliderSetting("aura_speed", "Aura speed", 1.0, 0.3, 2.5, 0.05).multiplier());
-	public final BooleanSetting glyphs = add(new BooleanSetting("line_glyphs", "Line glyphs", true)
+	public final BooleanSetting glyphs = add(new BooleanSetting("line_glyphs", "Line glyphs", false)
 		.description("Animated angular lines turning around you: rings of ticks, brackets and runes"));
 	public final EnumSetting<FxColor> glyphColor = add(new EnumSetting<>("glyph_color", "Glyph colour", FxColor.DUO));
 	public final BooleanSetting youInFirstPerson = add(new BooleanSetting("aura_first_person", "Also in first person", true)
 		.description("Your aura and glyphs while you look through your own eyes too, spread wider so they never sit in your face"));
 
 	// The world around you (first person too).
-	public final BooleanSetting worldRibbons = add(new BooleanSetting("world_ribbons", "Light ribbons", true)
+	public final BooleanSetting worldRibbons = add(new BooleanSetting("world_ribbons", "Light ribbons", false)
 		.description("Long ribbons of light drifting through the air around you, like an aurora you can walk through"));
 	public final EnumSetting<AuroraColor> ribbonColor = add(new EnumSetting<>("world_ribbon_color", "Ribbon colour", AuroraColor.CLASSIC));
 	public final SliderSetting ribbonAmount = add(new SliderSetting("world_ribbon_amount", "How many ribbons", 0.6, 0.2, 1.0, 0.05).percent());
 	public final BooleanSetting ribbonsByDay = add(new BooleanSetting("world_ribbons_day", "Also by day", true)
 		.description("Fainter in daylight, brightest at night"));
-	public final BooleanSetting motes = add(new BooleanSetting("world_motes", "Floating motes", true)
+	public final BooleanSetting motes = add(new BooleanSetting("world_motes", "Floating motes", false)
 		.description("Small lights hanging in the air around you that drift, glow and fade"));
 	public final SliderSetting moteAmount = add(new SliderSetting("world_mote_amount", "How many motes", 0.6, 0.2, 1.0, 0.05).percent());
-	public final BooleanSetting lightParticles = add(new BooleanSetting("light_particles", "Light particles", true)
+	public final BooleanSetting starfall = add(new BooleanSetting("world_starfall", "Starfall", false)
+		.description("Comets of light streak down from the sky all around you and land in rings of light rippling over the ground"));
+	public final SliderSetting starfallAmount = add(new SliderSetting("world_starfall_amount", "How many comets", 0.6, 0.2, 1.0, 0.05).percent());
+	public final BooleanSetting skyCrystals = add(new BooleanSetting("world_sky_crystals", "Sky crystals", false)
+		.description("Huge crystals of light hovering over the land, slowly turning, with orbiting rings and a beam down to the ground"));
+	public final BooleanSetting pulseGrid = add(new BooleanSetting("world_pulse_grid", "Pulse grid", false)
+		.description("Waves of light sweep out from you over the land like a sonar scan, lighting the shape of the ground up as a mesh"));
+	public final BooleanSetting lightRivers = add(new BooleanSetting("world_light_rivers", "Light rivers", false)
+		.description("Streams of light flowing over the ground along winding paths, bending aside round your feet"));
+	public final BooleanSetting skyShapes = add(new BooleanSetting("world_sky_shapes", "Sky shapes", false)
+		.description("Vast shapes of light far up in the sky: tumbling wire polyhedra, gyroscopes of rings and great gates"));
+	public final BooleanSetting rift = add(new BooleanSetting("world_rift", "Rift", false)
+		.description("A tear in the sky at a few places in the world: a crack of light with a dark gap, rings leaning in and shards circling"));
+
+	// What you do.
+	public final EnumSetting<FxColor> actionColor = add(new EnumSetting<>("action_color", "Effect colour", FxColor.ACCENT));
+	public final BooleanSetting footsteps = add(new BooleanSetting("footstep_ripples", "Footstep ripples", false)
+		.description("Every step sends a ring of light over the ground; sprinting leaves a line of them and landing makes a big one"));
+	public final BooleanSetting rushStreaks = add(new BooleanSetting("rush_streaks", "Rush streaks", false)
+		.description("Lines of light stream past you when you sprint-jump or fall fast, and a ring bursts out when you break into a sprint"));
+	public final BooleanSetting blockShatter = add(new BooleanSetting("block_shatter", "Block shatter", false)
+		.description("Broken blocks burst into shards of light in their own colour, inside a frame of light flying apart"));
+	public final BooleanSetting placePulse = add(new BooleanSetting("place_pulse", "Place pulse", false)
+		.description("A block you place lights up along its edges and sends a frame of light outwards"));
+	public final BooleanSetting weaponAura = add(new BooleanSetting("weapon_aura", "Weapon aura", false)
+		.description("Rings of light and runes turn round your sword, axe or mace, drawing closed and warming up as your attack charges"));
+	public final BooleanSetting killCrown = add(new BooleanSetting("kill_crown", "Kill streak crown", false)
+		.description("Kills in a row build a crown of light over your head, one spike per kill; it fades 12 seconds after the last"));
+	public final BooleanSetting hitEcho = add(new BooleanSetting("hit_echo", "Hit echo", false)
+		.description("A ghost of what you hit, drawn in rings of light, slides back the way it was knocked"));
+	public final BooleanSetting lightParticles = add(new BooleanSetting("light_particles", "Light particles", false)
 		.description("Kairo's effects and Minecraft's combat, death, potion and explosion particles become sparks, shards and rings of light instead of pixel sprites"));
 
 	public enum TrailStyle implements EnumSetting.Labeled {
@@ -377,10 +407,10 @@ public final class VoidSettings extends SettingHolder {
 		}
 	}
 
-	public final EnumSetting<HitImpact> hitImpact = add(new EnumSetting<>("hit_impact", "Hit impact", HitImpact.SHARDS)
+	public final EnumSetting<HitImpact> hitImpact = add(new EnumSetting<>("hit_impact", "Hit impact", HitImpact.NONE)
 		.description("Light drawn where your hit lands: shards, a sigil, a cross slash, a star or rings. Bigger on crits"));
 	public final EnumSetting<FxColor> hitImpactColor = add(new EnumSetting<>("hit_impact_color", "Impact colour", FxColor.DUO));
-	public final BooleanSetting kineticNumbers = add(new BooleanSetting("kinetic_numbers", "Animated damage markers", true)
+	public final BooleanSetting kineticNumbers = add(new BooleanSetting("kinetic_numbers", "Animated damage markers", false)
 		.description("Damage numbers that punch in, slash, stack into combos and break apart (turn on Damage numbers too)"));
 
 	public enum NoirStyle implements EnumSetting.Labeled {
@@ -442,7 +472,7 @@ public final class VoidSettings extends SettingHolder {
 		}
 	}
 
-	public final EnumSetting<BlockOverlay> blockOverlay = add(new EnumSetting<>("block_overlay", "Block overlay", BlockOverlay.BRACKETS)
+	public final EnumSetting<BlockOverlay> blockOverlay = add(new EnumSetting<>("block_overlay", "Block overlay", BlockOverlay.NONE)
 		.description("An animated overlay on the block you look at, in place of the outline"));
 	public final EnumSetting<FxColor> blockOverlayColor = add(new EnumSetting<>("block_overlay_color", "Overlay colour", FxColor.ACCENT));
 	public final BooleanSetting overlayGlide = add(new BooleanSetting("block_overlay_glide", "Glide between blocks", true)
@@ -467,7 +497,7 @@ public final class VoidSettings extends SettingHolder {
 		}
 	}
 
-	public final EnumSetting<NametagStyle> nametags = add(new EnumSetting<>("nametags", "Nametags", NametagStyle.GLASS)
+	public final EnumSetting<NametagStyle> nametags = add(new EnumSetting<>("nametags", "Nametags", NametagStyle.VANILLA)
 		.description("Players' nametags with a style. They show exactly when Minecraft would show them, nothing more"));
 	public final BooleanSetting ownNametag = add(new BooleanSetting("own_nametag", "Your own nametag in F5", false));
 

@@ -96,5 +96,9 @@ abstract class FirstPersonItemMixin {
 		if (shine == dev.mordo.kairo.core.GameVisuals.HeldShine.OUTLINE || shine == dev.mordo.kairo.core.GameVisuals.HeldShine.BOTH) {
 			dev.mordo.kairo.render.HeldOutline.draw(poseStack, collector, hand == InteractionHand.MAIN_HAND ? state.mainHandRenderState : state.offHandRenderState);
 		}
+		// Kairo Void: the weapon aura, in the same space as the item.
+		if (hand == InteractionHand.MAIN_HAND && dev.mordo.kairo.render.WeaponAura.wanted(stack)) {
+			dev.mordo.kairo.render.WeaponAura.draw(poseStack, collector, state.mainHandRenderState);
+		}
 	}
 }

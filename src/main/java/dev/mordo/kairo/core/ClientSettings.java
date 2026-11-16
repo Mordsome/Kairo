@@ -136,12 +136,21 @@ public final class ClientSettings extends SettingHolder {
 	public final EnumSetting<ClickEffect> buttonClick = add(new EnumSetting<>("button_click", "Click effect", ClickEffect.RIPPLE)
 		.description("What happens when you click a button"));
 
+	/** Which look the menus are drawn with: Kairo's own, or one an addon added (see dev.mordo.kairo.api.MenuLook). */
+	public final dev.mordo.kairo.core.settings.ChoiceSetting menuLook = add(new dev.mordo.kairo.core.settings.ChoiceSetting("menu_look", "Menu look",
+		dev.mordo.kairo.api.Addons.DEFAULT_LOOK, dev.mordo.kairo.api.Addons::menuLookChoices)
+		.<dev.mordo.kairo.core.settings.ChoiceSetting>description("How panels, the ring and the menu background are drawn. Addons can add more looks")
+		.visibleWhen(dev.mordo.kairo.api.Addons::hasMenuLooks));
+	/** Looks seen before, so a newly installed one can be picked once. */
+	public final dev.mordo.kairo.core.settings.TextSetting knownMenuLooks = add(new dev.mordo.kairo.core.settings.TextSetting("known_menu_looks",
+		"Known menu looks", "", 1000).hidden());
+
 	/** The ring menu breathes, lights orbit it and the centre pulses (in Kairo Void it's also just the ring). */
-	public final BooleanSetting livingRing = add(new BooleanSetting("living_ring", "Living ring", true)
+	public final BooleanSetting livingRing = add(new BooleanSetting("living_ring", "Living ring", !Edition.isVoid())
 		.description("The ring breathes, lights orbit it and the centre pulses"));
-	public final BooleanSetting menuFx = add(new BooleanSetting("menu_fx", "Living menus", true)
+	public final BooleanSetting menuFx = add(new BooleanSetting("menu_fx", "Living menus", !Edition.isVoid())
 		.description("Drifting light and motes behind the menus"));
-	public final BooleanSetting panelEdgeLight = add(new BooleanSetting("panel_edge_light", "Panel edge light", true)
+	public final BooleanSetting panelEdgeLight = add(new BooleanSetting("panel_edge_light", "Panel edge light", !Edition.isVoid())
 		.description("A short light that runs along the top edge of big panels"));
 
 	/** Opt-in: asks GitHub for the latest version once per launch. Never downloads or installs without a click. */

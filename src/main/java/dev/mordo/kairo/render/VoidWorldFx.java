@@ -83,6 +83,7 @@ public final class VoidWorldFx {
 			TRAIL.clear();
 			IMPACTS.clear();
 			LightParticles.clear();
+			VoidActionFx.clear();
 			return;
 		}
 		Minecraft mc = Minecraft.getInstance();
@@ -103,6 +104,7 @@ public final class VoidWorldFx {
 		// Through your own eyes everything around you spreads out, so it surrounds you without sitting in your face.
 		float spread = thirdPerson ? 1 : 2.3f;
 		float dt = frameTime();
+		VoidActionFx.track(player, feet, s, dt);
 
 		updateTrail(player, feet, s);
 		collector.submitCustomGeometry(poseStack, Geo.glowType(), (pose, b) -> {
@@ -120,6 +122,7 @@ public final class VoidWorldFx {
 				}
 			}
 			VoidAmbient.draw(pose, b, cam, mc.level, context.levelState().skyRenderState, t, s);
+			VoidActionFx.draw(pose, b, cam, at, t, s, thirdPerson, showYou);
 			if (s.playerTrail.get() != VoidSettings.TrailStyle.NONE && (thirdPerson || s.youInFirstPerson.isOn())) {
 				trail(pose, b, cam, s);
 			}

@@ -78,6 +78,9 @@ Keystrokes, CPS, FPS, ping, coordinates, a compass and armor status. Keystrokes 
 | Keystrokes, CPS, FPS, Ping, Coordinates, Armor Status, Direction HUD | HUD elements you place with the layout editor; Keystrokes can show your CPS, and the CPS label is editable |
 | Zoom | Hold **C**, scroll to zoom further; smooth, with optional hand hiding |
 | Fullbright | Raises the gamma value only. No Night Vision, no lighting changes |
+| Time Changer, Weather Changer | The time of day and the weather you see, whatever the world has (only your picture) |
+| Now Playing | The song your PC is playing (Spotify, YouTube, any player): cover, title, artist, progress. Windows |
+| Music Visualiser | Bars, a wave or a ring on your HUD moving to the sound your PC plays. Windows |
 | Crosshair | Cross, dot, circle, T or your own pixel grid; outline and cooldown styles |
 | Waypoints | Markers with beams and a death point, saved per world and server (**M**) |
 | Chat | Timestamps, stacked repeats, longer history, search, right-click to copy |
@@ -105,6 +108,10 @@ Every mod has its own settings and an **In PvP mode** section. The [feature guid
 
 Both editions also have **music emotes**: bring your own song, set its BPM, and dance on the beat (only you hear it).
 
+## ✦ Addons
+
+Want more? [Kairo Addons](https://github.com/Mordsome/KairoAddons) are small extras that plug into Kairo and Kairo Void, like a solid plastic look for the menus. Install them from the [Kairo Launcher](https://github.com/Mordsome/KairoLauncher) or drop the jar into `mods`.
+
 ## 📦 Install
 
 1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft Java **26.3**.
@@ -123,6 +130,7 @@ Tested on Windows.
 
 - **No cheats.** Kairo only changes what your own screen draws and plays. No automation, no packet changes, no reach, no ESP.
 - **Offline unless you say so.** No accounts, no telemetry, no analytics. Settings, waypoints and your images and sounds stay in `config/kairo`. The only thing that can go online is **Check for updates on GitHub**, which is off by default: when you turn it on (in the first-run setup or *Settings → About*), Kairo asks GitHub for the latest version once per launch. It sends nothing about you, and nothing is downloaded or installed until you click **Update** (the download is checked against the release's `SHA256SUMS.txt` and swapped in when the game closes).
+- **Music mods are opt-in.** Now Playing and the Music Visualiser are off by default. While one is on, a small bundled helper asks Windows what is playing and how loud the PC's sound is. Nothing is recorded or sent anywhere, and it stops when they're off.
 - **Server rules still apply.** Some servers have rules about client mods (Fullbright or Zoom, for example). Check them before you play.
 
 ## 🔨 Build from source

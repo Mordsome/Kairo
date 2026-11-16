@@ -285,6 +285,24 @@ public final class LightParticles {
 		}
 	}
 
+	/** Shards of light bursting out of a point (a broken block), in one colour. */
+	public static void shards(double x, double y, double z, int color, int count) {
+		for (int i = 0; i < count && LIVE.size() < MAX; i++) {
+			P q = new P();
+			q.x = x + (RANDOM.nextFloat() - 0.5) * 0.7;
+			q.y = y + (RANDOM.nextFloat() - 0.5) * 0.7;
+			q.z = z + (RANDOM.nextFloat() - 0.5) * 0.7;
+			q.vx = (float) RANDOM.nextGaussian() * 2.2f;
+			q.vy = (float) RANDOM.nextGaussian() * 1.6f + 1.8f;
+			q.vz = (float) RANDOM.nextGaussian() * 2.2f;
+			q.spin = RANDOM.nextFloat() * 6.28f;
+			q.spinSpeed = (RANDOM.nextFloat() - 0.5f) * 9;
+			q.drag = 1.6f;
+			look(q, Shape.SHARD, Colors.lerp(color, 0xFFFFFFFF, RANDOM.nextFloat() * 0.35f), 0.075f, 0.8f, 8);
+			LIVE.add(q);
+		}
+	}
+
 	/** How many light particles are alive (for the tests). */
 	public static int count() {
 		return LIVE.size();

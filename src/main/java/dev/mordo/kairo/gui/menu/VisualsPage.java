@@ -103,7 +103,9 @@ public final class VisualsPage extends PanelPage {
 			section("Glass", Icon.LAYOUT, null, List.of(s.glassTint, s.blurStrength, s.backgroundDim), List.of());
 			section("Motion", Icon.GAUGE, null, List.of(s.animationSpeed, s.reduceMotion, s.reduceFlashing), List.of());
 		}
-		section("Menus", Icon.WORLD, null, List.of(s.customMainMenu, s.restyleMenus, s.menuFx, s.panelEdgeLight, s.hidePauseExtras, s.menuSounds), List.of());
+		section("Menus", Icon.WORLD, null, java.util.stream.Stream.concat(java.util.stream.Stream.<dev.mordo.kairo.core.settings.Setting<?>>of(s.menuLook, s.customMainMenu,
+			s.restyleMenus, s.menuFx, s.panelEdgeLight, s.hidePauseExtras, s.menuSounds), dev.mordo.kairo.api.Addons.menuLookSettings().stream()).toList(),
+			List.of());
 		Section buttons = section("Buttons", Icon.POWER, null,
 			List.of(s.buttonRadius, s.buttonAnimations, s.buttonGlow, s.buttonOutline, s.buttonColor, s.buttonClick), List.of());
 		// A live sample at the top of the Buttons section: hover it, click it.

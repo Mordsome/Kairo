@@ -62,17 +62,31 @@ final class Update030Tour {
 			ctx.runOnClient(mc -> {
 				VoidSettings.INSTANCE.worldRibbons.set(false);
 				VoidSettings.INSTANCE.motes.set(false);
+				// Everything starts off in Void; the older sections expect these three on.
+				VoidSettings.INSTANCE.cosmicSky.set(true);
+				VoidSettings.INSTANCE.lightParticles.set(true);
+				VoidSettings.INSTANCE.kineticNumbers.set(true);
+				Kairo.LOGGER.info("CHECK everything starts off: aurora {}, blades {}, glyphs {}, quality {}", VoidSettings.INSTANCE.aurora.isOn(),
+					VoidSettings.INSTANCE.slashes.isOn(), VoidSettings.INSTANCE.glyphs.isOn(), VoidSettings.INSTANCE.quality.get());
+				VoidSettings.INSTANCE.starfall.set(false);
+				VoidSettings.INSTANCE.skyCrystals.set(false);
 				VoidSettings.INSTANCE.glyphs.set(false);
 				VoidSettings.INSTANCE.blockOverlay.set(VoidSettings.BlockOverlay.NONE);
 			});
 			sky(ctx, server);
 			you(ctx, server);
 			pov(ctx, server);
+			more(ctx, server);
 			combat(ctx, server);
 			lightParticles(ctx, server);
 			overlay(ctx, server);
 			music(ctx, server);
+			newMods(ctx, server);
+			if (java.nio.file.Files.exists(java.nio.file.Path.of("..", "..", "tour-media")) || java.nio.file.Files.exists(java.nio.file.Path.of("build", "tour-media"))) {
+				realMedia(ctx);
+			}
 			menus(ctx);
+			addons(ctx);
 		}
 		ctx.runOnClient(mc -> mc.gui.setScreen(new TitleScreen()));
 		ctx.waitTicks(10);
@@ -276,16 +290,177 @@ final class Update030Tour {
 		server.runCommand("tp @p 0 -60 0 20 -12");
 		ctx.waitTicks(10);
 		shot(ctx, "28_pov_rainbow_ribbons");
-		ctx.runOnClient(mc -> s.ribbonColor.reset());
+		ctx.runOnClient(mc -> {
+			s.ribbonColor.reset();
+			s.worldRibbons.set(false);
+			s.glyphs.set(false);
+			s.aura.reset();
+			s.starfall.set(true);
+			s.starfallAmount.set(1.0);
+			s.skyCrystals.set(true);
+		});
+		for (int i = 0; i < 4; i++) {
+			server.runCommand("tp @p 0 -60 0 " + (i * 90 + 30) + " -14");
+			ctx.waitTicks(14);
+			shot(ctx, "28_pov_starfall_crystals_" + i);
+		}
+		ctx.runOnClient(mc -> {
+			s.worldRibbons.set(true);
+			s.glyphs.set(true);
+			s.starfallAmount.reset();
+		});
+		server.runCommand("tp @p 0 -60 0 20 -12");
 		server.runCommand("time set 1000");
 		ctx.waitTicks(10);
 		shot(ctx, "29_pov_day");
+		ctx.runOnClient(mc -> {
+			s.starfall.set(false);
+			s.skyCrystals.set(false);
+		});
 		ctx.runOnClient(mc -> {
 			s.worldRibbons.set(false);
 			s.motes.set(false);
 			s.glyphs.set(false);
 			s.aura.reset();
 		});
+	}
+
+	// ---- the second batch: world, actions, combat, the outline ----
+
+	private void more(ClientGameTestContext ctx, net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext server) {
+		VoidSettings s = VoidSettings.INSTANCE;
+		var visuals = dev.mordo.kairo.core.GameVisuals.INSTANCE;
+		// World: pulse grid, light rivers, sky shapes, rift.
+		server.runCommand("time set 18000");
+		ctx.runOnClient(mc -> {
+			mc.options.setCameraType(CameraType.FIRST_PERSON);
+			s.pulseGrid.set(true);
+			s.lightRivers.set(true);
+			s.skyShapes.set(true);
+			s.rift.set(true);
+		});
+		// The far-off shapes need a normal render distance to be in sight (the test world starts at 5 chunks).
+		ctx.runOnClient(mc -> mc.options.renderDistance().set(12));
+		ctx.waitTicks(60);
+		ctx.runOnClient(mc -> Kairo.LOGGER.info("CHECK render distance for the sky shapes: {} chunks", mc.options.getEffectiveRenderDistance()));
+		for (int i = 0; i < 4; i++) {
+			server.runCommand("tp @p 0 -60 0 " + (i * 90 + 10) + " -22");
+			ctx.waitTicks(14);
+			shot(ctx, "2a_world_sky_" + i);
+		}
+		server.runCommand("tp @p 0 -60 0 45 18");
+		ctx.waitTicks(22);
+		shot(ctx, "2a_world_ground_a");
+		ctx.waitTicks(17);
+		shot(ctx, "2a_world_ground_b");
+		server.runCommand("time set 1000");
+		ctx.waitTicks(10);
+		shot(ctx, "2a_world_ground_day");
+		server.runCommand("tp @p 0 -60 0 100 -22");
+		ctx.waitTicks(10);
+		shot(ctx, "2a_world_sky_day");
+		ctx.runOnClient(mc -> mc.options.renderDistance().set(5));
+		ctx.runOnClient(mc -> {
+			s.pulseGrid.set(false);
+			s.lightRivers.set(false);
+			s.skyShapes.set(false);
+			s.rift.set(false);
+			s.footsteps.set(true);
+			s.rushStreaks.set(true);
+			mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
+		});
+		// Footsteps: walk, then drop from a height.
+		// A step, then a few ticks standing on the ground, like walking (a teleport every tick never touches down).
+		for (int i = 0; i <= 5; i++) {
+			server.runCommand(String.format(java.util.Locale.ROOT, "tp @p %.3f -60 0 -90 20", i * 0.84));
+			ctx.waitTicks(4);
+		}
+		shot(ctx, "2b_footsteps");
+		server.runCommand("tp @p 4.2 -55 0 -90 20");
+		ctx.waitTicks(19);
+		shot(ctx, "2b_landing");
+		ctx.waitTicks(20);
+		// Rush streaks: moving fast (the streaks follow how fast you really move).
+		for (int i = 0; i <= 22; i++) {
+			server.runCommand(String.format(java.util.Locale.ROOT, "tp @p %.3f -60 0 -90 12", 4.2 + i * 0.5));
+			ctx.waitTicks(1);
+			if (i == 16) {
+				shot(ctx, "2c_rush_streaks");
+			}
+		}
+		ctx.runOnClient(mc -> {
+			s.footsteps.set(false);
+			s.rushStreaks.set(false);
+			s.blockShatter.set(true);
+			s.placePulse.set(true);
+			mc.options.setCameraType(CameraType.FIRST_PERSON);
+		});
+		// Blocks: a broken one shatters, a placed one pulses.
+		server.runCommand("tp @p 0 -60 0 0 12");
+		server.runCommand("setblock 0 -60 3 minecraft:emerald_block");
+		ctx.waitTicks(10);
+		server.runCommand("setblock 0 -60 3 minecraft:air destroy");
+		ctx.waitTicks(3);
+		shot(ctx, "2d_block_shatter");
+		ctx.waitTicks(20);
+		server.runCommand("kill @e[type=item]");
+		server.runCommand("setblock 0 -60 3 minecraft:polished_andesite");
+		ctx.waitTicks(3);
+		ctx.runOnClient(mc -> dev.mordo.kairo.render.VoidActionFx.onPlace(new net.minecraft.core.BlockPos(0, -60, 3)));
+		ctx.waitTicks(3);
+		shot(ctx, "2e_place_pulse");
+		ctx.waitTicks(15);
+		server.runCommand("setblock 0 -60 3 minecraft:air");
+		// Combat: the hit echo, the kill streak crown, the weapon aura.
+		ctx.runOnClient(mc -> {
+			s.blockShatter.set(false);
+			s.placePulse.set(false);
+			s.hitEcho.set(true);
+			s.killCrown.set(true);
+			dev.mordo.kairo.render.VoidActionFx.onHit(new Vec3(0, -60, 3), 0.6f, 1.95f, new Vec3(0.4, 0, 1).normalize());
+		});
+		ctx.waitTicks(3);
+		shot(ctx, "2f_hit_echo");
+		ctx.runOnClient(mc -> {
+			dev.mordo.kairo.render.VoidActionFx.testStreak(6);
+			mc.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+		});
+		ctx.waitTicks(10);
+		shot(ctx, "2g_kill_crown");
+		ctx.runOnClient(mc -> mc.options.setCameraType(CameraType.FIRST_PERSON));
+		server.runCommand("tp @p 0 -60 0 0 -38");
+		ctx.waitTicks(8);
+		shot(ctx, "2g_kill_crown_first_person");
+		ctx.runOnClient(mc -> {
+			dev.mordo.kairo.render.VoidActionFx.testStreak(0);
+			s.hitEcho.set(false);
+			s.killCrown.set(false);
+		});
+		// The held item outline (both editions) and the weapon aura.
+		server.runCommand("tp @p 0 -60 0 0 0");
+		server.runCommand("item replace entity @p weapon.mainhand with minecraft:diamond_sword");
+		ctx.runOnClient(mc -> visuals.heldShine.set(dev.mordo.kairo.core.GameVisuals.HeldShine.OUTLINE));
+		ctx.waitTicks(15);
+		shot(ctx, "2h_outline_sword");
+		server.runCommand("item replace entity @p weapon.mainhand with minecraft:diamond_pickaxe");
+		ctx.waitTicks(12);
+		shot(ctx, "2h_outline_pickaxe");
+		server.runCommand("item replace entity @p weapon.mainhand with minecraft:grass_block");
+		ctx.waitTicks(12);
+		shot(ctx, "2h_outline_block");
+		server.runCommand("item replace entity @p weapon.mainhand with minecraft:netherite_sword");
+		ctx.runOnClient(mc -> {
+			visuals.heldShine.reset();
+			s.weaponAura.set(true);
+		});
+		ctx.waitTicks(30);
+		shot(ctx, "2i_weapon_aura_sword");
+		server.runCommand("item replace entity @p weapon.mainhand with minecraft:diamond_axe");
+		ctx.waitTicks(30);
+		shot(ctx, "2i_weapon_aura_axe");
+		server.runCommand("item replace entity @p weapon.mainhand with minecraft:air");
+		ctx.runOnClient(mc -> s.weaponAura.set(false));
+		ctx.waitTicks(5);
 	}
 
 	// ---- light particles ----
@@ -455,6 +630,169 @@ final class Update030Tour {
 			Emotes.stop();
 			mc.options.setCameraType(CameraType.FIRST_PERSON);
 			c.music1Dance.reset();
+		});
+		ctx.waitTicks(5);
+	}
+
+	// ---- the new mods (both editions): time, weather, now playing, the visualiser ----
+
+	private static void turn(dev.mordo.kairo.core.Module mod, boolean on) {
+		if (mod.isEnabled() != on) {
+			mod.toggle();
+		}
+		dev.mordo.kairo.core.ModuleManager.syncAll();
+	}
+
+	private void newMods(ClientGameTestContext ctx, net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext server) {
+		var time = dev.mordo.kairo.core.ModuleManager.get(dev.mordo.kairo.mods.TimeChanger.class);
+		var weather = dev.mordo.kairo.core.ModuleManager.get(dev.mordo.kairo.mods.WeatherChanger.class);
+		var playing = dev.mordo.kairo.core.ModuleManager.get(dev.mordo.kairo.hud.NowPlayingHud.class);
+		var visualizer = dev.mordo.kairo.core.ModuleManager.get(dev.mordo.kairo.hud.VisualizerHud.class);
+		server.runCommand("time set 6000");
+		server.runCommand("weather clear");
+		server.runCommand("tp @p 0 -60 0 0 -20");
+		ctx.runOnClient(mc -> mc.options.setCameraType(CameraType.FIRST_PERSON));
+		ctx.waitTicks(10);
+		shot(ctx, "70_time_real_noon");
+		ctx.runOnClient(mc -> {
+			time.hour.set(0.0);
+			turn(time, true);
+		});
+		ctx.waitTicks(10);
+		shot(ctx, "70_time_changer_midnight");
+		ctx.runOnClient(mc -> time.hour.set(18.0));
+		ctx.waitTicks(10);
+		shot(ctx, "70_time_changer_sunset");
+		ctx.runOnClient(mc -> {
+			Kairo.LOGGER.info("CHECK time changer: world clock shows {} while the real time is noon", mc.level.getDefaultClockTime() % 24000);
+			turn(time, false);
+			time.hour.reset();
+			weather.fade.set(0.0);
+			weather.weather.set(dev.mordo.kairo.mods.WeatherChanger.Weather.RAIN);
+			turn(weather, true);
+		});
+		ctx.waitTicks(30);
+		shot(ctx, "71_weather_changer_rain");
+		ctx.runOnClient(mc -> weather.weather.set(dev.mordo.kairo.mods.WeatherChanger.Weather.THUNDER));
+		ctx.waitTicks(20);
+		shot(ctx, "71_weather_changer_thunder");
+		ctx.runOnClient(mc -> {
+			Kairo.LOGGER.info("CHECK weather changer: rain {} thunder {} (the real weather is clear)", mc.level.getRainLevel(1), mc.level.getThunderLevel(1));
+			turn(weather, false);
+			weather.weather.reset();
+			weather.fade.reset();
+		});
+		ctx.waitTicks(5);
+		ctx.runOnClient(mc -> Kairo.LOGGER.info("CHECK weather back to real: rain {}", mc.level.getRainLevel(1)));
+		// Now Playing and the visualiser, fed with a stand-in song and sound (the test never starts the helper).
+		ctx.runOnClient(mc -> {
+			dev.mordo.kairo.sound.MediaHelper.testTrack = new dev.mordo.kairo.sound.MediaHelper.Track(true, true, 83_000, 225_000, "Spotify",
+				"A Song With A Rather Long Title That Has To Scroll", "Some Artist", 0, System.nanoTime());
+			turn(playing, true);
+			turn(visualizer, true);
+		});
+		for (var style : dev.mordo.kairo.hud.VisualizerHud.Style.values()) {
+			ctx.runOnClient(mc -> visualizer.style.set(style));
+			for (int i = 0; i < 6; i++) {
+				int frame = i + style.ordinal() * 6;
+				ctx.runOnClient(mc -> {
+					float[] bands = new float[dev.mordo.kairo.sound.MediaHelper.BANDS];
+					for (int b = 0; b < bands.length; b++) {
+						bands[b] = (float) Math.clamp(0.5 + 0.3 * Math.sin(b * 0.5 + frame * 0.9) + 0.25 * Math.sin(b * 1.3 - frame * 0.5) - b * 0.008, 0.1, 1);
+					}
+					dev.mordo.kairo.sound.MediaHelper.testBands = bands;
+				});
+				ctx.waitTicks(1);
+			}
+			shot(ctx, "72_music_" + style.name().toLowerCase());
+		}
+		ctx.runOnClient(mc -> {
+			playing.layout.set(dev.mordo.kairo.hud.NowPlayingHud.Layout.LINE);
+			visualizer.style.reset();
+			visualizer.paint.set(dev.mordo.kairo.hud.VisualizerHud.Paint.RAINBOW);
+			dev.mordo.kairo.sound.MediaHelper.testTrack = new dev.mordo.kairo.sound.MediaHelper.Track(true, false, 61_000, 0, "Chrome", "A video",
+				"A channel", 0, System.nanoTime());
+		});
+		ctx.waitTicks(8);
+		shot(ctx, "73_music_one_line_paused_rainbow");
+		ctx.runOnClient(mc -> {
+			playing.layout.reset();
+			visualizer.paint.reset();
+			turn(playing, false);
+			turn(visualizer, false);
+			dev.mordo.kairo.sound.MediaHelper.testTrack = null;
+			dev.mordo.kairo.sound.MediaHelper.testBands = null;
+		});
+		ctx.waitTicks(3);
+	}
+
+	// ---- the real media helper (only with build/tour-media: it starts PowerShell and listens to this PC) ----
+
+	private void realMedia(ClientGameTestContext ctx) {
+		var playing = dev.mordo.kairo.core.ModuleManager.get(dev.mordo.kairo.hud.NowPlayingHud.class);
+		var visualizer = dev.mordo.kairo.core.ModuleManager.get(dev.mordo.kairo.hud.VisualizerHud.class);
+		ctx.runOnClient(mc -> {
+			System.setProperty("kairo.media.inTests", "true");
+			Kairo.LOGGER.info("CHECK media helper before the mods are on: running {}", dev.mordo.kairo.sound.MediaHelper.running());
+			turn(playing, true);
+			turn(visualizer, true);
+		});
+		ctx.waitTicks(160);
+		ctx.runOnClient(mc -> {
+			var track = dev.mordo.kairo.sound.MediaHelper.track();
+			float loudest = 0;
+			for (float band : dev.mordo.kairo.sound.MediaHelper.bands()) {
+				loudest = Math.max(loudest, band);
+			}
+			Kairo.LOGGER.info("CHECK media helper with the mods on: running {}, hearing {}, loudest band {}, something playing known {}, app '{}', length {} ms, cover {}",
+				dev.mordo.kairo.sound.MediaHelper.running(), dev.mordo.kairo.sound.MediaHelper.hearing(), loudest, track.known(), track.app(),
+				track.lengthMs(), track.cover());
+		});
+		shot(ctx, "74_real_media");
+		ctx.runOnClient(mc -> {
+			turn(playing, false);
+			turn(visualizer, false);
+		});
+		ctx.waitTicks(30);
+		ctx.runOnClient(mc -> {
+			Kairo.LOGGER.info("CHECK media helper after the mods are off: running {}", dev.mordo.kairo.sound.MediaHelper.running());
+			System.clearProperty("kairo.media.inTests");
+		});
+	}
+
+	// ---- addons (only when one is loaded: run with -Paddons=<jar>, the way the launcher starts the game) ----
+
+	private void addons(ClientGameTestContext ctx) {
+		ctx.runOnClient(mc -> Kairo.LOGGER.info("CHECK addons loaded: {}, menu look in use: '{}', looks to choose from: {}",
+			dev.mordo.kairo.api.Addons.loaded(), ClientSettings.INSTANCE.menuLook.get(), dev.mordo.kairo.api.Addons.menuLookChoices().size()));
+		if (!ctx.computeOnClient(mc -> dev.mordo.kairo.api.Addons.hasMenuLooks())) {
+			return;
+		}
+		ctx.runOnClient(mc -> mc.gui.setScreen(new MenuScreen()));
+		ctx.waitTicks(30);
+		shot(ctx, "80_addon_look_ring");
+		ctx.runOnClient(mc -> mc.gui.setScreen(MenuScreen.openOn(MenuScreen::mods, null)));
+		ctx.waitTicks(30);
+		shot(ctx, "81_addon_look_mods");
+		ctx.runOnClient(mc -> mc.gui.setScreen(MenuScreen.openOn(MenuScreen::visualsPage, null)));
+		ctx.waitTicks(30);
+		shot(ctx, "82_addon_look_visuals");
+		ctx.runOnClient(mc -> mc.gui.setScreen(MenuScreen.openOn(MenuScreen::settings, null)));
+		ctx.waitTicks(30);
+		shot(ctx, "83_addon_look_settings");
+		// Minecraft's own buttons follow the look too.
+		ctx.runOnClient(mc -> mc.gui.setScreen(new net.minecraft.client.gui.screens.PauseScreen(true)));
+		ctx.waitTicks(20);
+		shot(ctx, "85_addon_look_minecraft_buttons");
+		ctx.runOnClient(mc -> {
+			ClientSettings.INSTANCE.menuLook.set(dev.mordo.kairo.api.Addons.DEFAULT_LOOK);
+			mc.gui.setScreen(new MenuScreen());
+		});
+		ctx.waitTicks(30);
+		shot(ctx, "84_addon_look_back_to_kairos_own");
+		ctx.runOnClient(mc -> {
+			Kairo.LOGGER.info("CHECK back to Kairo's own look: '{}'", ClientSettings.INSTANCE.menuLook.get());
+			mc.gui.setScreen(null);
 		});
 		ctx.waitTicks(5);
 	}

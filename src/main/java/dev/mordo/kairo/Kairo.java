@@ -32,11 +32,14 @@ public final class Kairo implements ClientModInitializer {
 			ModuleManager.registerHolder(dev.mordo.kairo.core.VoidSettings.INSTANCE);
 		}
 		Modules.registerAll();
+		// Addons plug in here: after Kairo's own mods, before the settings are loaded.
+		dev.mordo.kairo.api.Addons.load();
 
 		KeybindManager.collect();
 		HudManager.init();
 		Toasts.register();
 		ConfigManager.init();
+		dev.mordo.kairo.api.Addons.afterSettingsLoaded();
 		for (var module : ModuleManager.modules()) {
 			module.init();
 		}
@@ -69,9 +72,11 @@ public final class Kairo implements ClientModInitializer {
 			dev.mordo.kairo.render.background.WallpaperColors.tick();
 			dev.mordo.kairo.gui.Theme.refresh();
 			dev.mordo.kairo.core.update.UpdateChecker.tick(client);
+			dev.mordo.kairo.sound.MediaHelper.tick();
 			ConfigManager.tick();
 		});
 		ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
+			dev.mordo.kairo.sound.MediaHelper.stop();
 			ConfigManager.save();
 			// Only if the player clicked Update and the download checked out.
 			dev.mordo.kairo.core.update.UpdateInstaller.onExit();

@@ -125,6 +125,16 @@ public final class Shapes {
 	/** Frosted-glass sector: shows the blurred world behind it under {@code tint}. */
 	public static void glassSector(GuiGraphicsExtractor g, float cx, float cy, float innerR, float outerR, float midAngle, float halfAngle,
 								   float gap, float cornerRadius, int tint, int stroke, float strokeWidth, float opacity, float saturation) {
+		dev.mordo.kairo.api.MenuLook look = dev.mordo.kairo.api.Addons.activeLook();
+		if (look != null) {
+			// An addon's menu look draws it; if it breaks, Kairo's own look takes over.
+			try {
+				look.sector(g, cx, cy, innerR, outerR, midAngle, halfAngle, gap, cornerRadius, tint, stroke, strokeWidth, opacity);
+				return;
+			} catch (Throwable t) {
+				dev.mordo.kairo.api.Addons.lookFailed(look, t);
+			}
+		}
 		if (Edition.isVoid()) {
 			sector(g, cx, cy, innerR, outerR, midAngle, halfAngle, gap, cornerRadius, Colors.multiplyAlpha(flat(tint), opacity), Colors.multiplyAlpha(flatStroke(stroke), opacity), strokeWidth);
 			return;
@@ -196,6 +206,15 @@ public final class Shapes {
 		if (w <= 0 || h <= 0) {
 			return;
 		}
+		dev.mordo.kairo.api.MenuLook look = dev.mordo.kairo.api.Addons.activeLook();
+		if (look != null) {
+			try {
+				look.panel(g, x, y, w, h, radius, tint, stroke, strokeWidth, opacity);
+				return;
+			} catch (Throwable t) {
+				dev.mordo.kairo.api.Addons.lookFailed(look, t);
+			}
+		}
 		if (Edition.isVoid()) {
 			rect(g, x, y, w, h, radius, Colors.multiplyAlpha(flat(tint), opacity), Colors.multiplyAlpha(flatStroke(stroke), opacity), strokeWidth);
 			if (w > 500 && h > 300 && dev.mordo.kairo.core.ClientSettings.INSTANCE.panelEdgeLight.isOn()) {
@@ -223,6 +242,15 @@ public final class Shapes {
 	 * Drawn in GUI space regardless of the current pose.
 	 */
 	public static void backdrop(GuiGraphicsExtractor g, float opacity, float dim, float vignette) {
+		dev.mordo.kairo.api.MenuLook look = dev.mordo.kairo.api.Addons.activeLook();
+		if (look != null) {
+			try {
+				look.backdrop(g, opacity, dim, vignette);
+				return;
+			} catch (Throwable t) {
+				dev.mordo.kairo.api.Addons.lookFailed(look, t);
+			}
+		}
 		if (Edition.isVoid()) {
 			// Void: no blur, just a deep flat grey over the world.
 			g.fill(0, 0, g.guiWidth(), g.guiHeight(), Colors.argb(Math.clamp(opacity * (0.55f + dim * 0.6f), 0f, 0.94f), dev.mordo.kairo.gui.Theme.voidPanel(VOID_BACK)));

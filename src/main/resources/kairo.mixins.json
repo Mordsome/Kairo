@@ -5,7 +5,9 @@
 	"client": [
 		"AbstractContainerScreenAccessor",
 		"AvatarRendererMixin",
+		"BlockBreakFxMixin",
 		"BlockOutlineMixin",
+		"BlockPlaceFxMixin",
 		"CameraMixin",
 		"ContainerGlassMixin",
 		"ContainerLabelMixin",
@@ -16,6 +18,8 @@
 		"ChatComponentMixin",
 		"ChatScreenMixin",
 		"ClientPacketListenerMixin",
+		"ClockTimeMixin",
+		"LevelWeatherMixin",
 		"ExperienceBarMixin",
 		"FirstPersonItemMixin",
 		"GameRendererMixin",

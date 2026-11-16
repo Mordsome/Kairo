@@ -244,6 +244,32 @@ public final class VoidVisualsPage extends PanelPage {
 			Group.WORLD, bool(vs.worldRibbons), List.of(vs.ribbonColor, vs.ribbonAmount, vs.ribbonsByDay), null);
 		add("Floating motes", "Small lights hanging in the air around you that drift, glow and fade", Icon.SPARKLE, Group.WORLD,
 			bool(vs.motes), List.of(vs.moteAmount, vs.ribbonColor), null);
+		add("Starfall", "Comets of light streak down all around you and land in rings of light on the ground", Icon.SPARKLE, Group.WORLD,
+			bool(vs.starfall), List.of(vs.starfallAmount, vs.ribbonColor), null);
+		add("Sky crystals", "Huge turning crystals of light hovering over the land, with orbiting rings and a beam", Icon.CUBE, Group.WORLD,
+			bool(vs.skyCrystals), List.of(vs.ribbonColor), null);
+		add("Pulse grid", "Waves of light sweep out from you over the land, lighting its shape up as a mesh", Icon.GRID, Group.WORLD,
+			bool(vs.pulseGrid), List.of(vs.ribbonColor), null);
+		add("Light rivers", "Streams of light flowing over the ground that bend aside round your feet", Icon.ARROW_RIGHT, Group.WORLD,
+			bool(vs.lightRivers), List.of(vs.ribbonColor), null);
+		add("Sky shapes", "Vast wire shapes, gyroscopes and gates of light far up in the sky", Icon.GLOBE, Group.WORLD,
+			bool(vs.skyShapes), List.of(vs.ribbonColor), null);
+		add("Rift", "A tear in the sky: a crack of light with a dark gap, rings leaning in and shards circling", Icon.SIGNAL, Group.WORLD,
+			bool(vs.rift), List.of(vs.ribbonColor), null);
+		add("Block shatter", "Broken blocks burst into shards of light in their own colour", Icon.CUBE, Group.WORLD,
+			bool(vs.blockShatter), List.of(), null);
+		add("Place pulse", "A block you place lights up along its edges and sends a frame of light outwards", Icon.BOX, Group.WORLD,
+			bool(vs.placePulse), List.of(vs.actionColor, vs.fxCustomColor), null);
+		add("Footstep ripples", "Every step sends a ring of light over the ground; landing makes a big one", Icon.SIGNAL, Group.YOU,
+			bool(vs.footsteps), List.of(vs.actionColor, vs.fxCustomColor), null);
+		add("Rush streaks", "Lines of light stream past when you sprint-jump or fall fast, and a ring when you start sprinting", Icon.ARROW_RIGHT,
+			Group.YOU, bool(vs.rushStreaks), List.of(vs.actionColor, vs.fxCustomColor), null);
+		add("Weapon aura", "Rings of light and runes round your sword, axe or mace that fill as your attack charges", Icon.SWORD, Group.COMBAT,
+			bool(vs.weaponAura), List.of(vs.actionColor, vs.fxCustomColor), null);
+		add("Kill streak crown", "Kills in a row build a crown of light over your head, one spike per kill", Icon.TOTEM, Group.COMBAT,
+			bool(vs.killCrown), List.of(vs.actionColor, vs.youInFirstPerson, vs.fxCustomColor), null);
+		add("Hit echo", "A ghost of what you hit, in rings of light, slides back the way it was knocked", Icon.USER, Group.COMBAT,
+			bool(vs.hitEcho), List.of(vs.actionColor, vs.fxCustomColor), null);
 		add("Light particles", "Effects become sparks, shards and rings of light instead of Minecraft's pixel particles", Icon.SPARKLE,
 			Group.COMBAT, bool(vs.lightParticles), List.of(), null);
 		add("Rich sunsets", "Deeper, warmer colours at sunrise and sunset", Icon.SUN, Group.WORLD, bool(vs.sunsets), List.of(), null);
@@ -291,6 +317,26 @@ public final class VoidVisualsPage extends PanelPage {
 		add("Keystroke ripples", "Keys pop and send out a ripple when you press them", Icon.KEYBOARD, Group.INTERFACE, bool(vs.keyRipples), List.of(), null);
 		add("Living menus", "Drifting light and motes behind the menus", Icon.GRID, Group.INTERFACE, bool(cs.menuFx),
 			List.of(cs.backgroundDim), null);
+		if (dev.mordo.kairo.api.Addons.hasMenuLooks()) {
+			// Only with an addon that adds a look: Kairo Void's own flat look, or the addon's.
+			Binding<Boolean> custom = new Binding<>() {
+				@Override
+				public Boolean get() {
+					return !cs.menuLook.get().equals(dev.mordo.kairo.api.Addons.DEFAULT_LOOK);
+				}
+
+				@Override
+				public void set(Boolean value) {
+					var choices = dev.mordo.kairo.api.Addons.menuLookChoices();
+					cs.menuLook.set(value && choices.size() > 1 ? choices.get(1).id() : dev.mordo.kairo.api.Addons.DEFAULT_LOOK);
+				}
+			};
+			List<Setting<?>> lookSettings = new ArrayList<>();
+			lookSettings.add(cs.menuLook);
+			lookSettings.addAll(dev.mordo.kairo.api.Addons.menuLookSettings());
+			add("Menu look", "How panels, the ring and the menu background are drawn: Kairo Void's own, or a look from an addon", Icon.LAYOUT,
+				Group.INTERFACE, custom, lookSettings, null);
+		}
 		add("Panel edge light", "A short light runs along the top edge of big panels", Icon.SUN, Group.INTERFACE, bool(cs.panelEdgeLight),
 			List.of(), null);
 		add("Wallpaper colours", "Your colour comes from your main menu background; panels and text take a tint of it", Icon.IMAGE,

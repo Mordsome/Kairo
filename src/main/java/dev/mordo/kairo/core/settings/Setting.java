@@ -25,7 +25,7 @@ public abstract class Setting<T> {
 	private final String id;
 	private final String name;
 	private String description = "";
-	private final T defaultValue;
+	private T defaultValue;
 	private T value;
 
 	/** Override declared by the module itself (null = no default override). */
@@ -57,6 +57,16 @@ public abstract class Setting<T> {
 
 	public <S extends Setting<T>> S description(String description) {
 		this.description = description;
+		return self();
+	}
+
+	/**
+	 * A different default for a setting a module inherits (a HUD mod that starts without a background, say). Only
+	 * while declaring the module, before any config is loaded.
+	 */
+	public <S extends Setting<T>> S startsAs(T value) {
+		this.defaultValue = sanitize(Objects.requireNonNull(value));
+		this.value = this.defaultValue;
 		return self();
 	}
 

@@ -80,6 +80,15 @@ if (providers.gradleProperty('nokairo').isPresent()) {
 	}
 }
 
+// Add -Paddons=<jar or folder>[;<more>] to any run to load Kairo addons the way the launcher does (Fabric's
+// fabric.addMods), without copying them into run/mods.
+if (providers.gradleProperty('addons').isPresent()) {
+	def addonPaths = providers.gradleProperty('addons').get()
+	loom.runs.configureEach {
+		vmArg "-Dfabric.addMods=${addonPaths}"
+	}
+}
+
 dependencies {
 	// 26.x ships unobfuscated, so there is no mappings line: Mojang's own names are used directly.
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"

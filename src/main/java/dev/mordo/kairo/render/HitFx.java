@@ -106,6 +106,8 @@ public final class HitFx {
 					burst(level, v.hitBurst.get(), centre.add(towards.scale(living.getBbWidth() * 0.75 + 0.15)), lastHeight, v.hitAmount.floatValue());
 					// Kairo Void: an impact of light drawn at the same spot.
 					VoidWorldFx.onHit(centre.add(towards.scale(living.getBbWidth() * 0.6 + 0.1)), lastHeight, VoidFx.lastWasCrit());
+					Vec3 push = new Vec3(-towards.x, 0, -towards.z);
+					VoidActionFx.onHit(lastPos, living.getBbWidth(), lastHeight, push.lengthSqr() < 1e-6 ? Vec3.ZERO : push.normalize());
 				}
 			}
 			if (sinceHit > 100) {
@@ -129,6 +131,7 @@ public final class HitFx {
 			packKill(lastPos.add(0, lastHeight * 0.5, 0));
 			VoidFx.onKill(lastPos.add(0, lastHeight * 0.5, 0));
 			VoidNoir.onKill(lastPos.add(0, lastHeight * 0.5, 0));
+			VoidActionFx.onKill();
 		}
 		targetId = -1;
 	}

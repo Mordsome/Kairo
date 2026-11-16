@@ -19,9 +19,32 @@ switchable in Visuals and respecting Fewer flashes and Reduce motion.
 - **Light ribbons (Void):** long ribbons of light hanging and twisting in the air around you, like an aurora you walk
   through. They belong to places in the world, so you pass them as you travel; brightest at night, fainter by day.
 - **Floating motes (Void):** small lights hanging in the air close around you that drift and slowly breathe.
+- **Starfall (Void):** comets of light streak down from the sky all around you and land in rings of light that ripple
+  out over the ground.
+- **Sky crystals (Void):** huge crystals of light hover over the land here and there, slowly turning, with rings
+  orbiting them, a beam down to the ground and a circle of light turning underneath.
 - **Light particles (Void):** Kairo's effects (hits, kills, jumps, explosions, crystals, atmospheres, trails, emotes)
   and Minecraft's combat, death, potion and explosion particles are drawn as sparks, shards, orbs, rings, petals and
   flakes of light instead of pixel sprites. Ambient ones (torches, smoke, rain) stay as they are.
+- **Pulse grid (Void):** waves of light sweep out from you over the land like a sonar scan, lighting the shape of the
+  ground up as a mesh.
+- **Light rivers (Void):** streams of light flow over the ground along winding paths and bend aside round your feet.
+- **Sky shapes (Void):** vast shapes of light far up in the sky: tumbling wire polyhedra, gyroscopes of rings, gates.
+- **Rift (Void):** a tear in the sky at a few places in the world: a crack of light with a dark gap opening and
+  closing, rings leaning in round it and shards circling.
+- **Footstep ripples (Void):** every step sends a ring of light over the ground; landing from a fall makes a big one.
+- **Rush streaks (Void):** lines of light stream past when you sprint-jump or fall fast, and a ring bursts out when you
+  break into a sprint.
+- **Block shatter and place pulse (Void):** broken blocks burst into shards of light in their own colour (in place of
+  Minecraft's crumbs); a block you place lights up along its edges and sends a frame of light outwards.
+- **Weapon aura (Void):** rings of light and runes turn round your sword, axe or mace, drawing closed and warming to
+  your colour as your attack charges (the same thing the crosshair indicator shows).
+- **Kill streak crown (Void):** kills in a row build a crown of light over your head, one spike per kill.
+- **Hit echo (Void):** a ghost of what you hit, drawn in rings of light, slides back the way it was knocked.
+- **Everything starts off (Void):** on a new install every Void visual is off and Quality is Custom, so you switch on
+  what you want (Favourites lists the main ones). Existing settings are kept.
+- **Held item outline (both editions):** now a real outline of the same width all the way round, following the item's
+  shape into its notches and gaps (it used to be a scaled-up copy, thick at the tips and missing in the corners).
 - **Player trail (Void):** a fading ribbon, comet, twin streaks or prism trail behind you.
 - **Your look (Void):** an outline, a glow or a hologram (see-through light with scan lines) on your own player only.
 - **Hit impact (Void):** shards, a sigil, a cross slash, a star or rings of light where your hit lands; bigger on crits.
@@ -37,6 +60,19 @@ switchable in Visuals and respecting Fewer flashes and Reduce motion.
 - **Music emotes (both editions):** two emotes that play your own song (OGG or WAV, up to 5 minutes, only you hear it)
   while you dance to it. Set the song's BPM and a beat offset so the dance lands on the beat; pick the dance, including
   two new ones made for it (Beat bounce and Beat step, also on the Dances page). A new Music page on the wheel.
+- **Now Playing (both editions, Windows):** a HUD mod showing the song your PC is playing (Spotify, YouTube or anything
+  in a browser, any player Windows' media controls know): album cover, title, artist, app, a progress bar and the time,
+  each with its own switch; card or one-line layout; long titles scroll. Display only.
+- **Music Visualiser (both editions, Windows):** a HUD mod with bars, mirrored bars, a wave, dots or a ring moving to
+  the sound your PC plays (all sound, or only while music plays), with options for count, size, round edges, colours,
+  animation, sensitivity, caps and glow.
+- Both music mods are off by default. While one is on (and only then) Kairo runs a small bundled PowerShell helper that
+  reads Windows' media controls and the level of the PC's sound output; nothing is recorded or sent anywhere.
+- **Time Changer and Weather Changer (both editions):** the time of day (a fixed hour or a fast day and night) and the
+  weather (clear, rain, thunderstorm) you see, whatever the world really has. Only your own picture changes.
+- **Addons (both editions):** Kairo can now be extended by small separate addon mods (from Mordsome/KairoAddons, by
+  hand or through the Kairo Launcher). First socket: menu looks, chosen in Visuals (Menu look), plus extra mods.
+  Addons only add things, so they work together; an addon that doesn't fit or breaks is skipped and Kairo carries on.
 - New "You" group in Void's Visuals; every new effect has its own card with its options.
 - **Favourites (Void):** Visuals opens on a Favourites tab with the most important effects already in it (hand
   animations, held item glow, blades, aura, glyphs, ribbons, motes, aurora, cosmic sky, block overlay, light
